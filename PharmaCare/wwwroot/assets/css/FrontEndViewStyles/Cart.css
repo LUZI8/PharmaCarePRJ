@@ -1,0 +1,226 @@
+﻿.empty-cart-container {
+    text-align: center;
+    padding: 50px 0; /* Generous padding for empty state spacing */
+}
+
+.empty-cart-icon {
+    font-size: 5rem; /* Large icon size for prominent empty cart display */
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.site-blocks-table {
+    margin-bottom: 30px;
+}
+
+    .site-blocks-table th {
+        padding: 12px;
+        text-align: center;
+        border-width: 1px !important;
+        vertical-align: middle; /* Centers table header content vertically */
+        color: var(--text-color); /* Uses CSS custom property for dynamic text color */
+        font-size: 0.9rem;
+    }
+
+    .site-blocks-table td {
+        padding: 20px;
+        text-align: center;
+        vertical-align: middle; /* Centers table cell content vertically */
+        color: var(--text-color);
+    }
+
+.input-group {
+    margin: 0 auto; /* Centers input group horizontally */
+}
+
+body.dark-mode .site-blocks-table th,
+body.dark-mode .site-blocks-table td,
+body.dark-mode .text-black {
+    color: #fff !important; /* White text for table content in dark mode */
+}
+
+body.dark-mode .btn-outline-primary:hover {
+    color: #fff !important; /* White text for hovered outline buttons in dark mode */
+}
+
+body.dark-mode .js-btn-plus:hover,
+body.dark-mode .js-btn-minus:hover {
+    color: #fff !important; /* White text for quantity control buttons on hover */
+}
+
+.btn-primary {
+    color: #fff !important; /* White text for primary buttons */
+}
+
+    .btn-primary:hover {
+        color: #fff !important; /* Maintains white text on hover */
+    }
+
+.site-blocks-table {
+    overflow: auto; /* Enables horizontal scrolling for table overflow */
+}
+
+    .site-blocks-table table {
+        width: 100%;
+        min-width: 800px; /* Ensures table maintains minimum width for readability */
+    }
+
+    .site-blocks-table th {
+        font-weight: 500;
+        padding: 12px;
+        text-align: center;
+        background-color: #f9f9f9; /* Light gray background for table headers */
+        border-color: #dee2e6;
+    }
+
+    .site-blocks-table td {
+        padding: 20px;
+        text-align: center;
+        vertical-align: middle;
+        color: #212529;
+        border-color: #dee2e6;
+    }
+
+    .site-blocks-table .product-thumbnail img {
+        max-width: 80px; /* Limits product thumbnail size */
+        border-radius: 4px;
+        transition: transform 0.2s; /* Smooth scaling animation */
+    }
+
+        .site-blocks-table .product-thumbnail img:hover {
+            transform: scale(1.05); /* Slightly enlarges thumbnail on hover */
+        }
+
+.input-group .form-control:focus {
+    border-color: #dee2e6;
+    box-shadow: none; /* Removes default focus shadow for cleaner appearance */
+}
+
+.toast-notification {
+    position: fixed; /* Fixed positioning for toast notifications */
+    top: 20px;
+    right: 20px;
+    background-color: #fff;
+    color: #333;
+    padding: 15px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for toast depth */
+    z-index: 1000; /* Ensures toast appears above other content */
+    display: flex;
+    align-items: center;
+    transform: translateX(120%); /* Initially positioned off-screen */
+    transition: transform 0.3s ease-in-out; /* Smooth slide-in animation */
+    max-width: 350px;
+}
+
+    .toast-notification.show {
+        transform: translateX(0); /* Slides toast into view */
+    }
+
+    .toast-notification.success i {
+        color: #28a745; /* Green icon for success notifications */
+    }
+
+    .toast-notification.error i {
+        color: #dc3545; /* Red icon for error notifications */
+    }
+
+    .toast-notification i {
+        font-size: 20px;
+        margin-right: 10px; /* Spacing between icon and text */
+    }
+
+.empty-cart-container {
+    text-align: center;
+    padding: 60px 0; /* Extra padding for empty cart state */
+}
+
+.empty-cart-icon {
+    font-size: 64px; /* Large icon for prominent empty cart display */
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+#back-to-top {
+    display: none;
+    opacity: 0.7; /* Semi-transparent by default */
+    transition: opacity 0.3s; /* Smooth opacity transition */
+}
+
+    #back-to-top:hover {
+        opacity: 1; /* Full opacity on hover */
+    }
+
+.cart-totals {
+    background-color: #f9f9f9; /* Light gray background for cart totals section */
+    padding: 25px;
+    border-radius: 4px;
+}
+
+@media (max-width: 767px) {
+    .col-md-6.pl-5 {
+        padding-left: 15px !important; /* Reduced padding for mobile layout */
+        margin-top: 30px;
+    }
+
+    .site-blocks-table {
+        overflow-x: auto; /* Horizontal scrolling for table on mobile */
+    }
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 50px 0;
+}
+
+.empty-cart-icon {
+    font-size: 80px; /* Large empty cart icon */
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.empty-cart h3 {
+    font-size: 24px; /* Large heading for empty cart message */
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.empty-cart p {
+    color: #6c757d; /* Gray text for empty cart description */
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #fff;
+    color: #333;
+    padding: 15px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    transform: translateX(120%);
+    transition: transform 0.3s ease-in-out;
+    max-width: 350px;
+}
+
+    .toast-notification.show {
+        transform: translateX(0);
+    }
+
+    .toast-notification.success i {
+        color: #28a745;
+    }
+
+    .toast-notification.error i {
+        color: #dc3545;
+    }
+
+    .toast-notification i {
+        font-size: 20px;
+        margin-right: 10px;
+    }

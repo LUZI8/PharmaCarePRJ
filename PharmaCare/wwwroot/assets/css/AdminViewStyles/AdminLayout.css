@@ -1,0 +1,627 @@
+﻿/* Brand logo styling with distinctive red color */
+.pharmacare-logo {
+    font-size: 1.5rem;
+    color: red !important; /* Force red color for brand recognition */
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: -1px; /* Tighter letter spacing for modern look */
+    width: 100%;
+}
+
+/* Sidebar header container with centered layout */
+.sidebar-header {
+    display: flex;
+    flex-direction: column; /* Vertical stacking of header elements */
+    align-items: center;
+    padding: 1.5rem 0.5rem;
+}
+
+/* Main admin sidebar with fixed positioning */
+.admin-sidebar {
+    min-width: 200px;
+    background-color: #343a40; /* Dark gray background */
+    color: white;
+    position: fixed; /* Fixed position for persistent navigation */
+    top: 0;
+    left: 0;
+    height: 100vh; /* Full viewport height */
+    width: 16.666667%; /* Bootstrap col-2 equivalent width */
+    z-index: 1050; /* High z-index to stay above content */
+    padding-top: 70px; /* Space for top navigation bar */
+    overflow-y: auto; /* Scrollable content if needed */
+    transition: transform 0.3s ease; /* Smooth slide animation for mobile */
+}
+
+/* Top navigation bar with fixed positioning */
+.top-nav {
+    display: flex;
+    justify-content: space-between; /* Space between left and right content */
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #fff;
+    border-bottom: 1px solid #e3e6f0; /* Subtle bottom border */
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15); /* Subtle shadow for depth */
+    position: fixed; /* Fixed at top of viewport */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1040; /* Below sidebar but above content */
+    height: 70px; /* Fixed height for consistent layout */
+}
+
+/* Left section of top navigation */
+.top-nav-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Right section of top navigation */
+.top-nav-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile hamburger menu button (hidden by default) */
+.hamburger-menu {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+    margin-right: 15px;
+    padding: 5px;
+}
+
+    .hamburger-menu:hover {
+        color: #dc3545; /* Brand color on hover */
+    }
+
+/* Top navigation links and buttons styling */
+.top-nav a, .top-nav button {
+    margin-left: 1.25rem;
+    color: #3a3a3a;
+    background: none;
+    border: none;
+    font-size: 1rem;
+}
+
+/* Admin information display container */
+.admin-info {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+/* Admin name display styling */
+.admin-name {
+    margin-right: 15px;
+    font-weight: 500; /* Medium font weight */
+    color: #333;
+}
+
+    .admin-name i {
+        margin-right: 5px;
+        color: #dc3545; /* Brand color for admin icon */
+    }
+
+/* Logout button with outlined style */
+.logout-btn {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #dc3545; /* Brand color border */
+    color: #dc3545;
+    background: transparent;
+    transition: all 0.3s; /* Smooth transition for hover effects */
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+    /* Logout button hover effect with color inversion */
+    .logout-btn:hover {
+        background-color: #dc3545; /* Fill background on hover */
+        color: white;
+    }
+
+    .logout-btn i {
+        margin-right: 5px; /* Icon spacing */
+    }
+
+/* Main content area with sidebar offset */
+.admin-content {
+    margin-left: 16.666667%; /* Offset by sidebar width */
+    margin-top: 70px; /* Offset by top nav height */
+    padding: 20px;
+    min-height: calc(100vh - 70px); /* Full height minus top nav */
+    width: calc(83.333333% - 40px); /* Remaining width minus padding */
+}
+
+/* Admin data table styling */
+.admin-table {
+    width: 100%;
+}
+
+    /* Table header styling with uppercase text */
+    .admin-table th {
+        background-color: #f8f9fc; /* Light background for headers */
+        border-bottom: 2px solid #e3e6f0; /* Stronger bottom border */
+        font-weight: 700; /* Bold header text */
+        text-transform: uppercase; /* Uppercase for emphasis */
+        font-size: 0.8rem;
+        letter-spacing: 0.05em; /* Slight letter spacing */
+    }
+
+    /* Table image sizing and styling */
+    .admin-table img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover; /* Maintain aspect ratio while filling container */
+        border-radius: 4px;
+    }
+
+/* Action buttons container styling */
+.action-btns a {
+    margin-right: 0.5rem;
+    color: #000 !important;
+    font-size: 0.9rem;
+}
+
+    .action-btns a i {
+        color: #000 !important; /* Default black color for icons */
+    }
+
+    /* Specific color for delete action icon */
+    .action-btns a .fa-trash-alt {
+        color: #dc3545 !important; /* Red for delete actions */
+    }
+
+    /* Specific color for edit action icon */
+    .action-btns a .fa-edit {
+        color: #007bff !important; /* Blue for edit actions */
+    }
+
+    /* Specific color for info action icon */
+    .action-btns a .fa-info-circle {
+        color: #fd7e14 !important; /* Orange for info actions */
+    }
+
+    /* Specific color for key/password action icon */
+    .action-btns a .fa-key {
+        color: #6c757d !important; /* Gray for key actions */
+    }
+
+    .action-btns a:hover {
+        color: #000 !important; /* Maintain color on hover */
+    }
+
+/* Pagination component styling */
+.admin-pagination {
+    margin-top: 1rem;
+}
+
+    .admin-pagination .page-link {
+        color: #333;
+        border-color: #ddd;
+    }
+
+    /* Active page styling with brand color */
+    .admin-pagination .page-item.active .page-link {
+        background-color: #dc3545; /* Brand color for active page */
+        border-color: #dc3545;
+    }
+
+    /* Pagination hover effect */
+    .admin-pagination .page-link:hover {
+        background-color: #f8f9fa;
+        color: #dc3545; /* Brand color on hover */
+    }
+
+/* Theme toggle button styling */
+#theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    line-height: 1; /* Consistent line height */
+    margin-left: 15px;
+}
+
+.theme-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+/* Mobile responsive layout adjustments */
+@media (max-width: 991.98px) {
+
+    /* Show hamburger menu on mobile */
+    .hamburger-menu {
+        display: block;
+    }
+
+    /* Hide sidebar by default on mobile */
+    .admin-sidebar {
+        transform: translateX(-100%); /* Slide sidebar off-screen */
+        width: 250px; /* Fixed width for mobile sidebar */
+    }
+
+        /* Show sidebar when active on mobile */
+        .admin-sidebar.active {
+            transform: translateX(0); /* Slide sidebar into view */
+        }
+
+    /* Adjust content area for mobile.
+       As a flex child of Bootstrap's .row, the content must be told to fill the row
+       (flex-basis 100%) and allowed to shrink below its content size (min-width 0),
+       otherwise it stretches to the widest non-wrapping child and gets clipped. */
+    .admin-content {
+        margin-left: 0; /* Remove sidebar offset */
+        padding: 15px;
+        width: 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+        min-width: 0; /* Allow the flex item to shrink instead of overflowing */
+    }
+
+    /* Keep the whole admin shell within the viewport */
+    .site-wrap,
+    .admin-content .container-fluid {
+        overflow-x: hidden;
+    }
+
+    /* Let card headers that pair a title with action buttons wrap on small screens */
+    .admin-content .card-header.d-flex {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* Prevent long button labels from forcing horizontal overflow */
+    .admin-content .btn {
+        white-space: normal;
+    }
+
+    .table-responsive {
+        border: none;
+    }
+
+    /* Mobile table layout - stack elements vertically */
+    .admin-table,
+    .admin-table tbody,
+    .admin-table tr,
+    .admin-table td {
+        display: block; /* Stack elements vertically */
+        width: 100%;
+    }
+
+        /* Hide table headers on mobile */
+        .admin-table thead {
+            display: none;
+        }
+
+        /* Card-style table rows for mobile */
+        .admin-table tr {
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Card shadow effect */
+        }
+
+        /* Mobile table cell styling with labels */
+        .admin-table td {
+            border: none;
+            padding: 8px 0;
+            position: relative;
+            padding-left: 40%; /* Space for data labels */
+        }
+
+            /* Pseudo-element for data labels on mobile */
+            .admin-table td:before {
+                content: attr(data-label) ": "; /* Display data label */
+                position: absolute;
+                left: 6px;
+                width: 35%;
+                font-weight: bold;
+                color: #333;
+            }
+
+        /* Smaller images on mobile */
+        .admin-table img {
+            width: 40px;
+            height: 40px;
+        }
+
+    /* Stack admin info vertically on mobile */
+    .admin-info {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    /* Adjust admin name for mobile */
+    .admin-name {
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+    }
+
+    /* Reduce top nav padding on mobile */
+    .top-nav {
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Extra small screen adjustments */
+@media (max-width: 767.98px) {
+
+    .admin-content {
+        padding: 10px; /* Minimal padding on small screens */
+    }
+
+    /* Smaller logo on mobile */
+    .pharmacare-logo {
+        font-size: 1.2rem;
+    }
+
+    /* Smaller admin name text */
+    .admin-name {
+        font-size: 0.8rem;
+    }
+
+    /* Smaller logout button */
+    .logout-btn {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .card {
+        margin-bottom: 15px;
+    }
+
+    .stat-card {
+        margin-bottom: 10px;
+    }
+
+    /* Flexbox layout for action buttons */
+    .action-btns {
+        display: flex;
+        flex-wrap: wrap; /* Allow wrapping on small screens */
+        gap: 5px; /* Consistent spacing between buttons */
+    }
+
+        .action-btns a {
+            margin-right: 0;
+            font-size: 0.8rem;
+        }
+}
+
+/* Dark theme color scheme overrides */
+body.dark-mode {
+    --primary-color: #e63946; /* Slightly different red for dark theme */
+    --secondary-color: #343a40;
+    --text-color: #f8f9fa; /* Light text for dark backgrounds */
+    --bg-color: #212529; /* Dark background color */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+    /* Dark theme top navigation */
+    body.dark-mode .top-nav {
+        background-color: #222323 !important; /* Dark background */
+        border-bottom: 1px solid #2c2c2c;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.3); /* Darker shadow */
+    }
+
+        /* Dark theme navigation links */
+        body.dark-mode .top-nav a,
+        body.dark-mode .top-nav button,
+        body.dark-mode .hamburger-menu {
+            color: #e0e0e0; /* Light gray text */
+        }
+
+    /* Dark theme admin name */
+    body.dark-mode .admin-name {
+        color: #e0e0e0;
+    }
+
+        body.dark-mode .admin-name i {
+            color: #ff4d4d; /* Brighter red for dark theme */
+        }
+
+    /* Dark theme logout button */
+    body.dark-mode .logout-btn {
+        color: #ff4d4d;
+        border-color: #ff4d4d;
+    }
+
+        body.dark-mode .logout-btn:hover {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+    /* Dark theme sidebar */
+    body.dark-mode .admin-sidebar {
+        background-color: #1a1a1a; /* Very dark background */
+    }
+
+    body.dark-mode .sidebar-header p.text-muted {
+        color: #aaa !important;
+    }
+
+    /* Dark theme navigation links */
+    body.dark-mode .nav-link {
+        color: #e0e0e0;
+    }
+
+        body.dark-mode .nav-link:hover {
+            background-color: #2a2a2a; /* Darker hover background */
+        }
+
+        body.dark-mode .nav-link.active {
+            background-color: #dc3545; /* Brand color for active links */
+            color: white;
+        }
+
+    /* Dark theme cards */
+    body.dark-mode .card {
+        background-color: #1e1e1e;
+        border-color: #2c2c2c;
+    }
+
+    body.dark-mode .card-header {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid #2c2c2c;
+    }
+
+    /* Dark theme list items */
+    body.dark-mode .list-group-item {
+        background-color: #1e1e1e;
+        border-color: #2c2c2c;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .text-muted {
+        color: #aaaaaa !important;
+    }
+
+    /* Dark theme tables */
+    body.dark-mode .table {
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.075); /* Subtle hover effect */
+    }
+
+    body.dark-mode .table th {
+        border-top: none;
+        border-bottom: 2px solid #2c2c2c;
+    }
+
+    body.dark-mode .table td {
+        border-top: 1px solid #2c2c2c;
+    }
+
+    /* Dark theme admin table headers */
+    body.dark-mode .admin-table th {
+        background-color: #2a2a2a;
+        border-bottom-color: #444;
+    }
+
+    /* Dark theme action buttons */
+    body.dark-mode .action-btns a {
+        color: #fff !important;
+    }
+
+        body.dark-mode .action-btns a i {
+            color: #fff !important;
+        }
+
+        /* Maintain specific colors for action icons in dark theme */
+        body.dark-mode .action-btns a .fa-trash-alt {
+            color: #dc3545 !important;
+        }
+
+        body.dark-mode .action-btns a .fa-edit {
+            color: #007bff !important;
+        }
+
+        body.dark-mode .action-btns a .fa-info-circle {
+            color: #fd7e14 !important;
+        }
+
+        body.dark-mode .action-btns a .fa-key {
+            color: #adb5bd !important;
+        }
+
+        body.dark-mode .action-btns a:hover {
+            color: #fff !important;
+        }
+
+    /* Dark theme pagination */
+    body.dark-mode .admin-pagination .page-link {
+        background-color: #2a2a2a;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .admin-pagination .page-item.active .page-link {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    body.dark-mode .admin-pagination .page-link:hover {
+        background-color: #3a3a3a;
+        color: #fff;
+    }
+
+    /* Dark theme footer */
+    body.dark-mode footer.bg-light {
+        background-color: #222323 !important;
+        border-top-color: #2c2c2c !important;
+        color: #e0e0e0;
+    }
+
+    /* Dark theme badges with appropriate colors */
+    body.dark-mode .badge-success {
+        background-color: #28a745;
+    }
+
+    body.dark-mode .badge-warning {
+        background-color: #ffc107;
+        color: #212529; /* Dark text for light yellow background */
+    }
+
+    body.dark-mode .badge-danger {
+        background-color: #dc3545;
+    }
+
+    body.dark-mode .badge-info {
+        background-color: #17a2b8;
+    }
+
+    body.dark-mode .badge-primary {
+        background-color: #007bff;
+    }
+
+    /* Dark theme form controls */
+    body.dark-mode input,
+    body.dark-mode select,
+    body.dark-mode textarea {
+        background-color: #2a2a2a;
+        border-color: #2c2c2c;
+        color: #e0e0e0;
+    }
+
+/* Dark theme mobile table adjustments */
+@media (max-width: 991.98px) {
+    body .dark-mode .admin-table tr {
+        background: #1e1e1e;
+        border-color: #2c2c2c;
+    }
+
+    body.dark-mode .admin-table td:before {
+        color: #e0e0e0; /* Light text for data labels */
+    }
+}
+
+/* Sidebar overlay for mobile menu */
+.sidebar-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    z-index: 1040; /* Below sidebar but above content */
+}
+
+/* Show overlay when sidebar is active on mobile */
+@media (max-width: 991.98px) {
+    .sidebar-overlay.active {
+        display: block;
+    }
+}

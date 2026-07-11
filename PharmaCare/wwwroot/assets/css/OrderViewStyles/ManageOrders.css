@@ -1,0 +1,77 @@
+﻿.order-filters {
+    background-color: #f8f9fc; /* Light blue background for filter container */
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 0.35rem;
+    border: 1px solid #e3e6f0; /* Light border around filter area */
+}
+
+.status-badge {
+    font-size: 0.85rem; /* Smaller font size for status badges */
+    padding: 0.35rem 0.65rem; /* Compact padding for badge appearance */
+}
+
+.order-details-row {
+    margin-top: 0.5rem;
+    display: none; /* Hidden by default until toggled */
+    background-color: #f8f9fc; /* Light background for expanded details */
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+.toggle-details {
+    cursor: pointer; /* Indicates clickable element for toggling details */
+}
+
+body.dark-mode .card.border-left-primary,
+body.dark-mode .card.border-left-warning,
+body.dark-mode .card.border-left-info,
+body.dark-mode .card.border-left-success,
+body.dark-mode .card.border-left-danger {
+    background-color: #1e1e1e; /* Dark background for all colored border cards */
+}
+
+body.dark-mode .text-gray-800 {
+    color: #e0e0e0 !important; /* Light gray text for dark mode readability */
+}
+
+body.dark-mode .order-details-row {
+    background-color: #2a2a2a; /* Dark background for expanded details in dark mode */
+}
+
+body.dark-mode .modal-content {
+    background-color: #2a2a2a; /* Dark background for modal windows */
+    border-color: #444;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+    border-color: #444; /* Gray borders for modal sections in dark mode */
+}
+
+body.dark-mode .modal-title,
+body.dark-mode .modal-body label {
+    color: #e0e0e0; /* Light text for modal content in dark mode */
+}
+
+body.dark-mode .form-control {
+    background-color: #333; /* Dark background for form inputs in modal */
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .close {
+    color: #e0e0e0; /* Light color for modal close button */
+}
+
+.btn-update-status {
+    background-color: #dc3545; /* Red background for status update button */
+    border-color: #dc3545;
+    color: #fff !important;
+}
+
+    .btn-update-status:hover {
+        background-color: #c82333; /* Darker red on hover */
+        border-color: #bd2130;
+        color: #fff !important;
+    }

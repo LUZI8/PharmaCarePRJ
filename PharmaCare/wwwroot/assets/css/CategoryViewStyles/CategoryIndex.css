@@ -1,0 +1,274 @@
+﻿.card-header {
+    background-color: #f8f9fc; /* Light blue-gray background for card headers */
+    border-bottom: 1px solid #e3e6f0; /* Separator line under header */
+}
+
+.admin-table {
+    border-collapse: collapse; /* Removes spacing between table cells */
+    width: 100%;
+    margin-bottom: 0;
+}
+
+    .admin-table th {
+        border-top: none; /* Removes top border from table headers */
+        background-color: #f8f9fc; /* Light background for table headers */
+        font-weight: 600;
+        text-transform: uppercase; /* Capitalizes header text */
+        font-size: 0.8rem;
+        letter-spacing: 0.05em; /* Adds spacing between header letters */
+        border-bottom: 1px solid #e3e6f0;
+        padding: 0.75rem;
+    }
+
+    .admin-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #edf2f9; /* Light border between table rows */
+        vertical-align: middle; /* Centers cell content vertically */
+    }
+
+    .admin-table tr:hover {
+        background-color: rgba(0, 0, 0, 0.03); /* Light gray background on row hover */
+    }
+
+.badge-success {
+    background-color: #28a745 !important; /* Green background for success badges */
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107 !important; /* Yellow background for warning badges */
+    color: #212529;
+}
+
+.badge-danger {
+    background-color: #dc3545 !important; /* Red background for danger badges */
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d !important; /* Gray background for secondary badges */
+    color: white;
+}
+
+.action-btns {
+    white-space: nowrap; /* Prevents action buttons from wrapping */
+}
+
+    .action-btns a {
+        margin-right: 0.5rem; /* Spacing between action buttons */
+        font-size: 0.9rem;
+        color: #000 !important;
+    }
+
+        .action-btns a i.fa-edit {
+            color: #007bff !important; /* Blue color for edit icon */
+        }
+
+        .action-btns a i.fa-info-circle {
+            color: #fd7e14 !important; /* Orange color for info icon */
+        }
+
+        .action-btns a i.fa-trash-alt {
+            color: #dc3545 !important; /* Red color for delete icon */
+        }
+
+        .action-btns a:hover {
+            color: #000 !important; /* Maintains black text on hover */
+        }
+
+.btn-primary.add-new {
+    background-color: #dc3545 !important; /* Red background for add new button */
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+.search-box {
+    position: relative; /* Enables absolute positioning for search icon */
+    margin-right: 10px;
+}
+
+    .search-box input {
+        padding-right: 30px; /* Leaves space for search icon */
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+    }
+
+.search-icon {
+    position: absolute; /* Positions search icon inside input field */
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%); /* Centers icon vertically */
+    color: #6c757d;
+}
+
+body.dark-mode .card-header {
+    background-color: #2a2a2a; /* Dark background for card headers in dark mode */
+    border-bottom-color: #444;
+}
+
+body.dark-mode .admin-table th {
+    background-color: #2a2a2a; /* Dark background for table headers in dark mode */
+    border-bottom-color: #444;
+}
+
+body.dark-mode .admin-table td {
+    border-bottom-color: #444; /* Gray borders for table cells in dark mode */
+}
+
+body.dark-mode .admin-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05); /* Light overlay on row hover in dark mode */
+}
+
+body.dark-mode .action-btns a {
+    color: #fff !important; /* White text for action buttons in dark mode */
+}
+
+@media (max-width: 991.98px) {
+    .page-header {
+        flex-direction: column; /* Stacks page header elements vertically on tablets */
+        align-items: stretch !important;
+    }
+
+        .page-header h1 {
+            margin-bottom: 15px;
+            text-align: center; /* Centers heading on mobile */
+        }
+
+    .btn-toolbar {
+        justify-content: center; /* Centers toolbar buttons on mobile */
+        margin-bottom: 0 !important;
+    }
+
+    .card-header {
+        flex-direction: column; /* Stacks card header elements vertically */
+        align-items: stretch !important;
+    }
+
+        .card-header h6 {
+            margin-bottom: 15px !important;
+            text-align: center;
+        }
+
+    .search-box {
+        margin-right: 0; /* Removes right margin on mobile */
+    }
+
+    .categories-table,
+    .categories-table tbody,
+    .categories-table tr,
+    .categories-table td {
+        display: block; /* Converts table to block layout for mobile */
+        width: 100%;
+    }
+
+        .categories-table thead {
+            display: none; /* Hides table headers on mobile */
+        }
+
+        .categories-table tr {
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Card-like appearance for mobile rows */
+        }
+
+        .categories-table td {
+            border: none;
+            padding: 8px 0;
+            position: relative;
+            padding-left: 35%; /* Leaves space for data labels */
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+            .categories-table td:before {
+                content: attr(data-label) ": "; /* Shows data label before cell content */
+                position: absolute;
+                left: 0;
+                width: 30%;
+                font-weight: bold;
+                color: #333;
+                display: flex;
+                align-items: center;
+            }
+
+        .categories-table .action-btns {
+            display: flex;
+            gap: 10px; /* Consistent spacing between action buttons */
+            justify-content: flex-start;
+            flex-wrap: wrap; /* Allows buttons to wrap on small screens */
+        }
+
+            .categories-table .action-btns a {
+                margin-right: 0;
+                padding: 8px;
+                border-radius: 4px;
+                background-color: #f8f9fa; /* Light background for action buttons */
+                border: 1px solid #ddd;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 36px; /* Ensures consistent button size */
+                height: 36px;
+            }
+
+    .empty-state {
+        padding: 20px !important; /* Reduced padding for empty state on mobile */
+    }
+
+        .empty-state i {
+            font-size: 2rem !important; /* Smaller icon for mobile */
+        }
+
+        .empty-state h5 {
+            font-size: 1.2rem;
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+    body.dark-mode .categories-table tr {
+        background: #1e1e1e; /* Dark background for mobile table rows */
+        border-color: #2c2c2c;
+    }
+
+    body.dark-mode .categories-table td:before {
+        color: #e0e0e0; /* Light text for data labels in dark mode */
+    }
+
+    body.dark-mode .categories-table .action-btns a {
+        background-color: #2c2c2c; /* Dark background for action buttons */
+        border-color: #444;
+        color: #fff !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .categories-table tr {
+        padding: 12px; /* Reduced padding for very small screens */
+        margin-bottom: 12px;
+    }
+
+    .categories-table td {
+        padding: 6px 0;
+        padding-left: 40%; /* More space for longer labels on small screens */
+    }
+
+        .categories-table td:before {
+            width: 35%; /* Wider labels for small screens */
+            font-size: 0.85rem;
+        }
+
+    .btn-primary.add-new {
+        font-size: 0.9rem; /* Smaller button text on mobile */
+        padding: 0.5rem 1rem;
+    }
+
+    .search-box input {
+        font-size: 0.9rem; /* Smaller search input text on mobile */
+    }
+}

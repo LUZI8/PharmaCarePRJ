@@ -1,0 +1,159 @@
+﻿@model PharmaCare.Models.User
+@{
+    ViewData["Title"] = "Login - PharmaCare";
+    /* No layout specified - standalone page with custom structure */
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!-- External font and icon libraries -->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/AccountViewStyles/Login.css" />
+    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
+</head>
+<!-- Body with default dark mode class -->
+<body class="dark-mode">
+    <div class="header">
+        <div class="logo">
+            <!-- Home page link in header logo -->
+            <a href="/">PHARMACARE</a>
+        </div>
+        <div class="theme-toggle">
+            <!-- Theme toggle button with sun/moon icons -->
+            <button id="theme-toggle-btn">
+                <span class="sun-icon">☀️</span>
+                <span class="moon-icon" style="display: none;">🌙</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <h2 class="form-title">Sign In</h2>
+
+        <!-- Success banner shown after registration verification or a password reset -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="error-message" style="background:#1b5e20;">@TempData["SuccessMessage"]</div>
+        }
+
+        <!-- Display validation errors for general model state -->
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""].Errors.Count > 0)
+        {
+            <div class="error-message">
+                @ViewData.ModelState[""].Errors[0].ErrorMessage
+            </div>
+        }
+
+        <!-- Login form with explicit action and controller targeting -->
+        <form method="post" action="@Url.Action("Login", "Account")">
+            @Html.AntiForgeryToken()
+            <!-- Hidden field to preserve return URL for post-login redirection -->
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+            <div class="form-group">
+                <label class="form-label" for="Email">Email</label>
+                <i class="fas fa-envelope form-icon"></i>
+                <!-- Email input with model value preservation and HTML5 validation -->
+                <input type="email" class="form-control" id="Email" name="Email" placeholder="Type your email"
+                       value="@Model?.Email" required>
+                <!-- Conditional field-specific error display -->
+                @if (ViewData.ModelState.ContainsKey("Email") && ViewData.ModelState["Email"].Errors.Count > 0)
+                {
+                    <div class="field-error">@ViewData.ModelState["Email"].Errors[0].ErrorMessage</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="Password">Password</label>
+                <i class="fas fa-lock form-icon"></i>
+                <!-- Password input with toggle visibility functionality -->
+                <input type="password" class="form-control" id="password-field" name="Password"
+                       placeholder="Type your password" required>
+                <!-- Password visibility toggle span with JavaScript targeting -->
+                <span class="password-toggle" id="password-toggle">
+                    <i class="fas fa-eye"></i>
+                </span>
+                @if (ViewData.ModelState.ContainsKey("Password") && ViewData.ModelState["Password"].Errors.Count > 0)
+                {
+                    <div class="field-error">@ViewData.ModelState["Password"].Errors[0].ErrorMessage</div>
+                }
+            </div>
+
+            <div class="remember-forgot">
+                <div class="checkbox-container">
+                    <!-- Remember me checkbox for persistent login -->
+                    <input type="checkbox" id="remember-me" name="RememberMe">
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <!-- Password reset link to the email-code reset flow -->
+                <a href="@Url.Action("ForgotPassword", "Account")" class="forgot-password">Forgot Password</a>
+            </div>
+            <!-- Hidden field setting default user role -->
+            <input type="hidden" name="Role" value="User" />
+            <button type="submit" class="btn">LOGIN</button>
+            <!-- Registration link for new users -->
+            <a href="@Url.Action("Register", "Account")" class="btn register-btn">SIGN UP</a>
+        </form>
+    </div>
+
+    <!-- Site footer with company information and links -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row pt-5 mt-5">
+                <div class="col-md-4 mb-5">
+                    <h3>About Us</h3>
+                    <p>
+                        At PharmaCare, we're committed to providing trusted healthcare solutions to our community. With years of experience in our physical pharmacy, we've now expanded online to bring you the same quality care, convenience, and reliability.
+                    </p>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <h3>Quick Links</h3>
+                    <!-- Unstyled list with footer navigation links -->
+                    <ul class="list-unstyled footer-link">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/FrontEnd/Shop">Store</a></li>
+                        <li><a href="/FrontEnd/Contact">Get In Touch</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <h3>Contact Info</h3>
+                    <!-- Contact information with FontAwesome icons -->
+                    <ul class="list-unstyled contact-info">
+                        <li class="d-flex">
+                            <span class="mr-3"><i class="fas fa-map-marker-alt"></i></span>
+                            <span>Almadina Almonaora St, Amman, Jordan</span>
+                        </li>
+                        <li class="d-flex">
+                            <span class="mr-3"><i class="fas fa-phone"></i></span>
+                            <span>+962 7 9999 8888</span>
+                        </li>
+                        <li class="d-flex">
+                            <span class="mr-3"><i class="fas fa-envelope"></i></span>
+                            <span>pharmacare@info.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center copyright">
+                    <p>
+                        <!-- Dynamic copyright year using DateTime.Now -->
+                        Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- External JavaScript libraries -->
+    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="~/assets/js/AccountViewScripts/Login.js "></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+﻿@model PharmaCare.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = "Create Product";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+
+<!-- Page header with title and navigation controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Create New Product</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Back to product list navigation link -->
+            <a href="@Url.Action("Index", "Product")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content layout with product form and help sidebar -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <!-- Product creation form with file upload support for images -->
+            <form asp-action="Create" enctype="multipart/form-data" method="post">
+                <!-- Display model-level validation errors -->
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Product name field - main identifier for customers -->
+                <div class="form-group">
+                    <label asp-for="ProductName" class="control-label">Product Name</label>
+                    <input asp-for="ProductName" class="form-control" name="ProductName" />
+                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                </div>
+
+                <!-- Product description field for detailed product information -->
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" name="Description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <!-- Price and stock fields arranged in two-column layout for space efficiency -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Price" class="control-label">Price</label>
+                            <!-- Price input with validation to prevent invalid characters (e, +, -) and multiple decimals -->
+                            <input asp-for="Price" class="form-control" name="Price" type="number" step="0.01" min="0"
+                                   onkeydown="return event.keyCode !== 69 && event.keyCode !== 187 && event.keyCode !== 189"
+                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Stock" class="control-label">Stock</label>
+                            <!-- Stock input with validation to allow only positive integers -->
+                            <input asp-for="Stock" class="form-control" name="Stock" type="number" min="0"
+                                   onkeydown="return event.keyCode !== 69 && event.keyCode !== 187 && event.keyCode !== 189"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                            <span asp-validation-for="Stock" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CRITICAL: Expiry date field for pharmaceutical safety -->
+                <div class="form-group">
+                    <label asp-for="ExpiryDate" class="control-label">Expiry Date</label>
+                    <input asp-for="ExpiryDate" class="form-control" name="ExpiryDate" type="date"
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        This is critical for pharmaceutical products. Ensure the expiry date is accurate.
+                    </small>
+                </div>
+
+                <!-- Product image upload field with custom file input styling -->
+                <div class="form-group">
+                    <label for="File" class="control-label">Product Image</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="customFile" name="File" />
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                    </div>
+                </div>
+
+                <!-- Product visibility toggle - determines if product appears to customers -->
+                <div class="form-group">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="activeSwitch" name="IsActive" checked />
+                        <label class="custom-control-label" for="activeSwitch">Is Active</label>
+                    </div>
+                </div>
+
+                <!-- Prescription requirement toggle for pharmacy regulations -->
+                <div class="form-group">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="prescriptionSwitch" name="RequiresPrescription" />
+                        <label class="custom-control-label" for="prescriptionSwitch">Requires Prescription</label>
+                    </div>
+                    <small class="form-text text-muted">Enable this for medications that require a prescription to purchase.</small>
+                </div>
+
+                <!-- Conditional prescription note field - only shown when prescription is required -->
+                <div class="form-group prescription-note" style="display: none;">
+                    <label for="PrescriptionNote" class="control-label">Prescription Note</label>
+                    <textarea class="form-control" id="PrescriptionNote" name="PrescriptionNote" rows="3"
+                              placeholder="Example: This item requires a valid prescription. You can reserve online but must visit the pharmacy with your prescription to complete the purchase."></textarea>
+                </div>
+
+                <!-- Category selection dropdown for product organization -->
+                <div class="form-group">
+                    <label for="CategoryID" class="control-label">Category</label>
+                    <select class="form-control" id="CategoryID" name="CategoryID" asp-items="Model.ListOfCategories">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryID" class="text-danger"></span>
+                </div>
+
+                <!-- Form submission and cancellation controls -->
+                <div class="form-group mt-4">
+                    <!-- Create button with custom PharmaCare styling -->
+                    <button type="submit" class="btn btn-primary" style="color: white !important; background-color: #dc3545 !important; border-color: #dc3545 !important;">
+                        <i class="fas fa-save"></i> Create Product
+                    </button>
+                    <a href="@Url.Action("Index", "Product")" class="btn btn-outline-secondary ml-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Help sidebar with field descriptions and guidance for admins -->
+    <div class="col-lg-4">
+        <div class="form-card">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">Help</h5>
+            </div>
+            <div class="p-3">
+                <!-- Field-by-field explanation for creating products -->
+                <p><strong>Product Name:</strong> Enter the name of the product as it will appear to customers.</p>
+                <p><strong>Description:</strong> Provide a detailed information about the product and how to used it.</p>
+                <p><strong>Price:</strong> Set the retail price for this product.</p>
+                <p><strong>Stock:</strong> Enter the current inventory quantity.</p>
+                <p><strong>Expiry Date:</strong> <span class="text-danger">CRITICAL</span> - Set the expiration date for pharmaceutical safety. Products past expiry cannot be sold.</p>
+                <p><strong>Image:</strong> Upload a high-quality image (recommended size: 800x800px).</p>
+                <p><strong>Is Active:</strong> Toggle to make the product visible to customers.</p>
+                <p><strong>Requires Prescription:</strong> Enable for medications that can only be sold with a valid prescription.</p>
+                <p><strong>Prescription Note:</strong> Message shown to customers explaining the prescription requirement.</p>
+                <p><strong>Category:</strong> Select the appropriate category for this product.</p>
+            </div>
+        </div>
+
+        <!-- Expiry Date Guidelines -->
+        <div class="form-card mt-3">
+            <div class="card-header bg-warning">
+                <h6 class="m-0 font-weight-bold text-dark">
+                    <i class="fas fa-calendar-times"></i> Expiry Date Guidelines
+                </h6>
+            </div>
+            <div class="p-3">
+                <ul class="mb-0 small">
+                    <li><strong>Medications:</strong> Usually 1-3 years from manufacture</li>
+                    <li><strong>Vitamins/Supplements:</strong> Typically 2-3 years</li>
+                    <li><strong>Topical products:</strong> Usually 1-2 years</li>
+                    <li><strong>Liquid medicines:</strong> Often shorter shelf life</li>
+                </ul>
+                <p class="mt-2 mb-0 small text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    Always verify expiry dates with manufacturer specifications.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // File input display functionality - shows selected filename
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        // Prescription note field toggle based on prescription requirement
+        $(document).ready(function() {
+            $('#prescriptionSwitch').change(function() {
+                if($(this).is(':checked')) {
+                    $('.prescription-note').show();
+                } else {
+                    $('.prescription-note').hide();
+                    $('#PrescriptionNote').val('');
+                }
+            });
+
+            // Initial state check for prescription note field visibility
+            if($('#prescriptionSwitch').is(':checked')) {
+                $('.prescription-note').show();
+            } else {
+                $('.prescription-note').hide();
+                $('#PrescriptionNote').val('');
+            }
+        });
+    </script>
+    @{
+        /* Include client-side validation scripts for form validation */
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

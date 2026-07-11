@@ -1,0 +1,344 @@
+﻿@{
+    var pageTitle = ViewData["Title"] ?? "PharmaCare";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>@pageTitle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Website favicon displayed in browser tab -->
+    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
+
+    <!-- External font imports for consistent typography across site -->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Core CSS framework and UI component libraries -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="~/assets/css/jquery-ui.css">
+    <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/assets/css/aos.css">
+
+    <!-- Custom frontend-specific styling -->
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="~/assets/css/custom.css">
+    <link rel="stylesheet" href="~/assets/css/search.css">
+    <link rel="stylesheet" href="~/assets/css/mobilemenu.css">
+    <link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/FrontEndLayout.css">
+
+    <!-- Render additional page-specific styles if provided -->
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <!-- Toast notification for user feedback (cart additions, etc.) -->
+    <div class="toast-notification" id="toast-notification" aria-live="polite">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Item added to cart!</span>
+    </div>
+
+    <div class="site-wrap">
+        <!-- Main navigation bar with responsive design -->
+        <div class="site-navbar py-2">
+            <div class="container">
+                <div class="d-flex align-items-center justify-content-between">
+                    <!-- Company logo/brand link -->
+                    <div class="logo">
+                        <div class="site-logo">
+                            <a href="@Url.Action("Index", "FrontEnd")" class="js-logo-clone">PHARMACARE</a>
+                        </div>
+                    </div>
+
+                    <!-- Main navigation menu (hidden on mobile, shown on desktop) -->
+                    <div class="main-nav d-none d-lg-block">
+                        <nav class="site-navigation" role="navigation">
+                            <ul class="site-menu d-flex">
+                                <!-- Home page link with active state detection -->
+                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "FrontEnd") ? "active" : "")">
+                                    <a href="@Url.Action("Index", "FrontEnd")">HOME</a>
+                                </li>
+
+                                <!-- Store/shop page link with active state detection -->
+                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "Shop" || ViewContext.RouteData.Values["Action"]?.ToString() == "ShopSingle") ? "active" : "")">
+                                    <a href="@Url.Action("Shop", "FrontEnd")">STORE</a>
+                                </li>
+
+                                <!-- Categories dropdown menu with dynamic category list -->
+                                <li class="has-children">
+                                    <a href="#">CATEGORIES</a>
+                                    <ul class="dropdown">
+                                        @if (ViewBag.Categories != null)
+                                        {
+                                            <!-- Generate category links from ViewBag data -->
+                                            foreach (var category in ViewBag.Categories)
+                                            {
+                                                <li><a href="@Url.Action("Shop", "FrontEnd", new { category = category.CategoryID })">@category.CategoryName</a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+
+                                <!-- About page link with active state detection -->
+                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "About") ? "active" : "")">
+                                    <a href="@Url.Action("About", "FrontEnd")">ABOUT</a>
+                                </li>
+
+                                <!-- Contact page link with active state detection -->
+                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "Contact") ? "active" : "")">
+                                    <a href="@Url.Action("Contact", "FrontEnd")">CONTACT</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!-- Right side icons: Search, Cart, User account, Theme toggle -->
+                    <div class="icons d-flex align-items-center">
+                        <!-- Search functionality (desktop only) -->
+                        <div class="navbar-search-container d-none d-lg-block">
+                            <div class="navbar-search-wrapper">
+                                <input type="text" id="navbar-search-input" class="navbar-search-input" placeholder="Search">
+                                <button id="navbar-search-btn" class="navbar-search-btn">
+                                    <span class="icon-search"></span>
+                                </button>
+                            </div>
+                            <!-- Search results dropdown container -->
+                            <div id="navbar-search-results" class="navbar-search-results"></div>
+                        </div>
+
+                        <!-- Shopping cart icon with item count badge -->
+                        <a href="@Url.Action("Cart", "FrontEnd")" class="icons-btn d-inline-block bag position-relative ml-3">
+                            <span class="icon-shopping-bag"></span>
+                            <!-- Cart count starts at 0 but will be updated by JavaScript -->
+                            <span class="number" id="cart-count">0</span>
+                        </a>
+
+                        <!-- User account dropdown with login/logout options -->
+                        <div class="user-icon position-relative d-flex align-items-center ml-3">
+                            <a href="#" class="icons-btn d-inline-block">
+                                <span class="icon-user"></span>
+                            </a>
+
+                            <!-- Display user greeting if logged in -->
+                            @if (ViewBag.IsLoggedIn == true)
+                            {
+                                <span class="user-greeting d-none d-md-inline-block">Hi, @(ViewBag.UserName?.ToString().Split(' ')[0])</span>
+                            }
+
+                            <!-- User dropdown menu with conditional content based on login status -->
+                            <div class="user-dropdown">
+                                @if (ViewBag.IsLoggedIn == true)
+                                {
+                                    <!-- Admin dashboard link for admin users -->
+                                    @if (ViewBag.UserRole == "Admin")
+                                    {
+                                        <a href="@Url.Action("Index", "Admin")">Admin Dashboard</a>
+                                    }
+
+                                    <!-- Pharmacist dashboard link for pharmacist users -->
+                                    @if (ViewBag.UserRole == "Pharmacist")
+                                    {
+                                        <a href="@Url.Action("Index", "Admin")">Pharmacist Dashboard</a>
+                                    }
+
+                                    <!-- User account management links -->
+                                    <a href="@Url.Action("Profile", "Account")">My Account</a>
+                                    <a href="@Url.Action("Index", "Order")">My Orders</a>
+                                    <a href="@Url.Action("MyReservations", "Prescription")">My Reservations</a>
+                                    <a href="@Url.Action("Logout", "Account")">Logout</a>
+                                }
+                                else
+                                {
+                                    <!-- Authentication links for non-logged-in users -->
+                                    <a href="@Url.Action("Login", "Account")">Sign In</a>
+                                    <a href="@Url.Action("Register", "Account")">Sign Up</a>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Theme toggle button for dark/light mode switching -->
+                        <button id="theme-toggle-btn" class="btn ml-3">
+                            <span class="moon-icon">🌙</span>
+                            <span class="sun-icon" style="display: none;">☀️</span>
+                        </button>
+
+                        <!-- Mobile menu toggle button (visible only on mobile devices) -->
+                        <a href="#" class="site-menu-toggle js-menu-toggle d-inline-block d-lg-none ml-3">
+                            <span class="icon-menu"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile navigation menu (hidden by default, shown when mobile toggle is clicked) -->
+        <div class="site-mobile-menu">
+            <div class="site-mobile-menu-header">
+                <div class="site-mobile-menu-close mt-3">
+                    <span class="icon-close2 js-menu-toggle"></span>
+                </div>
+            </div>
+            <!-- Mobile menu content is dynamically populated -->
+            <div class="site-mobile-menu-body"></div>
+        </div>
+
+        <!-- Main page content is rendered here -->
+        @RenderBody()
+
+        <!-- Back to top button (appears when user scrolls down) -->
+        <a href="#" id="back-to-top" class="btn rounded-circle p-3" style="position: fixed; bottom: 20px; right: 20px; display: none; background-color: #dc3545">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+
+        <!-- Site footer with company information and links -->
+        <footer class="site-footer bg-light">
+            <div class="container">
+                <div class="row pt-5 mt-5">
+                    <!-- About us section -->
+                    <div class="col-md-4 mb-5">
+                        <h3>About Us</h3>
+                        <p>
+                            At PharmaCare, we're committed to providing trusted healthcare solutions to our community. With years of experience in our physical pharmacy, we've now expanded online to bring you the same quality care, convenience, and reliability.
+                        </p>
+                    </div>
+
+                    <!-- Quick navigation links -->
+                    <div class="col-md-4 mb-5">
+                        <h3>Quick Links</h3>
+                        <ul class="list-unstyled footer-link">
+                            <li><a href="@Url.Action("Index", "FrontEnd")">Home</a></li>
+                            <li><a href="@Url.Action("Shop", "FrontEnd")">Store</a></li>
+                            <li><a href="@Url.Action("Contact", "FrontEnd")">Get In Touch</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact information -->
+                    <div class="col-md-4 mb-5">
+                        <h3>Contact Info</h3>
+                        <ul class="list-unstyled footer-link">
+                            <li class="d-flex">
+                                <span class="mr-3"><i class="fas fa-map-marker-alt"></i></span>
+                                <span>Almadina Almonaora St, Amman, Jordan</span>
+                            </li>
+                            <li class="d-flex">
+                                <span class="mr-3"><i class="fas fa-phone"></i></span>
+                                <span>+962 7 9999 8888</span>
+                            </li>
+                            <li class="d-flex">
+                                <span class="mr-3"><i class="fas fa-envelope"></i></span>
+                                <span>pharmacare@info.com</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Copyright notice -->
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <p>
+                            Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Core JavaScript libraries for site functionality -->
+    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="~/assets/js/jquery-ui.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="~/assets/js/aos.js"></script>
+
+    <!-- Frontend-specific JavaScript for theme toggle and main functionality -->
+    <script src="~/assets/js/theme-toggle.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="~/assets/js/Frontendviewscripts/search.js"></script>
+
+    <!-- Cart Count Loader Script - LOADS CART COUNT ON EVERY PAGE -->
+    <script>
+        // Global variable to track if cart count has been loaded to prevent duplicate calls
+        window.cartCountLoaded = false;
+
+        // Function to load and update cart count
+        function loadCartCount() {
+            // Prevent multiple simultaneous calls
+            if (window.cartCountLoaded) {
+                return;
+            }
+
+            window.cartCountLoaded = true;
+
+            $.ajax({
+                url: '@Url.Action("GetCartCount", "Cart")',
+                type: 'GET',
+                cache: false,
+                success: function(response) {
+                    if (response.success) {
+                        $('#cart-count').text(response.count);
+                        console.log('Cart count loaded:', response.count);
+                    } else {
+                        console.error('Failed to load cart count:', response.message);
+                        $('#cart-count').text('0');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading cart count:', error);
+                    $('#cart-count').text('0');
+                },
+                complete: function() {
+                    // Reset flag after request completes (success or error)
+                    window.cartCountLoaded = false;
+                }
+            });
+        }
+
+        // Load cart count when document is ready
+        $(document).ready(function() {
+            console.log('Document ready, loading cart count...');
+            loadCartCount();
+        });
+
+        // Also load cart count when page becomes visible (handles back/forward navigation)
+        $(window).on('focus pageshow', function(e) {
+            // Check if page was loaded from cache (back/forward buttons)
+            if (e.originalEvent && e.originalEvent.persisted) {
+                console.log('Page loaded from cache, reloading cart count...');
+                loadCartCount();
+            }
+        });
+
+    
+        window.updateCartCount = function(newCount) {
+            $('#cart-count').text(newCount);
+        };
+        
+    
+        window.cartUrls = {
+            updateCart: '@Url.Action("UpdateCart", "Cart")',
+            removeFromCart: '@Url.Action("RemoveFromCart", "Cart")',
+            clearCart: '@Url.Action("ClearCart", "Cart")',
+            getCartCount: '@Url.Action("GetCartCount", "Cart")' 
+        };
+
+        window.cartCountUrl = '@Url.Action("GetCartCount", "Cart")';
+
+        console.log('Cart URLs configured:', window.cartUrls);
+
+    </script>
+
+    <!-- Render additional page-specific scripts if provided -->
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+</html>

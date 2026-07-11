@@ -1,0 +1,1383 @@
+﻿:root {
+    --primary-color: #dc3545;
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --bg-color: #fff;
+    --border-color: #edf0f5;
+    --gray-color: #6c757d;
+    --dark-bg: #222;
+    --dark-text: #f8f9fa;
+    --transition: 0.3s all ease;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    /* Prevent horizontal scrollbar from appearing on any viewport size */
+    overflow-x: hidden;
+}
+
+body {
+    line-height: 1.7;
+    color: #8c92a0;
+    font-weight: 300;
+    font-size: 16px;
+    background-color: var(--bg-color);
+    /* Enable smooth color transitions for theme switching */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::-moz-selection {
+    background: #000;
+    color: #fff;
+}
+
+::selection {
+    background: #000;
+    color: #fff;
+}
+
+a {
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: none;
+    }
+
+.text-black {
+    color: #000;
+}
+
+.clll {
+    color: var(--primary-color) !important;
+}
+
+.site-wrap {
+    overflow: hidden;
+}
+
+    /* Create overlay effect for mobile menu activation */
+    .site-wrap:before {
+        transition: .3s all ease-in-out;
+        background: rgba(0, 0, 0, 0.6);
+        content: "";
+        position: absolute;
+        z-index: 2000;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+/* Position site wrapper for mobile menu overlay functionality */
+.offcanvas-menu .site-wrap {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    overflow: hidden;
+}
+
+    /* Activate overlay when mobile menu is open */
+    .offcanvas-menu .site-wrap:before {
+        opacity: 1;
+        visibility: visible;
+    }
+
+.btn {
+    transition: .3s all ease-in-out;
+    text-transform: uppercase;
+    border-width: 2px;
+}
+
+    .btn:hover,
+    .btn:active,
+    .btn:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .btn.btn-primary {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+
+        .btn.btn-primary:hover {
+            background-color: #c82333 !important;
+            border-color: #bd2130 !important;
+        }
+
+    .btn.btn-black {
+        background: #000;
+        color: #fff;
+    }
+
+        .btn.btn-black:hover,
+        .btn.btn-black:active,
+        .btn.btn-black:focus {
+            background-color: #51eaea;
+            color: #000;
+        }
+
+.btn-outline-danger.text-black {
+    color: #000;
+}
+
+.form-control {
+    height: 43px;
+    border-color: #ced4da;
+}
+
+    .form-control:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    .form-control:active,
+    .form-control:focus {
+        border-color: #51eaea;
+    }
+
+    .form-control:hover,
+    .form-control:active,
+    .form-control:focus {
+        box-shadow: none !important;
+    }
+
+.site-logo a {
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    font-size: 22px;
+    color: #000 !important;
+    font-weight: 900;
+}
+
+    .site-logo a:hover {
+        text-decoration: none;
+    }
+
+.icons-btn {
+    display: inline-block;
+    text-align: center;
+}
+
+    .icons-btn span {
+        display: block;
+        height: 40px;
+        width: 40px;
+        line-height: 40px;
+    }
+
+.site-menu-toggle {
+    display: block;
+    text-align: center;
+    font-size: 28px;
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+}
+
+    .site-menu-toggle > span {
+        top: 5px;
+        position: relative;
+    }
+
+.site-navbar {
+    margin-bottom: 0px;
+    z-index: 1999;
+    position: relative;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    transition: var(--transition);
+}
+
+    .site-navbar.position-relative {
+        position: relative;
+        background: #f9f9f9 !important;
+    }
+
+    .site-navbar.transparent {
+        background: transparent;
+    }
+
+    .site-navbar .site-navbar-top {
+        border-bottom: 1px solid #f3f3f4;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        margin-bottom: 0px;
+    }
+
+    .site-navbar .site-search-icon a span {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .site-navbar .site-search-icon a:hover {
+        text-decoration: none;
+    }
+
+    .site-navbar a {
+        color: #000;
+    }
+
+        .site-navbar a:hover {
+            color: #000;
+        }
+
+    .site-navbar .icon {
+        font-size: 20px;
+    }
+
+    .site-navbar .site-top-icons ul,
+    .site-navbar .site-top-icons ul li {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+        .site-navbar .site-top-icons ul li {
+            display: inline-block;
+        }
+
+            .site-navbar .site-top-icons ul li a {
+                margin-right: 10px;
+            }
+
+                .site-navbar .site-top-icons ul li a.site-cart {
+                    display: block;
+                    position: relative;
+                }
+
+                    /* Create floating cart count badge with precise positioning */
+                    .site-navbar .site-top-icons ul li a.site-cart .count {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        margin-right: -15px;
+                        margin-top: -20px;
+                        font-size: 13px;
+                        width: 24px;
+                        height: 24px;
+                        line-height: 24px;
+                        border-radius: 50%;
+                        display: block;
+                        text-align: center;
+                        background: #51eaea;
+                        color: #fff;
+                        transition: .2s all ease-in-out;
+                    }
+
+                /* Add hover animation to cart count badge */
+                .site-navbar .site-top-icons ul li a:hover .count {
+                    box-shadow: 0 3px 10px -4px rgba(0, 0, 0, 0.3) !important;
+                    margin-top: -22px;
+                }
+
+            .site-navbar .site-top-icons ul li:last-child a {
+                padding-right: 0;
+            }
+
+    .site-navbar .site-navigation.border-bottom {
+        border-bottom: 1px solid #f3f3f4 !important;
+    }
+
+    /* Use flexbox for horizontal navigation menu layout */
+    .site-navbar .site-navigation .site-menu {
+        margin-left: 0;
+        padding-left: 0;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        list-style: none;
+    }
+
+        .site-navbar .site-navigation .site-menu .active > a {
+            color: #000;
+            position: relative;
+        }
+
+            /* Create active menu indicator line */
+            .site-navbar .site-navigation .site-menu .active > a:before {
+                content: "";
+                position: absolute;
+                left: 10px;
+                right: 10px;
+                height: 2px;
+                background: #000 !important;
+                bottom: 0;
+            }
+
+        .site-navbar .site-navigation .site-menu a {
+            text-decoration: none !important;
+            font-size: 15px;
+            display: inline-block;
+        }
+
+        .site-navbar .site-navigation .site-menu > li {
+            display: inline-block;
+            padding: 10px 5px;
+            margin-right: 20px;
+        }
+
+            .site-navbar .site-navigation .site-menu > li > a {
+                padding: 10px 10px;
+                text-transform: uppercase;
+                letter-spacing: .05em;
+                color: #25262a;
+                font-size: 15px;
+                text-decoration: none !important;
+            }
+
+                .site-navbar .site-navigation .site-menu > li > a:hover {
+                    color: #000;
+                }
+
+        .site-navbar .site-navigation .site-menu .has-children {
+            position: relative;
+        }
+
+            .site-navbar .site-navigation .site-menu .has-children > a {
+                position: relative;
+                padding-right: 20px;
+            }
+
+                /* Add dropdown arrow icon using CSS pseudo-element */
+                .site-navbar .site-navigation .site-menu .has-children > a:before {
+                    position: absolute;
+                    content: "\e313";
+                    font-size: 16px;
+                    top: 50%;
+                    right: 0;
+                    transform: translateY(-50%);
+                    font-family: 'icomoon';
+                }
+
+            /* Position dropdown menu absolutely relative to parent menu item */
+            .site-navbar .site-navigation .site-menu .has-children .dropdown {
+                visibility: hidden;
+                opacity: 0;
+                top: 100%;
+                position: absolute;
+                text-align: left;
+                border-top: 2px solid var(--primary-color);
+                box-shadow: 0 0px 4px 0px rgba(0, 0, 0, 0.05);
+                border-left: 1px solid var(--border-color);
+                border-right: 1px solid var(--border-color);
+                border-bottom: 1px solid var(--border-color);
+                padding: 0px 0;
+                margin-top: 20px;
+                margin-left: 0px;
+                background: #fff;
+                transition: 0.2s 0s;
+                min-width: 200px;
+            }
+
+                .site-navbar .site-navigation .site-menu .has-children .dropdown a {
+                    font-size: 16px;
+                    text-transform: none;
+                    letter-spacing: normal;
+                    transition: 0s all;
+                }
+
+                .site-navbar .site-navigation .site-menu .has-children .dropdown .active > a {
+                    color: #51eaea !important;
+                }
+
+                .site-navbar .site-navigation .site-menu .has-children .dropdown > li {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    min-width: 200px;
+                }
+
+                    .site-navbar .site-navigation .site-menu .has-children .dropdown > li > a {
+                        padding: 9px 20px;
+                        display: block;
+                    }
+
+                        .site-navbar .site-navigation .site-menu .has-children .dropdown > li > a:hover {
+                            background: #f4f5f9;
+                            color: #25262a;
+                        }
+
+                    .site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children > a:before {
+                        content: "\e315";
+                        right: 20px;
+                    }
+
+                    /* Position nested dropdown menus to the right of parent dropdown */
+                    .site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children > .dropdown,
+                    .site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children > ul {
+                        left: 100%;
+                        top: 0;
+                    }
+
+                    .site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children:hover > a,
+                    .site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children:active > a,
+                    .site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children:focus > a {
+                        background: #f4f5f9;
+                        color: #25262a;
+                    }
+
+            .site-navbar .site-navigation .site-menu .has-children a {
+                text-transform: uppercase;
+            }
+
+            .site-navbar .site-navigation .site-menu .has-children:hover > a,
+            .site-navbar .site-navigation .site-menu .has-children:focus > a,
+            .site-navbar .site-navigation .site-menu .has-children:active > a {
+                color: #000;
+            }
+
+            .site-navbar .site-navigation .site-menu .has-children:hover,
+            .site-navbar .site-navigation .site-menu .has-children:focus,
+            .site-navbar .site-navigation .site-menu .has-children:active {
+                cursor: pointer;
+            }
+
+                /* Reveal dropdown menu on hover with animation timing */
+                .site-navbar .site-navigation .site-menu .has-children:hover > .dropdown,
+                .site-navbar .site-navigation .site-menu .has-children:focus > .dropdown,
+                .site-navbar .site-navigation .site-menu .has-children:active > .dropdown {
+                    transition-delay: 0s;
+                    margin-top: 0px;
+                    visibility: visible;
+                    opacity: 1;
+                }
+
+/* Apply sticky navigation behavior with shadow effect */
+.sticky-navbar,
+.sticky-header {
+    position: fixed !important;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease-in-out;
+    background-color: white;
+}
+
+/* Add body padding when sticky navbar is active to prevent content overlap */
+body.has-sticky-navbar,
+body.has-sticky-header {
+    padding-top: 70px !important;
+}
+
+.site-navbar .container {
+    max-width: 1200px;
+    padding: 0 15px;
+}
+
+/* Use flexbox for navbar layout with space distribution */
+.site-navbar .d-flex {
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.site-logo {
+    margin-right: 30px;
+}
+
+.main-nav {
+    flex-grow: 1;
+}
+
+/* Position header icons with flexbox and spacing */
+.icons {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 15px;
+}
+
+    .icons > * {
+        margin-left: 10px !important;
+    }
+
+/* Standardize icon button dimensions and centering */
+.icons-btn,
+.bag,
+.user-icon,
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.bag {
+    position: relative;
+}
+
+    /* Position cart quantity badge precisely over cart icon */
+    .bag .number {
+        position: absolute;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        line-height: 20px;
+        color: #000;
+        font-size: 12px;
+        background: var(--primary-color);
+        right: -5px;
+    }
+
+.user-icon {
+    position: relative;
+    margin-left: 15px;
+}
+
+/* Position user dropdown menu relative to user icon */
+.user-dropdown {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 0;
+    border-radius: 4px;
+}
+
+/* Show dropdown on hover interaction */
+.user-icon:hover .user-dropdown {
+    display: block;
+}
+
+.user-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+    .user-dropdown a:hover {
+        background-color: #f1f1f1;
+        border-radius: 4px;
+    }
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#theme-toggle-btn,
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+/* Position moon and sun icons absolutely for smooth transition effect */
+.moon-icon,
+.sun-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: all 0.5s ease;
+    position: absolute;
+}
+
+/* Initial state - show moon icon, hide sun icon */
+.sun-icon {
+    display: none;
+    opacity: 0;
+    transform: rotate(-90deg);
+}
+
+.moon-icon {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+/* Dark mode state - hide moon icon, show sun icon with rotation */
+.theme-toggle-btn.dark-mode .moon-icon {
+    opacity: 0;
+    transform: rotate(360deg);
+}
+
+.theme-toggle-btn.dark-mode .sun-icon {
+    opacity: 1;
+    transform: rotate(360deg);
+    display: inline-block;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
+}
+
+.site-menu-toggle {
+    display: none;
+    text-align: center;
+    font-size: 28px;
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+}
+
+    .site-menu-toggle > span {
+        top: 5px;
+        position: relative;
+    }
+
+/* Create fullscreen search overlay with center alignment */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 100px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+    /* Activate search overlay with fade-in effect */
+    .search-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+.navbar-search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+/* Style search input wrapper with rounded borders and background */
+.navbar-search-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    overflow: hidden;
+    background-color: #f8f9fa;
+    transition: box-shadow 0.3s ease;
+    padding: 0 5px 0 10px;
+}
+
+    /* Add focus ring effect when search input is active */
+    .navbar-search-wrapper:focus-within {
+        box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.15);
+    }
+
+.navbar-search-input {
+    border: none;
+    padding: 10px 15px;
+    width: 180px;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+    color: #666;
+}
+
+/* Style search button as circular with centered icon */
+.navbar-search-btn {
+    background: var(--primary-color);
+    border: none;
+    padding: 8px;
+    margin-right: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+}
+
+    .navbar-search-btn span {
+        color: #fff;
+    }
+
+/* Position search results dropdown below search input */
+.navbar-search-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: 300px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.navbar-search-results-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-height: 400px;
+}
+
+/* Add scrolling behavior to search results list */
+.navbar-search-results-list {
+    max-height: 350px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.navbar-search-result-item {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s;
+}
+
+    .navbar-search-result-item:hover {
+        background-color: #f9f9f9;
+    }
+
+/* Add smooth hover animations to product items */
+.item {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 15px;
+    position: relative;
+}
+
+    .item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .item img {
+        max-height: 200px;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    /* Scale product images on hover for visual feedback */
+    .item:hover img {
+        transform: scale(1.05);
+    }
+
+/* Create uniform product card styling with shadow effects */
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    height: 100%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+.product-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+    min-height: 40px;
+}
+
+.medication-info {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+}
+
+.price {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 10px 0;
+}
+
+/* Position product tags absolutely in top-right corner */
+.tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.medication-badges {
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+    .medication-badges .badge {
+        margin: 0 3px;
+        padding: 5px 8px;
+        font-weight: 400;
+    }
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-primary {
+    background-color: #007bff;
+}
+
+/* Style category items with hover elevation effect */
+.category-item {
+    padding: 30px 15px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .category-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+.category-icon {
+    display: inline-block;
+    font-size: 40px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.border-top {
+    border-top: 1px solid var(--border-color) !important;
+}
+
+.site-footer {
+    padding: 6em 0;
+    background-color: #f8f9fa;
+    color: var(--gray-color);
+}
+
+    .site-footer.bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .site-footer .text-black,
+    .site-footer a:not(.btn) {
+        color: #000 !important;
+    }
+
+    .site-footer ul li {
+        margin-bottom: 10px;
+    }
+
+        .site-footer ul li a {
+            color: #5c626e;
+            transition: var(--transition);
+        }
+
+            .site-footer ul li a:hover {
+                color: var(--primary-color);
+            }
+
+    .site-footer .footer-heading {
+        font-size: 1.2rem;
+        color: #000;
+        margin-bottom: 1rem;
+    }
+
+    .site-footer .fas {
+        color: var(--primary-color) !important;
+        width: 20px;
+    }
+
+    .site-footer p {
+        color: var(--gray-color);
+    }
+
+/* Position back-to-top button fixed in bottom-right with animation states */
+#back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
+    width: 50px;
+    height: 50px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+    /* Show back-to-top button when active */
+    #back-to-top.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #back-to-top:hover {
+        transform: translateY(-3px);
+        background-color: #c82333;
+    }
+
+/* Position toast notifications fixed in top-right with slide animation */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    transform: translateX(150%);
+    transition: transform 0.3s ease;
+}
+
+    /* Slide toast notification into view */
+    .toast-notification.show {
+        transform: translateX(0);
+    }
+
+/* Create spinning loading animation using CSS keyframes */
+.loader {
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid var(--primary-color);
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+    display: none;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Position mobile menu as fixed sidebar with slide-in animation */
+.site-mobile-menu {
+    position: fixed;
+    right: 0;
+    z-index: 2000;
+    width: 300px;
+    max-width: 100%;
+    background: #fff;
+    height: 100vh;
+    transform: translateX(100%);
+    transition: 0.3s all ease;
+    box-shadow: -10px 0 20px -10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+    /* Activate mobile menu slide-in effect */
+    .site-mobile-menu.active {
+        transform: translateX(0%);
+    }
+
+.site-mobile-menu-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+/* Apply dark theme color scheme using CSS custom properties */
+body.dark-mode {
+    --primary-color: #e63946;
+    --secondary-color: #343a40;
+    --text-color: #f8f9fa;
+    --bg-color: #212529;
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+}
+
+    /* Override navbar colors for dark mode */
+    body.dark-mode .site-navbar,
+    body.dark-mode .sticky-navbar,
+    body.dark-mode .sticky-header {
+        background-color: var(--dark-bg) !important;
+    }
+
+        body.dark-mode .site-navbar a {
+            color: var(--dark-text) !important;
+        }
+
+    body.dark-mode .site-navigation .site-menu .active > a:before {
+        background: #fff !important;
+    }
+
+    /* Apply dark theme to component backgrounds */
+    body.dark-mode .product-card,
+    body.dark-mode .category-item,
+    body.dark-mode .feature-block {
+        background-color: var(--dark-bg);
+        color: var(--dark-text);
+    }
+
+    body.dark-mode .item:hover {
+        box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+    }
+
+    /* Override text colors for dark mode readability */
+    body.dark-mode .text-black,
+    body.dark-mode .text-dark,
+    body.dark-mode h3.text-dark a,
+    body.dark-mode .product-title,
+    body.dark-mode .price {
+        color: var(--dark-text) !important;
+    }
+
+    body.dark-mode .product-description {
+        color: #ccc;
+    }
+
+    body.dark-mode .medication-info {
+        color: #aaa;
+    }
+
+    /* Style form controls for dark mode visibility */
+    body.dark-mode .form-control {
+        background-color: #2b2b2b;
+        border-color: var(--primary-color) !important;
+        color: #fff;
+    }
+
+        body.dark-mode .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.3) !important;
+        }
+
+    /* Apply dark theme to dropdown menus */
+    body.dark-mode .user-dropdown {
+        background-color: var(--dark-bg);
+    }
+
+        body.dark-mode .user-dropdown a {
+            color: var(--dark-text);
+        }
+
+            body.dark-mode .user-dropdown a:hover {
+                background-color: #555;
+            }
+
+    /* Style footer for dark mode */
+    body.dark-mode .site-footer {
+        background-color: var(--dark-bg) !important;
+        border-top: 1px solid var(--dark-bg);
+    }
+
+        body.dark-mode .site-footer .text-black,
+        body.dark-mode .site-footer a:not(.btn),
+        body.dark-mode .site-footer .footer-link li span {
+            color: var(--dark-text) !important;
+        }
+
+        body.dark-mode .site-footer a:hover {
+            color: var(--primary-color) !important;
+        }
+
+        body.dark-mode .site-footer .fas {
+            color: var(--dark-text) !important;
+        }
+
+        body.dark-mode .site-footer p {
+            color: #ccc !important;
+        }
+
+    /* Apply dark theme to search components */
+    body.dark-mode .navbar-search-wrapper {
+        background-color: #343a40;
+        border-color: #495057;
+    }
+
+    body.dark-mode .navbar-search-input {
+        color: #fff;
+    }
+
+    body.dark-mode .navbar-search-results {
+        background-color: #343a40;
+        border: 1px solid #495057;
+    }
+
+    body.dark-mode .navbar-search-result-item {
+        color: #fff;
+        border-bottom-color: #495057;
+    }
+
+        body.dark-mode .navbar-search-result-item:hover {
+            background-color: #495057;
+        }
+
+    body.dark-mode .btn-outline-danger.text-black {
+        color: #fff !important;
+        border-color: var(--primary-color);
+    }
+
+/* Responsive design for tablet and mobile devices */
+@media (max-width: 991.98px) {
+    /* Show mobile menu toggle, hide desktop navigation */
+    .site-menu-toggle {
+        display: block;
+    }
+
+    .main-nav {
+        display: none;
+    }
+
+    /* Convert horizontal menu to vertical mobile menu */
+    .site-navbar .site-navigation .site-menu {
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+        .site-navbar .site-navigation .site-menu > li {
+            display: block;
+            margin-right: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .site-navbar .site-navigation .site-menu > li > a {
+                padding: 15px 20px;
+                display: block;
+            }
+
+    /* Reorder search container for mobile layout */
+    .navbar-search-container {
+        order: -1;
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+
+    .navbar-search-wrapper {
+        width: 100%;
+    }
+
+    .navbar-search-input {
+        width: 100%;
+    }
+
+    /* Reduce spacing between mobile icons */
+    .icons {
+        gap: 10px;
+    }
+
+        .icons > * {
+            margin-left: 5px !important;
+        }
+}
+
+@media (max-width: 767.98px) {
+    /* Adjust sticky navbar padding for smaller screens */
+    body.has-sticky-navbar,
+    body.has-sticky-header {
+        padding-top: 60px !important;
+    }
+
+    .site-logo {
+        margin-right: 15px;
+    }
+
+        .site-logo a {
+            font-size: 18px;
+        }
+
+    /* Reduce search input width for mobile */
+    .navbar-search-input {
+        width: 120px;
+        padding: 8px 12px;
+    }
+
+    /* Scale down icon buttons for mobile */
+    .icons-btn,
+    .bag,
+    .user-icon,
+    .theme-toggle-btn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .product-card {
+        margin-bottom: 20px;
+    }
+
+    .category-item {
+        padding: 20px 10px;
+    }
+
+    .site-footer {
+        padding: 4em 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+    /* Further reduce search input for extra small screens */
+    .navbar-search-input {
+        width: 100px;
+        font-size: 14px;
+    }
+
+    .site-logo a {
+        font-size: 16px;
+    }
+
+    /* Minimize spacing between icons on small screens */
+    .icons {
+        gap: 5px;
+    }
+
+    .product-card {
+        padding: 15px;
+    }
+}
+
+/* Apply dark theme to mobile menu in responsive design */
+@media (max-width: 991.98px) {
+    body.dark-mode .site-navbar .site-navigation .site-menu {
+        background: var(--dark-bg);
+    }
+
+        body.dark-mode .site-navbar .site-navigation .site-menu > li {
+            border-bottom-color: #555;
+        }
+}
+
+.custom-border-bottom {
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.custom-border-top {
+    border-top: 1px solid #f9f9f9;
+}
+
+.height-auto {
+    height: auto !important;
+}
+
+.product-container {
+    margin-bottom: 50px;
+}
+
+/* Create uniform feature block styling with hover effects */
+.feature-block {
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+    .feature-block:hover {
+        transform: translateY(-5px);
+    }
+
+.trust-badges {
+    margin: 20px 0 40px;
+}
+
+/* Center trust badge items with flexbox layout */
+.badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px;
+    text-align: center;
+}
+
+    .badge-item i {
+        font-size: 24px;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .badge-item span {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+/* Create fullscreen search overlay with fade transition */
+.search-wrap {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: .5s all ease;
+}
+
+    .search-wrap .container {
+        position: relative;
+        height: 100%;
+    }
+
+    /* Activate search overlay with fade-in effect */
+    .search-wrap.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Center search input vertically in overlay */
+    .search-wrap .form-control {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        transform: translateY(-50%);
+        border: none;
+        z-index: 3;
+        font-size: 20px;
+    }
+
+    /* Position search close button in top-right corner */
+    .search-wrap .search-close {
+        z-index: 4;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+        .search-wrap .search-close span {
+            font-size: 30px;
+        }

@@ -1,0 +1,118 @@
+﻿@model PharmaCare.Models.Order
+@{
+    ViewData["Title"] = "Thank You";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.HideCategories = true;
+}
+<link rel="stylesheet" href="/assets/css/OrderViewStyles/ThankYouPage.css" />
+
+<div class="site-section thank-you-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <!-- Success icon and confirmation message displayed prominently -->
+                <i class="fas fa-check-circle success-icon"></i>
+                <h2 class="display-3 text-black">Thank you!</h2>
+                <p class="lead mb-5">Your order has been successfully placed.</p>
+
+                <!-- Order summary card displaying key order information -->
+                <div class="order-details-card mb-4">
+                    <h4>Order Details</h4>
+                    <div class="row mt-4">
+                        <div class="col-md-6 text-md-right">
+                            <p><strong>Order Number:</strong></p>
+                            <p><strong>Order Date:</strong></p>
+                            <p><strong>Total Amount:</strong></p>
+                            <p><strong>Payment Method:</strong></p>
+                            <p><strong>Status:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-md-left">
+                            <p>@Model.OrderNumber</p>
+                            <!-- Format date to full month name, day, and year -->
+                            <p>@Model.OrderDate.ToString("MMMM dd, yyyy")</p>
+                            <!-- Display total amount with 2 decimal places -->
+                            <p>$@Model.TotalAmount.ToString("0.00")</p>
+                            <p>@Model.PaymentMethod</p>
+                            <!-- Status badge with Bootstrap info styling -->
+                            <p><span class="badge badge-info">@Model.Status</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping address information card -->
+                <div class="order-details-card mb-4">
+                    <h4>Shipping Address</h4>
+                    <p>@Model.ShippingAddress</p>
+                    <p>@Model.City</p>
+                    <p>Phone: @Model.PhoneNumber</p>
+                </div>
+
+                <!-- Detailed order items table with totals -->
+                <div class="order-details-card mb-5">
+                    <h4>Order Items</h4>
+                    <div class="table-responsive mt-4">
+                        <table class="table order-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loop through each order item to display product details -->
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.Quantity</td>
+                                        <!-- Display individual item price formatted to 2 decimals -->
+                                        <td>$@item.Price.ToString("0.00")</td>
+                                        <!-- Calculate and display line total (price × quantity) -->
+                                        <td>$@((item.Price * item.Quantity).ToString("0.00"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <!-- Order total row spanning 3 columns with right alignment -->
+                                    <th colspan="3" class="text-right">Total:</th>
+                                    <th>$@Model.TotalAmount.ToString("0.00")</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Navigation buttons for user actions after order completion -->
+                <p>
+                    <!-- Primary button to return to homepage -->
+                    <a href="@Url.Action("Index", "FrontEnd")" class="btn btn-primary">Back to Homepage</a>
+                    <!-- Secondary button to continue shopping -->
+                    <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-custom-outline">Continue Shopping</a>
+                </p>
+
+                <!-- Additional navigation option to return to cart -->
+                <p class="mt-3">
+                    <a href="@Url.Action("Cart", "FrontEnd")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Cart
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            /* Push current state to browser history to prevent accidental back navigation */
+            window.history.pushState({page: "thank-you"}, "Thank You", window.location.href);
+            /* Redirect to cart page if user tries to navigate back using browser back button */
+            window.onpopstate = function() {
+                window.location.href = "@Url.Action("Cart", "FrontEnd")";
+            };
+        });
+    </script>
+}

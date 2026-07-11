@@ -1,0 +1,104 @@
+﻿@model PharmaCare.Models.PrescriptionReservation
+@{
+    ViewData["Title"] = "Reservation Complete";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+}
+
+<!-- Import reservation completion specific styling -->
+<link rel="stylesheet" href="~/assets/css/PrescriptionViewStyles/ReservationComplete.css" />
+
+<!-- Light background header section -->
+<div class="bg-light py-3">
+    <div class="container">
+    </div>
+</div>
+
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <!-- Success icon for visual confirmation -->
+                <span class="icon-check_circle display-3 text-success"></span>
+
+                <!-- Thank you message for successful reservation -->
+                <h2 class="display-3 text-black">Thank You!</h2>
+                <p class="lead mb-5">Your prescription medication has been successfully reserved.</p>
+
+                <!-- Reservation details card with comprehensive information -->
+                <div class="card mb-5 mx-auto" style="max-width: 600px;">
+                    <div class="card-header bg-info text-white">
+                        <!-- Unique reservation number for customer reference -->
+                        <h4 class="mb-0">Reservation #@Model.ReservationNumber</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Medication information in structured format -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 text-left">
+                                <strong>Medication:</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                @Model.Product.ProductName
+                            </div>
+                        </div>
+
+                        <!-- Reserved quantity display -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 text-left">
+                                <strong>Quantity:</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                @Model.Quantity
+                            </div>
+                        </div>
+
+                        <!-- Total price calculation and display -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 text-left">
+                                <strong>Price:</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                $@((Model.Product.Price * Model.Quantity).ToString("0.00"))
+                            </div>
+                        </div>
+
+                        <!-- Reservation creation date -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 text-left">
+                                <strong>Reservation Date:</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                @Model.ReservationDate.ToString("MMM dd, yyyy")
+                            </div>
+                        </div>
+
+                        <!-- Important expiry date for customer awareness -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 text-left">
+                                <strong>Expiry Date:</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                @Model.ExpiryDate.ToString("MMM dd, yyyy")
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Critical prescription requirement reminder -->
+                        <div class="alert alert-warning mb-0">
+                            <p class="mb-0"><i class="fas fa-exclamation-triangle mr-2"></i> Please bring a valid prescription to the pharmacy when picking up this medication.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation options for continued shopping or reservation management -->
+                <p>
+                    <!-- Continue shopping link -->
+                    <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-custom-outline">Continue Shopping</a>
+
+                    <!-- View all reservations link -->
+                    <a href="@Url.Action("MyReservations", "Prescription")" class="btn btn-custom-danger">View My Reservations</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

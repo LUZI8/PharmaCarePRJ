@@ -1,0 +1,1049 @@
+﻿/* ==========================================================================
+   SHOPSINGLE.CSS - COMPLETE STYLES FOR LIGHT AND DARK MODE
+   ========================================================================== */
+
+/* Base table styles for light mode */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa !important;
+}
+
+.table th {
+    font-weight: 600;
+    color: #495057 !important;
+    background: #f8f9fa !important;
+}
+
+.table td {
+    color: #333 !important;
+    background: white !important;
+}
+
+.table {
+    color: #333 !important;
+    background: white !important;
+}
+
+/* Product card styles */
+.product-card {
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+    background-color: var(--card-bg, white);
+}
+
+    .product-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+    }
+
+/* Tag styles */
+.tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color, #ff6767);
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    z-index: 2;
+}
+
+/* Badge styles */
+.medication-badges {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+}
+
+.badge {
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 11px;
+}
+
+    .badge i {
+        margin-right: 4px;
+    }
+
+/* Prescription notice */
+.prescription-notice {
+    border-left: 4px solid var(--primary-color, #ff6767);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Filter section */
+.filter-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Button group styles */
+.btn-group .btn-outline-danger.active,
+.btn-group .btn-outline-danger:active {
+    background-color: var(--danger, #dc3545) !important;
+    color: white !important;
+    border-color: var(--danger, #dc3545) !important;
+}
+
+.prescription-filter {
+    margin-top: 15px;
+}
+
+    .prescription-filter .btn-outline-danger {
+        transition: all 0.3s ease;
+    }
+
+        .prescription-filter .btn-outline-danger.active {
+            background-color: var(--danger, #dc3545) !important;
+            color: white !important;
+            border-color: var(--danger, #dc3545) !important;
+        }
+
+.btn-add-to-cart {
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* Pagination styles */
+.site-block-27 ul {
+    padding: 0;
+    margin: 0;
+}
+
+    .site-block-27 ul li {
+        display: inline-block;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+        .site-block-27 ul li a,
+        .site-block-27 ul li span {
+            color: #333;
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            border: 1px solid #e6e6e6;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .site-block-27 ul li a:hover {
+                background-color: #f8f9fa;
+                text-decoration: none;
+            }
+
+        .site-block-27 ul li.active span {
+            background: #dc3545;
+            color: #fff;
+            border-color: #dc3545;
+        }
+
+        .site-block-27 ul li.disabled a {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+            .site-block-27 ul li.disabled a:hover {
+                background-color: transparent;
+            }
+
+/* Toast notification styles */
+.toast-notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background-color: #28a745;
+    color: white;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 0 6px 10px rgba(0, 0, 0, 0.15);
+    z-index: 99999;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    min-width: 350px;
+    max-width: 400px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+    .toast-notification.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    padding: 18px 22px;
+    position: relative;
+}
+
+.toast-icon {
+    font-size: 26px;
+    margin-right: 14px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.toast-text {
+    flex: 1;
+}
+
+    .toast-text strong {
+        display: block;
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .toast-text p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.95;
+        line-height: 1.4;
+        font-weight: 400;
+    }
+
+.toast-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+    .toast-close:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(1.1);
+    }
+
+/* Toast variants */
+.toast-notification.success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 50%, #17a2b8 100%);
+    border-color: rgba(40, 167, 69, 0.3);
+}
+
+.toast-notification.error {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 50%, #c0392b 100%);
+    border-color: rgba(220, 53, 69, 0.3);
+}
+
+.toast-notification.warning {
+    background: linear-gradient(135deg, #ffc107 0%, #f39c12 50%, #e67e22 100%);
+    color: #744d00;
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+    .toast-notification.warning .toast-close {
+        color: #744d00;
+        background: rgba(116, 77, 0, 0.25);
+    }
+
+        .toast-notification.warning .toast-close:hover {
+            background: rgba(116, 77, 0, 0.4);
+        }
+
+    .toast-notification.warning .toast-text strong {
+        color: #744d00;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+    }
+
+/* Toast animations */
+@keyframes toastSlideIn {
+    0% {
+        transform: translateX(100%) rotate(5deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translateX(-10px) rotate(-2deg);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    0% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100%) scale(0.9);
+        opacity: 0;
+    }
+}
+
+.toast-notification.show {
+    animation: toastSlideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-notification.hiding {
+    animation: toastSlideOut 0.4s ease-in-out;
+}
+
+.toast-notification::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 0 0 12px 12px;
+    animation: toastProgress 4s linear;
+}
+
+@keyframes toastProgress {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}
+
+/* Prescription warning */
+.prescription-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 18px;
+    border-left: 5px solid #f39c12;
+    box-shadow: 0 2px 10px rgba(243, 156, 18, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+    .prescription-warning::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #f39c12, #e67e22, #f39c12);
+    }
+
+    .prescription-warning h5 {
+        color: #856404;
+        margin-bottom: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+        .prescription-warning h5 i {
+            margin-right: 8px;
+            color: #f39c12;
+        }
+
+    .prescription-warning p {
+        color: #856404;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+/* LIGHT MODE QUANTITY CONTROLS (DEFAULT) */
+.quantity-plus,
+.quantity-minus {
+    width: 42px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    border: 1px solid #dc3545 !important;
+    background: white !important;
+    color: #dc3545 !important;
+}
+
+    .quantity-plus:hover,
+    .quantity-minus:hover {
+        background: #dc3545 !important;
+        color: white !important;
+        transform: scale(1.05);
+    }
+
+    .quantity-plus:active,
+    .quantity-minus:active {
+        transform: scale(0.95);
+    }
+
+#quantity-input {
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    border: 1px solid #dc3545 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    background: white !important;
+    color: #333 !important;
+}
+
+    #quantity-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        border-color: #dc3545 !important;
+        background: white !important;
+        color: #333 !important;
+    }
+
+    #quantity-input[readonly] {
+        background-color: #f8f9fa !important;
+        color: #6c757d !important;
+        cursor: not-allowed;
+    }
+
+/* LIGHT MODE NAV TABS (DEFAULT) */
+.nav-tabs .nav-link {
+    border: 1px solid transparent !important;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    color: #495057 !important;
+    background: white !important;
+    border-color: #dee2e6 !important;
+}
+
+    .nav-tabs .nav-link:hover {
+        border-color: #e9ecef #e9ecef #dee2e6 !important;
+        color: #dc3545 !important;
+        background: white !important;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #dc3545 !important;
+        background-color: #fff !important;
+        border-color: #dee2e6 #dee2e6 #fff !important;
+    }
+
+/* LIGHT MODE TAB CONTENT (DEFAULT) */
+.tab-content {
+    background: white !important;
+    color: #333 !important;
+}
+
+/* Add to cart button */
+#add-to-cart-btn {
+    transition: all 0.3s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    #add-to-cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #add-to-cart-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+/* Owl carousel */
+.owl-nav button {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #495057 !important;
+    font-size: 16px !important;
+}
+
+    .owl-nav button:hover {
+        background-color: #dc3545 !important;
+        color: white !important;
+        border-color: #dc3545 !important;
+    }
+
+/* Product items - LIGHT MODE DEFAULT */
+.product-item {
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white !important;
+    color: #333 !important;
+}
+
+    .product-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: #dc3545 !important;
+    }
+
+    .product-item h3 a {
+        color: #495057 !important;
+        text-decoration: none;
+    }
+
+        .product-item h3 a:hover {
+            color: #dc3545 !important;
+            text-decoration: none;
+        }
+
+    .product-item .p-3 {
+        background: white !important;
+        color: #333 !important;
+    }
+
+        .product-item .p-3 h3 {
+            color: #333 !important;
+        }
+
+        .product-item .p-3 p {
+            color: #333 !important;
+        }
+
+    /* Force white background for ALL parts of product items in light mode */
+    .product-item > div {
+        background: white !important;
+        color: #333 !important;
+    }
+
+    .product-item .product-thumbnail + div {
+        background: white !important;
+        color: #333 !important;
+    }
+
+/* Override any dark styling in light mode */
+html:not(.dark-mode) .product-item,
+html:not(.dark-mode) .product-item > div,
+html:not(.dark-mode) .product-item .p-3 {
+    background: white !important;
+    color: #333 !important;
+}
+
+    html:not(.dark-mode) .product-item h3,
+    html:not(.dark-mode) .product-item h3 a,
+    html:not(.dark-mode) .product-item p {
+        color: #333 !important;
+    }
+
+.product-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 3;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* Button styles */
+.btn {
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+.btn-primary {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border-color: #dc3545;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #c82333, #bd2130);
+        border-color: #c82333;
+    }
+
+.btn-outline-primary {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+/* Form controls */
+.form-control {
+    transition: all 0.3s ease;
+    border-radius: 6px;
+}
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+        border-color: #dc3545;
+    }
+
+/* Price and badge styles */
+.price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #28a745;
+    margin: 10px 0;
+}
+
+.badge-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.badge-warning {
+    background: linear-gradient(135deg, #ffc107, #f39c12);
+}
+
+.badge-danger {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+}
+
+.badge-info {
+    background: linear-gradient(135deg, #17a2b8, #20c997);
+}
+
+.badge-primary {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+}
+
+/* Mobile responsive toast */
+@media (max-width: 768px) {
+    .toast-notification {
+        top: 70px;
+        right: 15px;
+        left: 15px;
+        min-width: auto;
+        max-width: none;
+        transform: translateY(-100%);
+    }
+
+        .toast-notification.show {
+            transform: translateY(0);
+            animation: none;
+        }
+
+    .toast-content {
+        padding: 16px 18px;
+    }
+
+    .toast-icon {
+        font-size: 22px;
+        margin-right: 12px;
+    }
+
+    .toast-text strong {
+        font-size: 15px;
+    }
+
+    .toast-text p {
+        font-size: 13px;
+    }
+
+    @keyframes toastSlideIn {
+        0% {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}
+
+/* ==========================================================================
+   DARK MODE STYLES
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    /* Dark mode quantity controls */
+    .quantity-plus,
+    .quantity-minus {
+        background: #343a40;
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    #quantity-input {
+        background: #495057;
+        color: #adb5bd;
+        border-color: #dc3545;
+    }
+
+        #quantity-input:focus {
+            background: #343a40;
+            color: #fff;
+        }
+
+        #quantity-input[readonly] {
+            background-color: #495057;
+            color: #6c757d;
+        }
+
+    /* Dark mode nav tabs */
+    .nav-tabs .nav-link {
+        color: #adb5bd;
+        background: #343a40;
+        border-color: #495057;
+    }
+
+        .nav-tabs .nav-link:hover {
+            border-color: #495057 #495057 #343a40;
+            color: #dc3545;
+            background: #343a40;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #dc3545;
+            background-color: #343a40;
+            border-color: #495057 #495057 #343a40;
+        }
+
+    /* Dark mode tab content */
+    .tab-content {
+        background: #343a40;
+        color: #adb5bd;
+    }
+
+    /* Dark mode table */
+    .table {
+        color: #adb5bd;
+        background: #343a40;
+    }
+
+        .table th {
+            color: #adb5bd;
+            background: #495057;
+        }
+
+        .table td {
+            color: #adb5bd;
+            background: #343a40;
+        }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #495057;
+    }
+
+    /* Dark mode carousel */
+    .owl-nav button {
+        background-color: #495057 !important;
+        border-color: #6c757d !important;
+        color: #adb5bd !important;
+    }
+
+    /* Dark mode product items */
+    .product-item {
+        background: #343a40 !important;
+        border-color: #495057 !important;
+        color: #adb5bd !important;
+    }
+
+        .product-item h3 a {
+            color: #adb5bd !important;
+        }
+
+            .product-item h3 a:hover {
+                color: #dc3545 !important;
+            }
+
+        .product-item .p-3 {
+            background: #343a40 !important;
+            color: #adb5bd !important;
+        }
+
+            .product-item .p-3 h3 {
+                color: #adb5bd !important;
+            }
+
+            .product-item .p-3 p {
+                color: #adb5bd !important;
+            }
+
+    /* Dark mode form controls */
+    .form-control {
+        background: #495057;
+        border-color: #6c757d;
+        color: #adb5bd;
+    }
+
+        .form-control:focus {
+            background: #343a40;
+            border-color: #dc3545;
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: #6c757d;
+        }
+}
+
+/* Manual dark mode class support */
+.dark-mode .quantity-plus,
+.dark-mode .quantity-minus {
+    background: #343a40;
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.dark-mode #quantity-input {
+    background: #495057;
+    color: #adb5bd;
+    border-color: #dc3545;
+}
+
+    .dark-mode #quantity-input:focus {
+        background: #343a40;
+        color: #fff;
+    }
+
+    .dark-mode #quantity-input[readonly] {
+        background-color: #495057;
+        color: #6c757d;
+    }
+
+.dark-mode .nav-tabs .nav-link {
+    color: #adb5bd;
+    background: #343a40;
+    border-color: #495057;
+}
+
+    .dark-mode .nav-tabs .nav-link:hover {
+        border-color: #495057 #495057 #343a40;
+        color: #dc3545;
+        background: #343a40;
+    }
+
+    .dark-mode .nav-tabs .nav-link.active {
+        color: #dc3545;
+        background-color: #343a40;
+        border-color: #495057 #495057 #343a40;
+    }
+
+.dark-mode .tab-content {
+    background: #343a40;
+    color: #adb5bd;
+}
+
+.dark-mode .table {
+    color: #adb5bd;
+    background: #343a40;
+}
+
+    .dark-mode .table th {
+        color: #adb5bd;
+        background: #495057;
+    }
+
+    .dark-mode .table td {
+        color: #adb5bd;
+        background: #343a40;
+    }
+
+.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #495057;
+}
+
+.dark-mode .owl-nav button {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+    color: #adb5bd !important;
+}
+
+/* Manual dark mode class support - SPECIFIC CLASSES */
+.dark-mode .shop-quantity-btn,
+.dark-mode .quantity-plus,
+.dark-mode .quantity-minus {
+    background: #343a40 !important;
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.dark-mode .shop-quantity-input,
+.dark-mode #quantity-input {
+    background: #495057 !important;
+    color: #adb5bd !important;
+    border-color: #dc3545 !important;
+}
+
+    .dark-mode .shop-quantity-input:focus,
+    .dark-mode #quantity-input:focus {
+        background: #343a40 !important;
+        color: #fff !important;
+    }
+
+    .dark-mode .shop-quantity-input[readonly],
+    .dark-mode #quantity-input[readonly] {
+        background-color: #495057 !important;
+        color: #6c757d !important;
+    }
+
+/* Dark mode nav tabs */
+.dark-mode .shop-nav-tabs .nav-link,
+.dark-mode .shop-nav-link,
+.dark-mode .nav-tabs .nav-link {
+    color: #adb5bd !important;
+    background: #343a40 !important;
+    border-color: #495057 !important;
+}
+
+    .dark-mode .shop-nav-tabs .nav-link:hover,
+    .dark-mode .shop-nav-link:hover,
+    .dark-mode .nav-tabs .nav-link:hover {
+        border-color: #495057 #495057 #343a40 !important;
+        color: #dc3545 !important;
+        background: #343a40 !important;
+    }
+
+    .dark-mode .shop-nav-tabs .nav-link.active,
+    .dark-mode .shop-nav-link.active,
+    .dark-mode .nav-tabs .nav-link.active {
+        color: #dc3545 !important;
+        background-color: #343a40 !important;
+        border-color: #495057 #495057 #343a40 !important;
+    }
+
+/* Dark mode tab content */
+.dark-mode .shop-tab-content,
+.dark-mode .tab-content {
+    background: #343a40 !important;
+    color: #fff !important;
+}
+
+/* Dark mode table */
+.dark-mode .shop-table,
+.dark-mode .table {
+    color: #fff !important;
+    background: #343a40 !important;
+}
+
+    .dark-mode .shop-table th,
+    .dark-mode .table th {
+        color: #fff !important;
+        background: #495057 !important;
+    }
+
+    .dark-mode .shop-table td,
+    .dark-mode .table td {
+        color: #fff !important;
+        background: #343a40 !important;
+    }
+
+    .dark-mode .shop-table.table-striped tbody tr:nth-of-type(odd),
+    .dark-mode .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #495057 !important;
+    }
+
+/* Dark mode product items - FORCE DARK BACKGROUNDS */
+.dark-mode .shop-product-item,
+.dark-mode .product-item,
+.dark-mode .owl-carousel .product-item,
+.dark-mode .owl-carousel .item .product-item,
+.dark-mode div.product-item {
+    background: #343a40 !important;
+    border-color: #495057 !important;
+    color: #fff !important;
+}
+
+    .dark-mode .shop-product-content,
+    .dark-mode .shop-product-item .p-3,
+    .dark-mode .product-item .p-3,
+    .dark-mode .owl-carousel .product-item .p-3,
+    .dark-mode .product-item > div {
+        background: #343a40 !important;
+        color: #fff !important;
+    }
+
+    .dark-mode .shop-product-item h3,
+    .dark-mode .shop-product-item h3 a,
+    .dark-mode .shop-product-item p,
+    .dark-mode .product-item h3,
+    .dark-mode .product-item h3 a,
+    .dark-mode .product-item p,
+    .dark-mode .owl-carousel .product-item h3,
+    .dark-mode .owl-carousel .product-item h3 a,
+    .dark-mode .owl-carousel .product-item p {
+        color: #fff !important;
+        background: transparent !important;
+    }
+
+        .dark-mode .shop-product-item h3 a:hover,
+        .dark-mode .product-item h3 a:hover {
+            color: #dc3545 !important;
+        }
+
+/* Dark mode related products section */
+.dark-mode .shop-related-section,
+.dark-mode .site-section.bg-light {
+    background: #343a40 !important;
+}
+
+/* Force ALL related product elements to be dark */
+.dark-mode .owl-carousel .item,
+.dark-mode .owl-theme .item {
+    background: transparent !important;
+}
+
+/* Dark mode carousel */
+.dark-mode .shop-owl-carousel .owl-nav button,
+.dark-mode .owl-nav button {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+    color: #adb5bd !important;
+}
+
+.form-control {
+    background: #495057;
+    border-color: #6c757d;
+    color: #adb5bd;
+}
+
+.dark-mode .form-control:focus {
+    background: #343a40;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+.dark-mode .form-control::placeholder {
+    color: #6c757d;
+}

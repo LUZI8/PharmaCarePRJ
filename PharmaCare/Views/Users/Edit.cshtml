@@ -1,0 +1,237 @@
+﻿@model PharmaCare.Models.User
+
+@{
+    ViewData["Title"] = "Edit User";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* User avatar styling for consistent appearance across themes */
+    .user-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* Dark mode adaptation for user avatar background */
+    body.dark-mode .user-avatar {
+        background-color: #343a40;
+    }
+
+    /* Form card styling with shadow and rounded corners */
+    .form-card {
+        border-radius: 0.35rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin-bottom: 1.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+        /* Card header styling with consistent padding and borders */
+        .form-card .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e3e6f0;
+            border-top-left-radius: 0.35rem;
+            border-top-right-radius: 0.35rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Card body padding for optimal content spacing */
+        .form-card .card-body {
+            padding: 1.5rem;
+        }
+</style>
+
+<!-- Page header with title and navigation controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Edit User</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Back to user list navigation link -->
+            <a href="@Url.Action("Index", "Users")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content layout with edit form and user information sidebar -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="form-card card">
+            <!-- Card header displaying current user name -->
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">@Model.FirstName @Model.LastName</h5>
+            </div>
+            <div class="card-body">
+                <!-- User edit form with model binding and validation -->
+                <form asp-action="Edit">
+                    <!-- Display model-level validation errors -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <!-- Hidden field to preserve user ID during edit -->
+                    <input type="hidden" asp-for="UserId" />
+
+                    <!-- Name fields arranged in two columns for better layout -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FirstName" class="control-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LastName" class="control-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email field - serves as username for authentication -->
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- Role selection dropdown for permission management -->
+                    <div class="form-group">
+                        <label asp-for="Role" class="control-label"></label>
+                        <select asp-for="Role" class="form-control">
+                            <option value="Admin">Admin</option>
+                            <option value="Pharmacist">Pharmacist</option>
+                            <option value="Customer">Customer</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+
+                    <!-- Address information fields in two-column layout -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Address" class="control-label"></label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="City" class="control-label"></label>
+                                <input asp-for="City" class="form-control" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact phone number field -->
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <!-- Account creation timestamp field -->
+                    <div class="form-group">
+                        <label asp-for="DateCreated" class="control-label"></label>
+                        <input asp-for="DateCreated" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="DateCreated" class="text-danger"></span>
+                    </div>
+
+                    <!-- Account status toggle switch for activating/deactivating users -->
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input asp-for="IsActive" class="custom-control-input" id="activeSwitch" />
+                            <label class="custom-control-label" for="activeSwitch">Is Active</label>
+                        </div>
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+
+                    <!-- Form submission and cancellation controls -->
+                    <div class="form-group mt-4">
+                        <!-- Save button with custom PharmaCare styling -->
+                        <button type="submit" class="btn btn-primary text-white" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary ml-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User information and help sidebar -->
+    <div class="col-lg-4">
+        <div class="form-card card user-info-card">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">User Information</h5>
+            </div>
+            <div class="card-body p-3">
+                <!-- User avatar display section -->
+                <div class="text-center mb-4">
+                    <div class="user-avatar">
+                        <i class="fas fa-user fa-3x text-muted"></i>
+                    </div>
+                </div>
+
+                <!-- Read-only user information display -->
+                <p><strong>User ID:</strong> @Model.UserId</p>
+                <p><strong>Account Created:</strong> @Model.DateCreated.ToString("MMM dd, yyyy")</p>
+
+                <!-- Current account status with conditional badge styling -->
+                <p>
+                    <strong>Current Status:</strong>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge badge-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-secondary">Inactive</span>
+                    }
+                </p>
+
+                <hr>
+
+                <!-- Help section with usage instructions -->
+                <div class="mt-3">
+                    <h6>Help</h6>
+                    <p><small>Edit the user information and click Save Changes to update the record. Toggle the Is Active switch to enable or disable user access.</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        /* Include client-side validation scripts for form validation */
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function() {
+            /* Function to apply dark mode styling to form fields */
+            function updateFormFieldsForDarkMode() {
+                if ($('body').hasClass('dark-mode')) {
+                    $('.form-control').addClass('dark-field');
+                } else {
+                    $('.form-control').removeClass('dark-field');
+                }
+            }
+
+            // Apply initial dark mode styling
+            updateFormFieldsForDarkMode();
+
+            /* Listen for theme toggle and update form field styling accordingly */
+            $('#theme-toggle-btn, #mobile-theme-toggle').on('click', function() {
+                setTimeout(updateFormFieldsForDarkMode, 50);
+            });
+        });
+    </script>
+}

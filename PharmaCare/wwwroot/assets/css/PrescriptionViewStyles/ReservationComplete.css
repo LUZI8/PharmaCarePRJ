@@ -1,0 +1,72 @@
+﻿.btn-custom-danger {
+    background-color: #dc3545 !important; /* Red background for custom danger buttons */
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+    .btn-custom-danger:hover,
+    .btn-custom-danger:focus,
+    .btn-custom-danger:active {
+        background-color: #dc3545 !important; /* Maintains red color for all button states */
+        border-color: #dc3545 !important;
+        color: #ffffff !important;
+        box-shadow: none !important; /* Removes default button shadow effects */
+        transform: none !important; /* Disables transform animations */
+    }
+
+.btn-custom-outline {
+    border: 1px solid #dc3545; /* Red border for outline buttons */
+    background-color: transparent; /* Transparent background for outline style */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.btn-custom-outline {
+    color: #dc3545; /* Red text color for outline buttons in light mode */
+}
+
+    .btn-custom-outline:hover,
+    .btn-custom-outline:focus,
+    .btn-custom-outline:active {
+        color: #000000 !important; /* Black text on hover in light mode */
+        background-color: #dc3545; /* Red background fill on hover */
+        border-color: #dc3545;
+    }
+
+[data-theme="dark"] .btn-custom-outline {
+    color: #dc3545; /* Red text for outline buttons with data-theme dark */
+    border-color: #dc3545;
+}
+
+    [data-theme="dark"] .btn-custom-outline:hover,
+    [data-theme="dark"] .btn-custom-outline:focus,
+    [data-theme="dark"] .btn-custom-outline:active {
+        color: #ffffff !important; /* White text on hover in dark mode */
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+.dark-mode .btn-custom-outline {
+    color: #dc3545; /* Red text for outline buttons with dark-mode class */
+    border-color: #dc3545;
+}
+
+    .dark-mode .btn-custom-outline:hover,
+    .dark-mode .btn-custom-outline:focus,
+    .dark-mode .btn-custom-outline:active {
+        color: #ffffff !important; /* White text on hover for dark-mode class */
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+body.dark .btn-custom-outline {
+    color: #dc3545; /* Red text for outline buttons with body.dark class */
+    border-color: #dc3545;
+}
+
+    body.dark .btn-custom-outline:hover,
+    body.dark .btn-custom-outline:focus,
+    body.dark .btn-custom-outline:active {
+        color: #ffffff !important; /* White text on hover for body.dark selector */
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }

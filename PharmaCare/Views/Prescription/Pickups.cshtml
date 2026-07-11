@@ -1,0 +1,231 @@
+﻿@model IEnumerable<PharmaCare.Models.PrescriptionReservation>
+
+@{
+    ViewData["Title"] = "Manage Prescription Pickups";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+
+<!-- Page header with title and navigation controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Prescription Pickups</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Back to admin dashboard navigation link -->
+            <a href="@Url.Action("Index", "Admin")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Success message display for completed pickup operations -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- Error message display for failed pickup operations -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Prescription pickups management table with search and filtering capabilities -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="m-0 font-weight-bold">Manage Prescription Pickups</h5>
+        <div class="d-flex">
+            <!-- Search functionality for finding specific pickups -->
+            <div class="input-group mr-2" style="width: 250px;">
+                <input type="text" class="form-control form-control-sm" placeholder="Search pickups..." id="searchInput">
+                <div class="input-group-append">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status-based filtering dropdown including expired option -->
+            <select class="form-control form-control-sm" style="width: 150px;" id="statusFilter">
+                <option value="all">All Statuses</option>
+                <option value="Reserved">Reserved</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Expired">Expired</option>
+            </select>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <!-- Comprehensive pickup management table with detailed information -->
+            <table class="table table-hover admin-table">
+                <thead>
+                    <tr>
+                        <th>Reservation #</th>
+                        <th>Customer</th>
+                        <th>Contact</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Reserved Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <!-- Row styling with danger class for expired reserved items -->
+                            <tr class="@(item.Status == "Reserved" && DateTime.Now > item.ExpiryDate ? "table-danger" : "")">
+                                <!-- Unique reservation identifier -->
+                                <td>@item.ReservationNumber</td>
+
+                                <!-- Customer full name for identification -->
+                                <td>@item.User.FirstName @item.User.LastName</td>
+
+                                <!-- Customer contact phone number for pickup coordination -->
+                                <td>@item.User.PhoneNumber</td>
+
+                                <!-- Product information with image and name display -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <!-- Product image with fallback to default placeholder -->
+                                        @if (!string.IsNullOrEmpty(item.Product.ImageUrl))
+                                        {
+                                            <img src="@item.Product.ImageUrl" alt="@item.Product.ProductName" width="40" class="mr-2">
+                                        }
+                                        else
+                                        {
+                                            <img src="/images/product_01.png" alt="@item.Product.ProductName" width="40" class="mr-2">
+                                        }
+                                        <span>@item.Product.ProductName</span>
+                                    </div>
+                                </td>
+
+                                <!-- Reserved medication quantity -->
+                                <td>@item.Quantity</td>
+
+                                <!-- Reservation creation date with time for pickup scheduling -->
+                                <td>@item.ReservationDate.ToString("MMM dd, yyyy HH:mm")</td>
+
+                                <!-- Expiry date with time and expired indicator for overdue reservations -->
+                                <td>
+                                    @item.ExpiryDate.ToString("MMM dd, yyyy HH:mm")
+                                    @if (item.Status == "Reserved" && DateTime.Now > item.ExpiryDate)
+                                    {
+                                        <span class="badge badge-danger">Expired</span>
+                                    }
+                                </td>
+
+                                <!-- Status with conditional badge styling and expiry logic -->
+                                <td>
+                                    @if (item.Status == "Reserved")
+                                    {
+                                        @if (DateTime.Now > item.ExpiryDate)
+                                        {
+                                            <span class="badge badge-danger">Expired</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-warning">@item.Status</span>
+                                        }
+                                    }
+                                    else if (item.Status == "Completed")
+                                    {
+                                        <span class="badge badge-success">@item.Status</span>
+                                    }
+                                    else if (item.Status == "Cancelled")
+                                    {
+                                        <span class="badge badge-secondary">@item.Status</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-info">@item.Status</span>
+                                    }
+                                </td>
+
+                                <!-- Action dropdown for pickup management - only available for reserved items -->
+                                <td>
+                                    @if (item.Status == "Reserved")
+                                    {
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Actions
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <!-- Mark pickup as completed -->
+                                                <form asp-action="UpdateReservationStatus" asp-controller="Prescription" method="post" class="dropdown-item">
+                                                    <input type="hidden" name="id" value="@item.ReservationId" />
+                                                    <input type="hidden" name="status" value="Completed" />
+                                                    <button type="submit" class="btn btn-link p-0 text-success">
+                                                        <i class="fas fa-check-circle mr-1"></i> Mark as Completed
+                                                    </button>
+                                                </form>
+
+                                                <!-- Cancel reservation administratively -->
+                                                <form asp-action="CancelReservationAdmin" asp-controller="Prescription" method="post" class="dropdown-item">
+                                                    <input type="hidden" name="id" value="@item.ReservationId" />
+                                                    <button type="submit" class="btn btn-link p-0 text-danger">
+                                                        <i class="fas fa-times-circle mr-1"></i> Cancel Reservation
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <!-- No actions available for completed/cancelled pickups -->
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>No Actions</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Empty state display when no pickups are available -->
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="fas fa-prescription-bottle-alt fa-3x text-muted mb-3"></i>
+                                    <h5>No prescription pickups available</h5>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Customer details modal for additional information display -->
+<div class="modal fade" id="customerDetailsModal" tabindex="-1" role="dialog" aria-labelledby="customerDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerDetailsModalLabel">Customer Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Customer details content populated dynamically -->
+                <div class="customer-details-content">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import JavaScript for pickup management functionality -->
+<script src="~/assets/js/PrescriptionViewScripts/Pickups.js"></script>

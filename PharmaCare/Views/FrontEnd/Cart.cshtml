@@ -1,0 +1,336 @@
+﻿@model PharmaCare.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "Shopping Cart";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/Cart.css">
+
+<div class="site-section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <h2 class="h3 mb-3 text-black">Your Cart</h2>
+
+                <!-- Conditional rendering based on cart contents -->
+                @if (Model != null && Model.Items != null && Model.Items.Any())
+                {
+                    <div class="site-blocks-table">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="product-thumbnail">Image</th>
+                                    <th class="product-name">Product</th>
+                                    <th class="product-price">Price</th>
+                                    <th class="product-quantity">Quantity</th>
+                                    <th class="product-total">Total</th>
+                                    <th class="product-remove">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loop through cart items to display each product -->
+                                @foreach (var item in Model.Items)
+                                {
+                                    <!-- Each row has data-product-id for JavaScript targeting -->
+                                    <tr data-product-id="@item.ProductId">
+                                        <td class="product-thumbnail">
+                                            <!-- Conditional image display with fallback -->
+                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                            {
+                                                <img src="@item.ImageUrl" alt="@item.ProductName" class="img-fluid rounded" style="max-width: 80px;">
+                                            }
+                                            else
+                                            {
+                                                <img src="~/assets/images/no-image.png" alt="@item.ProductName" class="img-fluid rounded" style="max-width: 80px;">
+                                            }
+                                        </td>
+                                        <td class="product-name">
+                                            <h6 class="text-black">@item.ProductName</h6>
+                                        </td>
+                                        <td class="product-price">
+                                            <!-- Format price to 2 decimal places -->
+                                            <span class="text-black">$@item.Price.ToString("0.00")</span>
+                                        </td>
+                                        <td>
+                                            <!-- Quantity controls with plus/minus buttons -->
+                                            <div class="input-group mb-3" style="max-width: 120px;">
+                                                <div class="input-group-prepend">
+                                                    <!-- Minus button with product ID for JavaScript handling -->
+                                                    <button class="btn btn-outline-primary js-btn-minus" type="button" data-product-id="@item.ProductId">&minus;</button>
+                                                </div>
+                                                <input type="text" class="form-control text-center quantity-input" value="@item.Quantity"
+                                                       aria-label="Quantity" aria-describedby="button-addon1">
+                                                <div class="input-group-append">
+                                                    <!-- Plus button with product ID for JavaScript handling -->
+                                                    <button class="btn btn-outline-primary js-btn-plus" type="button" data-product-id="@item.ProductId">&plus;</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="product-total">
+                                            <!-- Calculate and display line total (price × quantity) -->
+                                            <span class="text-black">$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                                        </td>
+                                        <td>
+                                            <!-- Remove item button with product ID -->
+                                            <a href="#" class="btn btn-danger btn-sm remove-item" data-product-id="@item.ProductId">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <!-- Empty cart state with call-to-action -->
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-shopping-cart fa-4x text-muted"></i>
+                        </div>
+                        <h3 class="h4 mb-4">Your cart is empty</h3>
+                        <p class="text-muted mb-4">Looks like you haven't added any items to your cart yet.</p>
+                        <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-primary">Continue Shopping</a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Cart actions and summary section (only shown when cart has items) -->
+        @if (Model != null && Model.Items != null && Model.Items.Any())
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-outline-primary btn-md btn-block">Continue Shopping</a>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Clear cart button with JavaScript class selector -->
+                            <button class="btn btn-outline-danger btn-md btn-block clear-cart">Clear Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 pl-5">
+                    <!-- Cart totals summary section -->
+                    <div class="row justify-content-end">
+                        <div class="col-md-7">
+                            <div class="row">
+                                <div class="col-md-12 text-right border-bottom mb-4">
+                                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <span class="text-black">Subtotal</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <!-- Subtotal with ID for JavaScript updates -->
+                                    <strong class="text-black" id="subtotal">$@(Model.SubTotal.ToString("0.00"))</strong>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <span class="text-black">Tax</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <!-- Tax amount with ID for JavaScript updates -->
+                                    <strong class="text-black" id="tax">$@(Model.Tax.ToString("0.00"))</strong>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <span class="text-black">Shipping</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <!-- Shipping cost with ID for JavaScript updates -->
+                                    <strong class="text-black" id="shipping">
+                                        @if (Model.ShippingCost == 0)
+                                        {
+                                            <span class="text-success">FREE</span>
+                                        }
+                                        else
+                                        {
+                                            <span>$@(Model.ShippingCost.ToString("0.00"))</span>
+                                        }
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <span class="text-black">Total</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <!-- Grand total with ID for JavaScript updates -->
+                                    <strong class="text-black h4" id="total">$@(Model.Total.ToString("0.00"))</strong>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!-- Checkout button linking to order controller -->
+                                    <a href="@Url.Action("Checkout", "Order")" class="btn btn-primary btn-lg btn-block">
+                                        Proceed To Checkout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Cart page initialized');
+
+            // Handle quantity increase
+            $(document).on('click', '.js-btn-plus', function() {
+                var productId = $(this).data('product-id');
+                var $quantityInput = $(this).closest('.input-group').find('.quantity-input');
+                var currentQuantity = parseInt($quantityInput.val()) || 0;
+                var newQuantity = currentQuantity + 1;
+
+                updateCartQuantity(productId, newQuantity, $quantityInput);
+            });
+
+            // Handle quantity decrease
+            $(document).on('click', '.js-btn-minus', function() {
+                var productId = $(this).data('product-id');
+                var $quantityInput = $(this).closest('.input-group').find('.quantity-input');
+                var currentQuantity = parseInt($quantityInput.val()) || 0;
+                var newQuantity = Math.max(1, currentQuantity - 1);
+
+                updateCartQuantity(productId, newQuantity, $quantityInput);
+            });
+
+            // Handle direct quantity input change
+            $(document).on('change', '.quantity-input', function() {
+                var productId = $(this).closest('tr').data('product-id');
+                var newQuantity = parseInt($(this).val()) || 1;
+
+                updateCartQuantity(productId, newQuantity, $(this));
+            });
+
+            // Handle item removal
+            $(document).on('click', '.remove-item', function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                removeFromCart(productId);
+            });
+
+            // Handle clear cart
+            $(document).on('click', '.clear-cart', function() {
+                if (confirm('Are you sure you want to clear your cart?')) {
+                    clearCart();
+                }
+            });
+        });
+
+        function updateCartQuantity(productId, quantity, $quantityInput) {
+            console.log('Updating cart quantity:', productId, quantity);
+
+            $.ajax({
+                url: '@Url.Action("UpdateCart", "Cart")',
+                type: 'POST',
+                data: {
+                    productId: productId,
+                    quantity: quantity
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Check if cart became empty
+                        if (response.cartCount === 0 || response.cartCount <= 0) {
+                            window.location.href = '@Url.Action("Cart", "FrontEnd")';
+                            return;
+                        }
+
+                        // Update quantity input
+                        $quantityInput.val(quantity);
+
+                        // Update line total
+                        var price = parseFloat($quantityInput.closest('tr').find('.product-price span').text().replace('$', ''));
+                        var lineTotal = (price * quantity).toFixed(2);
+                        $quantityInput.closest('tr').find('.product-total span').text('$' + lineTotal);
+
+                        // Update cart totals
+                        updateCartTotals(response);
+                    } else {
+                        alert('Error updating cart: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    alert('Error updating cart. Please try again.');
+                }
+            });
+        }
+
+        function removeFromCart(productId) {
+            $.ajax({
+                url: '@Url.Action("RemoveFromCart", "Cart")',
+                type: 'POST',
+                data: { productId: productId },
+                success: function(response) {
+                    if (response.success) {
+                        // Remove the row from table
+                        $('tr[data-product-id="' + productId + '"]').fadeOut(300, function() {
+                            $(this).remove();
+                        });
+
+                        // Check if cart is empty
+                        if (response.cartCount === 0 || response.cartCount <= 0) {
+                            setTimeout(function() {
+                                window.location.href = '@Url.Action("Cart", "FrontEnd")';
+                            }, 500);
+                            return;
+                        }
+
+                        // Update cart totals
+                        updateCartTotals(response);
+                    } else {
+                        alert('Error removing item: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error removing item. Please try again.');
+                }
+            });
+        }
+
+        function clearCart() {
+            $.ajax({
+                url: '@Url.Action("ClearCart", "Cart")',
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '@Url.Action("Cart", "FrontEnd")';
+                    } else {
+                        alert('Error clearing cart: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error clearing cart. Please try again.');
+                }
+            });
+        }
+
+        function updateCartTotals(response) {
+            $('#subtotal').text('$' + response.subtotal);
+            $('#tax').text('$' + response.tax);
+
+            // Update shipping display
+            if (parseFloat(response.shipping) === 0) {
+                $('#shipping').html('<span class="text-success">FREE</span>');
+            } else {
+                $('#shipping').html('<span>$' + response.shipping + '</span>');
+            }
+
+            $('#total').text('$' + response.total);
+        }
+    </script>
+}

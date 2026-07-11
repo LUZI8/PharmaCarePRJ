@@ -1,0 +1,252 @@
+﻿@model PharmaCare.Models.DashboardViewModel
+@using System.Linq
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        /* Custom styling for statistics cards with left border indicator */
+        .stat-card {
+            border-left-width: 4px;
+        }
+
+        /* Scrollable container for recent orders with fixed height */
+        .recent-orders {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+}
+
+<!-- Dashboard statistics cards displaying key metrics -->
+<div class="row mt-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <!-- Orders statistics card with green left border -->
+        <div class="card shadow-sm stat-card h-100" style="border-left-color: #28a745;">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs text-uppercase mb-1">Orders</div>
+                        <!-- Display order count from dashboard model -->
+                        <div class="h5 mb-0 font-weight-bold">@Model.OrderCount</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-shopping-bag fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <!-- Inventory statistics card with yellow left border -->
+        <div class="card shadow-sm stat-card h-100" style="border-left-color: #ffc107;">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs text-uppercase mb-1">Inventory Items</div>
+                        <!-- Display inventory count from dashboard model -->
+                        <div class="h5 mb-0 font-weight-bold">@Model.InventoryCount item</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-boxes fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Main content area for products management -->
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold">Products Management</h6>
+                <!-- Quick action buttons for category and product management -->
+                <a href="@Url.Action("Index", "Category")" class="btn btn-sm btn-danger">
+                    <i class="fas"></i> Manage Categories
+                </a>
+                <a href="@Url.Action("Create", "Product")" class="btn btn-sm btn-danger">
+                    <i class="fas fa-plus"></i> Add New Product
+                </a>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Conditional rendering based on products availability -->
+                            @if (Model.Products != null && Model.Products.Count > 0)
+                            {
+                                @foreach (var product in Model.Products)
+                                {
+                                    <tr>
+                                        <td>
+                                            <!-- Product image with fallback for missing images -->
+                                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                            {
+                                                <img src="@product.ImageUrl" alt="@product.ProductName" style="height: 50px; width: auto;">
+                                            }
+                                            else
+                                            {
+                                                <img src="/assets/images/no-image.png" alt="No Image" style="height: 50px; width: auto;">
+                                            }
+                                        </td>
+                                        <td>@product.ProductName</td>
+                                        <!-- Format price to 2 decimal places -->
+                                        <td>$@product.Price.ToString("0.00")</td>
+                                        <td>@product.Stock</td>
+                                        <td>
+                                            <!-- Stock status badges with conditional logic including IsActive property -->
+                                            @if (!product.IsActive)
+                                            {
+                                                <span class="badge badge-secondary">Inactive</span>
+                                            }
+                                            else if (product.Stock > 10)
+                                            {
+                                                <span class="badge badge-success">Active</span>
+                                            }
+                                            else if (product.Stock > 0)
+                                            {
+                                                <span class="badge badge-warning">Low Stock</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger">Out of Stock</span>
+                                            }
+
+                                            <!-- Additional prescription indicator badge -->
+                                            @if (product.RequiresPrescription && product.IsActive)
+                                            {
+                                                <span class="badge badge-info ml-1">Prescription</span>
+                                            }
+                                        </td>
+                                        <td class="action-btns">
+                                            <!-- Product action buttons with route parameters -->
+                                            <a href="@Url.Action("Edit", "Product", new { id = product.ProductId })"><i class="fas fa-edit"></i></a>
+                                            <!-- Delete button with JavaScript confirmation -->
+                                            <a href="@Url.Action("Delete", "Product", new { id = product.ProductId })" onclick="return confirm('Are you sure you want to delete this product?');"><i class="fas fa-trash-alt"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <!-- Empty state when no products are available -->
+                                <tr>
+                                    <td colspan="7" class="text-center">No products available.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center mt-3">
+                    <!-- Link to view all products -->
+                    <a href="@Url.Action("Index", "Product")" class="btn btn-sm btn-outline-danger">View All Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar containing orders and statistics -->
+    <div class="col-lg-4">
+        <!-- Recent orders overview card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold">Recent Orders</h6>
+                <!-- Quick link to orders management -->
+                <a href="@Url.Action("ManageOrders", "Order")" class="btn btn-sm btn-outline-danger">
+                    View All
+                </a>
+            </div>
+            <!-- Scrollable container for recent orders list -->
+            <div class="card-body recent-orders">
+                @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                {
+                    foreach (var order in Model.RecentOrders)
+                    {
+                        <!-- Individual order item with status badge -->
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <div>
+                                <p class="mb-0">Order #@order.OrderNumber</p>
+                                <!-- Order metadata with customer name and item count -->
+                                <small class="text-muted">@order.CustomerName • @order.ItemCount items</small>
+                            </div>
+                            <div>
+                                <!-- Dynamic status badge with CSS class from model -->
+                                <span class="badge badge-@order.StatusClass">@order.Status</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <!-- Empty state for no recent orders -->
+                    <p class="text-center">No recent orders</p>
+                }
+            </div>
+        </div>
+
+        <!-- Order statistics breakdown card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold">Order Statistics</h6>
+            </div>
+            <div class="card-body p-0">
+                <!-- Bootstrap list group for statistics display -->
+                <ul class="list-group list-group-flush">
+                    <!-- Conditional rendering based on ViewBag statistics -->
+                    @if (ViewBag.OrderStatistics != null)
+                    {
+                        <!-- Each statistic item with badge pill styling -->
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Orders
+                            <!-- Dictionary lookup for statistics values -->
+                            <span class="badge badge-primary badge-pill">@ViewBag.OrderStatistics["Total"]</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Pending
+                            <span class="badge badge-warning badge-pill">@ViewBag.OrderStatistics["Pending"]</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Processing
+                            <span class="badge badge-info badge-pill">@ViewBag.OrderStatistics["Processing"]</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Shipped
+                            <span class="badge badge-primary badge-pill">@ViewBag.OrderStatistics["Shipped"]</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Delivered
+                            <span class="badge badge-success badge-pill">@ViewBag.OrderStatistics["Delivered"]</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Cancelled
+                            <span class="badge badge-danger badge-pill">@ViewBag.OrderStatistics["Cancelled"]</span>
+                        </li>
+                    }
+                    else
+                    {
+                        <!-- Empty state when statistics are unavailable -->
+                        <li class="list-group-item text-center">No statistics available</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

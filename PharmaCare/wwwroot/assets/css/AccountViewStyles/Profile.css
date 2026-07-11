@@ -1,0 +1,156 @@
+﻿/* Main sidebar container with card-style design */
+.account-sidebar {
+    background-color: #fff;
+    border-radius: 8px; /* Rounded corners for modern appearance */
+    overflow: hidden; /* Prevents content from extending beyond borders */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    margin-bottom: 30px;
+}
+
+/* Sidebar header with brand color styling */
+.sidebar-header {
+    background-color: #dc3545; /* Primary brand red color */
+    color: white;
+    padding: 15px 20px;
+    font-weight: 600; /* Semi-bold font for emphasis */
+    border-bottom: 1px solid rgba(255,255,255,0.1); /* Subtle separator line */
+}
+
+/* Individual sidebar navigation items */
+.account-sidebar .list-group-item {
+    border: none;
+    border-bottom: 1px solid #f0f0f0; /* Light separator between items */
+    padding: 15px 20px;
+    transition: all 0.3s ease; /* Smooth animation for hover effects */
+    background-color: transparent;
+    color: #555;
+    font-weight: 500;
+}
+
+    .account-sidebar .list-group-item:last-child {
+        border-bottom: none; /* Remove border from final item */
+    }
+
+    /* Active sidebar item visual state */
+    .account-sidebar .list-group-item.active {
+        background-color: #f8f9fa; /* Light background for active state */
+        color: #dc3545; /* Brand color text for active item */
+        font-weight: 600;
+        border-left: 4px solid #dc3545; /* Left accent border for active indicator */
+    }
+
+    /* Hover effect for non-active sidebar items */
+    .account-sidebar .list-group-item:hover:not(.active) {
+        background-color: #f8f9fa;
+        color: #dc3545;
+        transform: translateX(5px); /* Slide animation on hover */
+    }
+
+/* Icon alignment and spacing within sidebar */
+.account-sidebar .fas {
+    width: 20px; /* Fixed width for consistent icon alignment */
+    text-align: center;
+    margin-right: 10px;
+}
+
+/* Main content area container styling */
+.account-content {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Lighter shadow than sidebar */
+}
+
+/* Individual profile information field containers */
+.profile-info-item {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Light separator between profile fields */
+}
+
+    .profile-info-item:last-child {
+        border-bottom: none; /* Remove border from last profile item */
+        margin-bottom: 0;
+    }
+
+/* Profile field label styling */
+.profile-info-label {
+    font-weight: 600; /* Bold labels for visual hierarchy */
+    color: #555;
+}
+
+/* Primary action button styling */
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease; /* Smooth transition for hover animations */
+}
+
+    /* Enhanced button hover effect with elevation */
+    .btn-danger:hover {
+        background-color: #c82333; /* Darker shade on hover */
+        border-color: #bd2130;
+        transform: translateY(-2px); /* Lift effect for modern interaction */
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3); /* Shadow for elevation effect */
+    }
+
+/* Mobile responsive design adjustments */
+@media (max-width: 767.98px) {
+    .account-sidebar {
+        margin-bottom: 30px; /* Maintain spacing on mobile devices */
+    }
+
+    .profile-info-label {
+        margin-bottom: 5px; /* Reduced label spacing for mobile */
+    }
+
+    .profile-info-item .row {
+        margin-bottom: 10px; /* Adjusted row spacing for mobile layout */
+    }
+}
+
+/* Dark theme color scheme overrides */
+body.dark-mode .account-sidebar {
+    background-color: #2d2d2d; /* Dark background for sidebar */
+}
+
+body.dark-mode .sidebar-header {
+    background-color: #c82333; /* Darker red variant for dark theme */
+}
+
+body.dark-mode .list-group-item:not(.active) {
+    background-color: #2d2d2d;
+    border-color: #444; /* Darker borders for dark theme */
+    color: #f8f9fa; /* Light text for dark background */
+}
+
+body.dark-mode .list-group-item.active {
+    background-color: #333; /* Darker active item background */
+    color: #fff;
+}
+
+body.dark-mode .list-group-item:hover:not(.active) {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark-mode .account-content {
+    background-color: #2d2d2d;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Stronger shadow for dark theme */
+    color: #f8f9fa;
+}
+
+body.dark-mode .profile-info-item {
+    border-bottom-color: #444; /* Dark separator lines */
+}
+
+body.dark-mode .profile-info-label {
+    color: #ddd; /* Light gray labels for dark theme readability */
+}
+
+body.dark-mode h4 {
+    color: #f8f9fa;
+    border-bottom-color: #444; /* Dark borders for section headings */
+}

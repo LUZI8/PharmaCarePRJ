@@ -1,0 +1,203 @@
+﻿@model PharmaCare.Models.User
+
+@{
+    ViewData["Title"] = "User Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Import user details specific styling -->
+<link href="~/assets/css/UsersViewStyles/Details.css" />
+
+<!-- Page header with title and action controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">User Details</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Navigation back to user list -->
+            <a href="@Url.Action("Index", "Users")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+            <!-- Quick edit action button with custom styling -->
+            <a href="@Url.Action("Edit", "Users", new { id = Model?.UserId })" class="btn btn-sm btn-primary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important;">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content layout with user details and status sidebar -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="details-card card">
+            <!-- Card header with user name and status badges -->
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">@Model.FirstName @Model.LastName</h5>
+                <div>
+                    <!-- Account status badge with conditional styling -->
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge badge-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-secondary">Inactive</span>
+                    }
+                    <!-- User role badge for permission level identification -->
+                    <span class="badge badge-info">@Model.Role</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <!-- User avatar placeholder with consistent styling -->
+                        <div class="user-avatar mx-auto">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <!-- User identification display -->
+                        <h5>@Model.FirstName @Model.LastName</h5>
+                        <p class="text-muted">@Model.Role</p>
+                    </div>
+
+                    <div class="col-md-8">
+                        <!-- Comprehensive user information in structured format -->
+                        <dl class="row user-info">
+                            <dt class="col-sm-4">User ID</dt>
+                            <dd class="col-sm-8">@Model.UserId</dd>
+
+                            <dt class="col-sm-4">Email</dt>
+                            <dd class="col-sm-8">@Model.Email</dd>
+
+                            <dt class="col-sm-4">Phone</dt>
+                            <dd class="col-sm-8">@Model.PhoneNumber</dd>
+
+                            <dt class="col-sm-4">Address</dt>
+                            <dd class="col-sm-8">@Model.Address, @Model.City</dd>
+
+                            <!-- Account status with text styling -->
+                            <dt class="col-sm-4">Status</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.IsActive)
+                                {
+                                    <span class="text-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">Inactive</span>
+                                }
+                            </dd>
+
+                            <!-- Account creation timestamp -->
+                            <dt class="col-sm-4">Joined</dt>
+                            <dd class="col-sm-8">
+                                @Model.DateCreated.ToString("MMM dd, yyyy")
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Action buttons for user management operations -->
+                <div class="mt-4 d-flex">
+                    <!-- Edit user information button -->
+                    <a href="@Url.Action("Edit", "Users", new { id = Model.UserId })" class="btn btn-primary mr-2" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important;">
+                        <i class="fas fa-edit"></i> Edit User
+                    </a>
+                    <!-- Delete user button -->
+                    <a href="@Url.Action("Delete", "Users", new { id = Model.UserId })" class="btn btn-outline-danger mr-2">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                    <!-- Back to list navigation -->
+                    <a href="@Url.Action("Index", "Users")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status and quick actions sidebar -->
+    <div class="col-lg-4">
+        <div class="details-card card user-status-card">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">User Status</h5>
+            </div>
+            <div class="card-body p-3">
+                <!-- Visual account status indicator with progress bar -->
+                <div class="mb-3">
+                    <h6>Account Status</h6>
+                    <div class="progress" style="height: 20px;">
+                        @{
+                            /* Determine progress bar styling based on account status */
+                            var progressClass = Model.IsActive ? "bg-success" : "bg-secondary";
+                            var progressWidth = Model.IsActive ? "100" : "0";
+                        }
+                        <div class="progress-bar @progressClass" role="progressbar" style="width: @progressWidth%;" aria-valuenow="@(Model.IsActive ? 100 : 0)" aria-valuemin="0" aria-valuemax="100">@(Model.IsActive ? "Active" : "Inactive")</div>
+                    </div>
+                </div>
+
+                <!-- Quick action buttons for common user management tasks -->
+                <div class="mb-3">
+                    <h6>Quick Actions</h6>
+
+                    <!-- Conditional activate/deactivate button based on current status -->
+                    @if (!Model.IsActive)
+                    {
+                        <a href="@Url.Action("ToggleStatus", "Users", new { id = Model.UserId })"
+                           class="btn btn-outline-success btn-block mb-2 toggle-status-btn"
+                           data-user-id="@Model.UserId">
+                            <i class="fas fa-toggle-on mr-2"></i> Activate User
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("ToggleStatus", "Users", new { id = Model.UserId })"
+                           class="btn btn-outline-secondary btn-block mb-2 toggle-status-btn"
+                           data-user-id="@Model.UserId">
+                            <i class="fas fa-toggle-off mr-2"></i> Deactivate User
+                        </a>
+                    }
+
+                    <!-- Password reset functionality -->
+                    <a href="@Url.Action("ResetPassword", "Users", new { id = Model.UserId })" class="btn btn-outline-warning btn-block mb-2">
+                        <i class="fas fa-key mr-2"></i> Reset Password
+                    </a>
+                </div>
+
+                <!-- Mock last login display (placeholder data) -->
+                <div class="mt-4">
+                    <h6>Last Login</h6>
+                    <p class="text-muted">@(DateTime.Now.AddDays(-3).ToString("MMM dd, yyyy HH:mm"))</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // AJAX functionality for toggling user status without page reload
+            $('.toggle-status-btn').on('click', function(e) {
+                e.preventDefault();
+                var userId = $(this).data('user-id');
+                var btn = $(this);
+
+                /* Send AJAX request to toggle user active status */
+                $.ajax({
+                    url: '@Url.Action("ToggleStatus", "Users")/' + userId,
+                    type: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            // Reload page to reflect updated status across all UI elements
+                            location.reload();
+                        } else {
+                            alert('Failed to toggle user status.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while toggling user status.');
+                    }
+                });
+            });
+        });
+    </script>
+}

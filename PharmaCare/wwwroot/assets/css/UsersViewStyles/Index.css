@@ -1,0 +1,97 @@
+﻿
+.btn-primary,
+a.btn-primary,
+.btn-toolbar .btn-primary,
+.card-header .btn-primary,
+.empty-state .btn-primary {
+    background-color: #dc3545 !important; /* Global red styling for all primary buttons */
+    border-color: #dc3545 !important;
+    color: white !important;
+    transition: none !important;
+}
+
+    .btn-primary:hover,
+    a.btn-primary:hover,
+    .btn-toolbar .btn-primary:hover,
+    .card-header .btn-primary:hover,
+    .empty-state .btn-primary:hover {
+        background-color: #dc3545 !important; /* Maintains consistent red on hover */
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    .btn-primary:active,
+    .btn-primary:focus,
+    .btn-primary:not(:disabled):not(.disabled):active {
+        background-color: #dc3545 !important; /* Consistent appearance for all button states */
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important;
+    }
+
+.empty-state {
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column; /* Stacks empty state content vertically */
+    align-items: center;
+    justify-content: center;
+}
+
+.search-wrapper {
+    position: relative; /* Enables absolute positioning for child elements */
+}
+
+@media (max-width: 991.98px) {
+    .card-header {
+        flex-direction: column; /* Stacks header elements vertically on tablets */
+        align-items: flex-start;
+    }
+
+        .card-header .d-flex {
+            margin-top: 1rem; /* Adds spacing between stacked header elements */
+            width: 100%;
+        }
+
+    .input-group {
+        width: 100% !important; /* Full width for input groups on mobile */
+        margin-bottom: 0.5rem;
+    }
+
+    select.form-control {
+        width: 100% !important; /* Full width for select elements */
+    }
+}
+
+@media (max-width: 767.98px) {
+    .action-btns a {
+        margin-right: 0.25rem; /* Reduced spacing between action buttons */
+        font-size: 1rem;
+    }
+
+    .action-btns {
+        white-space: nowrap; /* Prevents action buttons from wrapping */
+    }
+
+    .table-responsive {
+        border: 0; /* Removes border from responsive tables */
+    }
+}
+
+@media (max-width: 575.98px) {
+    .btn-toolbar {
+        flex-direction: column; /* Stacks toolbar buttons vertically on mobile */
+        align-items: flex-start;
+    }
+
+    .btn-group {
+        margin-bottom: 0.5rem;
+        display: flex;
+        width: 100%; /* Full width button groups on mobile */
+    }
+
+        .btn-group .btn {
+            flex: 1; /* Equal width distribution for buttons in group */
+        }
+}

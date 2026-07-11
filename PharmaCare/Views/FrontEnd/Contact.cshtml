@@ -1,0 +1,123 @@
+@{
+    ViewData["Title"] = "PharmaCare Contact";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+}
+
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="h3 mb-5 text-danger">Get in touch / Give us your feedback</h2>
+            </div>
+
+            <!-- Conditional success message display from TempData -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="col-md-12">
+                    <div class="alert alert-success mb-4">
+                        @TempData["SuccessMessage"]
+                    </div>
+                </div>
+            }
+
+            <!-- Special information for password reset requests -->
+            @if (ViewBag.PrefilledSubject == "Password Reset Request")
+            {
+                <div class="col-md-12">
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle"></i> Please provide your name, email, and any additional information to help us verify your identity. An administrator will contact you shortly with instructions to reset your password.
+                    </div>
+                </div>
+            }
+            <div class="col-md-12">
+                <!-- Contact form with POST submission to FrontEnd controller -->
+                <form action="@Url.Action("SubmitContact", "FrontEnd")" method="post">
+
+                    <div class="p-3 p-lg-5 border">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <!-- Required field indicators with red asterisks -->
+                                <label for="c_fname" class=" text-dark">First Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="c_fname" name="c_fname">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="c_lname" class="text-dark">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="c_lname" name="c_lname">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="c_email" class="text-dark">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="c_email" name="c_email" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="c_subject" class="text-dark">Subject </label>
+                                <!-- Subject field with conditional prefilling from ViewBag -->
+                                <input type="text" class="form-control" id="c_subject" name="c_subject"
+                                       value="@(ViewBag.PrefilledSubject ?? "")"
+                                       placeholder="@(ViewBag.PrefilledSubject == "Password Reset Request" ? "Password Reset Request" : "")">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="c_message" class="text-dark">Message </label>
+                                <textarea name="c_message" id="c_message" cols="30" rows="7" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-lg-12">
+                                <input type="submit" class="btn btn-danger btn-lg btn-block" value="Send Message">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Anti-forgery token for form security -->
+                    @Html.AntiForgeryToken()
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer testimonials section with varying background colors -->
+<div class="site-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-dark mb-4">Feedback</h2>
+            </div>
+            <!-- Testimonial cards with different background styling -->
+            <div class="col-lg-4">
+                <div class="p-4 bg-light mb-3 rounded">
+                    <span class="d-block text-black h6 text-uppercase">Mohammad Ali </span>
+                    <p class="mb-0 text-black">
+                        "The customer service team is amazing! They answered all my questions quickly and made the whole process so easy. Highly recommend!"
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <!-- White background for visual variety -->
+                <div class="p-4 bg-white mb-3 rounded">
+                    <span class="d-block text-black h6 text-uppercase">Salem Ayoub</span>
+                    <p class="mb-0 text-black">
+                        "This website has a great selection of medicines, and the filtering feature makes it easy to find what I need. It's so convenient and saves me a lot of time!"
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="p-4 bg-white mb-3 rounded">
+                    <span class="d-block text-black h6 text-uppercase">Jawad Hassan</span>
+                    <p class="mb-0 text-black">
+                        "Fast and reliable delivery! My order arrived right on time, and everything was perfectly packaged. Great experience!"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- External JavaScript file for contact form functionality -->
+<script src="~/assets/js/FrontEndViewScripts/Contact.js"></script>

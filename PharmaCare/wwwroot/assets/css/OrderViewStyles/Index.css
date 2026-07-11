@@ -1,0 +1,111 @@
+﻿.btn-danger.no-hover-effect,
+.btn-danger.view-btn {
+    color: white !important; /* Forces white text for danger buttons */
+    transition: none !important; /* Disables all transition animations */
+}
+
+    .btn-danger.no-hover-effect:hover,
+    .btn-danger.view-btn:hover {
+        transform: none !important; /* Prevents button scaling on hover */
+        box-shadow: none !important; /* Removes shadow effects on hover */
+        background-color: #dc3545 !important; /* Maintains red background on hover */
+        border-color: #dc3545 !important;
+    }
+
+.empty-orders-container {
+    background-color: transparent !important; /* Transparent background for empty state */
+    border: none !important; /* Removes border from empty container */
+    color: inherit !important; /* Inherits text color from parent */
+}
+
+body.dark-mode .table {
+    color: white !important; /* White text for tables in dark mode */
+}
+
+body.dark-mode .table-bordered {
+    border-color: #495057 !important; /* Gray borders for tables in dark mode */
+}
+
+body.dark-mode .table thead th {
+    border-bottom-color: #495057 !important; /* Gray border under table headers */
+    background-color: #343a40 !important; /* Dark background for table headers */
+    color: white !important;
+}
+
+body.dark-mode .table tbody tr {
+    background-color: #2d2d2d !important; /* Dark background for table rows */
+}
+
+    body.dark-mode .table tbody tr:nth-of-type(odd) {
+        background-color: #343a40 !important; /* Alternating row colors for better readability */
+    }
+
+body.dark-mode .table td,
+body.dark-mode .table th {
+    border-color: #495057 !important; /* Gray borders for all table cells */
+    color: white !important;
+}
+
+body.dark-mode .bg-light {
+    background-color: #343a40 !important; /* Dark background for light sections */
+}
+
+body.dark-mode .text-black {
+    color: white !important; /* Converts black text to white in dark mode */
+}
+
+body.dark-mode .empty-orders-container h3 {
+    color: white !important; /* White text for empty state headings */
+}
+
+body.dark-mode .text-muted {
+    color: #aaa !important; /* Light gray for muted text in dark mode */
+}
+
+.pagination .page-link {
+    color: #333; /* Dark gray text for pagination links */
+    border-color: #ddd;
+    padding: 0.5rem 0.75rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #dc3545; /* Red background for active page number */
+    border-color: #dc3545;
+    color: white;
+}
+
+.pagination .page-link:hover {
+    background-color: #f8f9fa; /* Light background on hover */
+    color: #dc3545; /* Red text on hover */
+    border-color: #dc3545;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d; /* Gray text for disabled pagination items */
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+body.dark-mode .pagination .page-link {
+    background-color: #2a2a2a; /* Dark background for pagination in dark mode */
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .pagination .page-item.active .page-link {
+    background-color: #dc3545; /* Red background for active page in dark mode */
+    border-color: #dc3545;
+    color: white;
+}
+
+body.dark-mode .pagination .page-link:hover {
+    background-color: #3a3a3a; /* Darker background on hover in dark mode */
+    color: #fff;
+    border-color: #dc3545;
+}
+
+body.dark-mode .pagination .page-item.disabled .page-link {
+    color: #6c757d; /* Gray text for disabled items in dark mode */
+    background-color: #2a2a2a;
+    border-color: #444;
+}

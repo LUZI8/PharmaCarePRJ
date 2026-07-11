@@ -1,0 +1,229 @@
+﻿@model PharmaCare.Models.User
+@{
+    ViewData["Title"] = "Sign Up - PharmaCare";
+    /* Standalone page without shared layout */
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!-- External dependencies and stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/AccountViewStyles/Register.css">
+    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
+</head>
+<!-- Default dark mode styling -->
+<body class="dark-mode">
+    <div class="header">
+        <div class="logo">
+            <a href="/">PHARMACARE</a>
+        </div>
+        <div class="theme-toggle">
+            <!-- Theme toggle with icon switching functionality -->
+            <button id="theme-toggle-btn">
+                <span class="sun-icon">☀️</span>
+                <span class="moon-icon" style="display: none;">🌙</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="signup-container">
+        <h2 class="form-title">Create Your Account</h2>
+
+        <!-- Display all validation errors from ModelState -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="error-message">
+                <ul>
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+        <!-- Registration form with ASP.NET Core tag helpers -->
+        <form id="registration-form" asp-controller="Account" asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <!-- Two-column layout for name fields -->
+            <div class="form-row">
+                <div class="form-group">
+                    <!-- First name input with value preservation -->
+                    <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="First Name"
+                           value="@Model?.FirstName" required>
+                    <!-- Hidden error container for JavaScript validation -->
+                    <div id="firstName-error" class="field-error" style="display: none;">First name is required</div>
+                    <!-- Server-side validation error display -->
+                    @if (ViewData.ModelState.ContainsKey("FirstName") && ViewData.ModelState["FirstName"].Errors.Count > 0)
+                    {
+                        <div class="field-error">@ViewData.ModelState["FirstName"].Errors[0].ErrorMessage</div>
+                    }
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Last Name"
+                           value="@Model?.LastName" required>
+                    <div id="lastName-error" class="field-error" style="display: none;">Last name is required</div>
+                    @if (ViewData.ModelState.ContainsKey("LastName") && ViewData.ModelState["LastName"].Errors.Count > 0)
+                    {
+                        <div class="field-error">@ViewData.ModelState["LastName"].Errors[0].ErrorMessage</div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <!-- Email input with HTML5 validation -->
+                <input type="email" class="form-control" id="Email" name="Email" placeholder="youremail@mail.com"
+                       value="@Model?.Email" required>
+                <div id="email-error" class="field-error" style="display: none;">Email is required</div>
+                @if (ViewData.ModelState.ContainsKey("Email") && ViewData.ModelState["Email"].Errors.Count > 0)
+                {
+                    <div class="field-error">@ViewData.ModelState["Email"].Errors[0].ErrorMessage</div>
+                }
+            </div>
+
+            <!-- Phone number with validation pattern and JavaScript number restriction -->
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="tel" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Phone Number"
+                       pattern="[0-9]{10,15}" minlength="10" maxlength="15"
+                       title="Phone number must be between 10 and 15 digits"
+                       value="@Model?.PhoneNumber" required onkeypress="return isNumberKey(event)">
+                <div id="phone-error" class="field-error" style="display: none;">Phone number must be between 10 and 15 digits</div>
+                @if (ViewData.ModelState.ContainsKey("PhoneNumber") && ViewData.ModelState["PhoneNumber"].Errors.Count > 0)
+                {
+                    <div class="field-error">@ViewData.ModelState["PhoneNumber"].Errors[0].ErrorMessage</div>
+                }
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="text" class="form-control" id="Address" name="Address" placeholder="Address"
+                       value="@Model?.Address" required>
+                <div id="address-error" class="field-error" style="display: none;">Address is required</div>
+                @if (ViewData.ModelState.ContainsKey("Address") && ViewData.ModelState["Address"].Errors.Count > 0)
+                {
+                    <div class="field-error">@ViewData.ModelState["Address"].Errors[0].ErrorMessage</div>
+                }
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="text" class="form-control" id="City" name="City" placeholder="City"
+                       value="@Model?.City" required>
+                <div id="city-error" class="field-error" style="display: none;">City is required</div>
+                @if (ViewData.ModelState.ContainsKey("City") && ViewData.ModelState["City"].Errors.Count > 0)
+                {
+                    <div class="field-error">@ViewData.ModelState["City"].Errors[0].ErrorMessage</div>
+                }
+            </div>
+
+            <!-- Password fields with requirements and confirmation -->
+            <div class="form-row">
+                <div class="form-group">
+                    <div class="password-container">
+                        <!-- Password input with toggle visibility -->
+                        <input type="password" class="form-control" id="password" name="Password" placeholder="Password" required>
+                        <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <!-- Password requirements display for user guidance -->
+                    <div class="password-requirements">
+                        <p>Password must:</p>
+                        <!-- Requirements list with IDs for JavaScript validation feedback -->
+                        <ul>
+                            <li id="length-req">Be at least 8 characters long</li>
+                            <li id="uppercase-req">Contain at least one uppercase letter</li>
+                            <li id="special-req">Contain at least one special character</li>
+                        </ul>
+                    </div>
+                    @if (ViewData.ModelState.ContainsKey("Password") && ViewData.ModelState["Password"].Errors.Count > 0)
+                    {
+                        <div class="field-error">@ViewData.ModelState["Password"].Errors[0].ErrorMessage</div>
+                    }
+                </div>
+                <div class="form-group">
+                    <div class="password-container">
+                        <!-- Confirm password input with matching validation -->
+                        <input type="password" class="form-control" id="confirm-password" name="confirmPassword" placeholder="Confirm Password" required>
+                        <span class="password-toggle" onclick="togglePasswordVisibility('confirm-password')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                        <!-- Error container for password confirmation mismatch -->
+                        <div class="password-error" id="confirm-password-error" style="display: none;"></div>
+                    </div>
+                    @if (ViewData.ModelState.ContainsKey("ConfirmPassword") && ViewData.ModelState["ConfirmPassword"].Errors.Count > 0)
+                    {
+                        <div class="field-error">@ViewData.ModelState["ConfirmPassword"].Errors[0].ErrorMessage</div>
+                    }
+                </div>
+            </div>
+            <!-- Hidden field setting default user role -->
+            <input type="hidden" name="Role" value="User" />
+            <button type="submit" class="submit-btn">SIGN UP</button>
+        </form>
+
+        <div class="sign-in-link">
+            <!-- Link to login page for existing users -->
+            I'm already a member! <a href="@Url.Action("Login", "Account")">Sign In</a>
+        </div>
+    </div>
+
+    <!-- Site footer with company information (identical to login page) -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row pt-5 mt-5">
+                <div class="col-md-4 mb-5">
+                    <h3>About Us</h3>
+                    <p>
+                        At PharmaCare, we're committed to providing trusted healthcare solutions to our community. With years of experience in our physical pharmacy, we've now expanded online to bring you the same quality care, convenience, and reliability.
+                    </p>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <h3>Quick Links</h3>
+                    <ul class="list-unstyled footer-link">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/FrontEnd/Shop">Store</a></li>
+                        <li><a href="/FrontEnd/Contact">Get In Touch</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <h3>Contact Info</h3>
+                    <ul class="list-unstyled contact-info">
+                        <li class="d-flex">
+                            <span class="mr-3"><i class="fas fa-map-marker-alt"></i></span>
+                            <span>Almadina Almonaora St, Amman, Jordan</span>
+                        </li>
+                        <li class="d-flex">
+                            <span class="mr-3"><i class="fas fa-phone"></i></span>
+                            <span>+962 7 9999 8888</span>
+                        </li>
+                        <li class="d-flex">
+                            <span class="mr-3"><i class="fas fa-envelope"></i></span>
+                            <span>pharmacare@info.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center copyright">
+                    <p>
+                        <!-- Dynamic copyright year -->
+                        Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- External JavaScript dependencies -->
+    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="~/assets/js/AccountViewScripts/Register.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+﻿@model IEnumerable<PharmaCare.Models.User>
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Import user management specific styling -->
+<link rel="stylesheet" href="~/assets/css/UsersViewStyles/Index.css" />
+
+<!-- Page header with title and primary action controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Users</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Add new user button with custom PharmaCare styling -->
+            <a href="@Url.Action("Create", "Users")" class="btn btn-sm btn-primary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important;">
+                <i class="fas fa-plus"></i> Add New User
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Users management table with search and filtering capabilities -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="m-0 font-weight-bold">User Management</h5>
+        <div class="d-flex">
+            <!-- Search functionality for finding specific users -->
+            <div class="input-group mr-2" style="width: 250px;">
+                <input type="text" class="form-control form-control-sm" placeholder="Search users..." id="searchInput">
+                <div class="input-group-append">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Role-based filtering dropdown -->
+            <select class="form-control form-control-sm" style="width: 150px;" id="roleFilter">
+                <option value="all">All Roles</option>
+                <option value="Admin">Admin</option>
+                <option value="Customer">Customer</option>
+                <option value="Pharmacist">Pharmacist</option>
+            </select>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <!-- User data table with comprehensive user information -->
+            <table class="table table-hover admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Phone</th>
+                        <th>City</th>
+                        <th>Date Created</th>
+                        <th>Status</th>
+                        <th style="width: 130px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <!-- User name with link to details page -->
+                                <td>
+                                    <a href="@Url.Action("Details", "Users", new { id = item.UserId })" class="font-weight-bold text-dark">
+                                        @item.FirstName @item.LastName
+                                    </a>
+                                </td>
+
+                                <!-- Email address display -->
+                                <td>@item.Email</td>
+
+                                <!-- Role badge with conditional styling based on role type -->
+                                <td>
+                                    @if (item.Role == "Admin")
+                                    {
+                                        <span class="badge badge-danger">Admin</span>
+                                    }
+                                    else if (item.Role == "Pharmacist")
+                                    {
+                                        <span class="badge badge-warning">Pharmacist</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-primary">Customer</span>
+                                    }
+                                </td>
+
+                                <!-- Contact information -->
+                                <td>@item.PhoneNumber</td>
+                                <td>@item.City</td>
+
+                                <!-- Account creation date -->
+                                <td>@item.DateCreated.ToString("MM/dd/yyyy")</td>
+
+                                <!-- Account status with conditional badge styling -->
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge badge-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-secondary">Inactive</span>
+                                    }
+                                </td>
+
+                                <!-- Action buttons for user management operations -->
+                                <td class="action-btns">
+                                    <!-- Edit user information -->
+                                    <a href="@Url.Action("Edit", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <!-- View detailed user information -->
+                                    <a href="@Url.Action("Details", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Details">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+
+                                    <!-- Reset user password -->
+                                    <a href="@Url.Action("ResetPassword", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Reset Password">
+                                        <i class="fas fa-key"></i>
+                                    </a>
+
+                                    <!-- Delete user account -->
+                                    <a href="@Url.Action("Delete", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Delete">
+                                        <i class="fas fa-trash-alt text-danger"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Empty state display when no users exist -->
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <h5>No users available</h5>
+                                    <p class="text-muted">Add your first user to get started.</p>
+                                    <!-- Call-to-action button for adding first user -->
+                                    <a href="@Url.Action("Create", "Users")" class="btn btn-primary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important;">
+                                        <i class="fas fa-plus"></i> Add User
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Import user management JavaScript functionality -->
+<script src="~/assets/js/UsersViewScripts"></script>

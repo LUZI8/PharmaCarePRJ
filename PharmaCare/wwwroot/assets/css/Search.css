@@ -1,0 +1,500 @@
+.search-overlay {
+    position: fixed; /* Creates full-screen overlay that stays in place during scroll */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent dark background for modal effect */
+    z-index: 9999; /* Ensures overlay appears above all other content */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 100px;
+    opacity: 0; /* Initially invisible for fade-in animation */
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth fade transition */
+}
+
+    .search-overlay.active {
+        opacity: 1; /* Makes overlay visible when active class is added */
+        visibility: visible;
+    }
+
+.navbar-search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.navbar-search-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 30px; /* Creates pill-shaped search input container */
+    overflow: hidden;
+    background-color: #f8f9fa;
+    transition: box-shadow 0.3s ease; /* Smooth shadow animation on focus */
+    padding: 0 5px 0 10px;
+}
+
+    .navbar-search-wrapper:focus-within {
+        box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.15); /* Red glow effect when input is focused */
+    }
+
+.navbar-search-input {
+    border: none;
+    padding: 10px 15px;
+    width: 180px; /* Fixed width for consistent navbar layout */
+    outline: none; /* Removes default browser focus outline */
+    font-size: 16px;
+    background: transparent;
+    color: #666;
+}
+
+.navbar-search-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    margin-right: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dc3545; /* Red background for search button */
+    border-radius: 50%; /* Creates circular search button */
+    width: 32px;
+    height: 32px;
+}
+
+    .navbar-search-btn span {
+        color: #fff; /* White icon color for contrast against red background */
+    }
+
+.navbar-search-results {
+    display: none; /* Hidden by default until search is performed */
+    position: absolute; /* Positioned relative to search container */
+    top: calc(100% + 10px); /* Positioned just below search input with 10px gap */
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: 300px; /* Ensures dropdown has minimum usable width */
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Subtle shadow for dropdown depth */
+    z-index: 1000; /* Ensures dropdown appears above other content */
+    overflow: hidden;
+}
+
+.navbar-search-results-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-height: 400px; /* Limits dropdown height to prevent viewport overflow */
+}
+
+.navbar-search-results-header {
+    padding: 15px;
+    background-color: #fff;
+    color: #666;
+    font-size: 14px;
+    border-bottom: 1px solid #eee; /* Separates header from results list */
+}
+
+.navbar-search-results-list {
+    max-height: 350px;
+    overflow-y: auto; /* Enables vertical scrolling for long results lists */
+    scrollbar-width: thin; /* Thinner scrollbar for Firefox */
+}
+
+    .navbar-search-results-list::-webkit-scrollbar {
+        width: 6px; /* Custom scrollbar width for WebKit browsers */
+    }
+
+    .navbar-search-results-list::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Light gray scrollbar track */
+    }
+
+    .navbar-search-results-list::-webkit-scrollbar-thumb {
+        background: #ddd; /* Gray scrollbar handle */
+        border-radius: 3px;
+    }
+
+        .navbar-search-results-list::-webkit-scrollbar-thumb:hover {
+            background: #ccc; /* Darker gray on hover for better interactivity */
+        }
+
+.navbar-search-result-item {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0; /* Subtle separator between result items */
+    transition: background-color 0.2s; /* Smooth hover effect */
+}
+
+    .navbar-search-result-item:last-child {
+        border-bottom: none; /* Removes border from last item for clean appearance */
+    }
+
+    .navbar-search-result-item:hover {
+        background-color: #f9f9f9; /* Light gray background on hover */
+    }
+
+.navbar-search-result-content {
+    display: flex;
+    align-items: center; /* Vertically centers content within each result item */
+}
+
+.navbar-search-result-image {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    flex-shrink: 0; /* Prevents image from shrinking when text is long */
+    border-radius: 50%; /* Creates circular product images */
+}
+
+.navbar-search-result-info {
+    flex-grow: 1; /* Takes up remaining space between image and price */
+    overflow: hidden;
+}
+
+.navbar-search-result-name {
+    font-weight: 700; /* Bold text for product names */
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.navbar-search-result-category {
+    color: #777; /* Gray text for category labels */
+    font-size: 14px;
+}
+
+.navbar-search-result-price {
+    font-weight: 700;
+    font-size: 16px;
+    color: #dc3545; /* Red color for product prices to match theme */
+    white-space: nowrap; /* Prevents price text from wrapping */
+    margin-left: 15px;
+}
+
+.navbar-search-no-results {
+    padding: 20px 15px;
+    text-align: center;
+    color: #666; /* Gray text for no results message */
+}
+
+    .navbar-search-no-results p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+.no-results-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 30px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05); /* Subtle shadow for card-like appearance */
+}
+
+    .no-results-container i {
+        color: #dc3545; /* Red color for icons in no results container */
+        opacity: 0.6;
+    }
+
+    .no-results-container .suggestions {
+        background-color: white;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 15px 0;
+        border-left: 4px solid #dc3545; /* Red left border for suggestion highlight */
+    }
+
+        .no-results-container .suggestions ul li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+            .no-results-container .suggestions ul li:last-child {
+                margin-bottom: 0; /* Removes bottom margin from last suggestion */
+            }
+
+.search-results-container {
+    padding: 10px;
+    border-radius: 4px;
+    max-height: 400px;
+    overflow-y: auto; /* Enables scrolling for long search results */
+}
+
+.search-results-section {
+    margin-bottom: 15px;
+}
+
+.search-results-header {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e0e0e0; /* Separator line under section headers */
+}
+
+.search-results-list {
+    list-style: none; /* Removes default list bullets */
+    padding: 0;
+    margin: 0;
+}
+
+.search-result-item {
+    padding: 5px 0;
+    transition: background-color 0.2s ease; /* Smooth color transition on hover */
+}
+
+    .search-result-item:hover {
+        background-color: rgba(220, 53, 69, 0.1); /* Light red background on hover */
+    }
+
+.category-link {
+    display: block;
+    padding: 5px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    .category-link:hover {
+        color: #dc3545; /* Changes to red color on hover */
+    }
+
+.product-link {
+    display: flex;
+    align-items: center; /* Vertically centers product link content */
+    padding: 5px;
+    color: #333;
+    text-decoration: none;
+}
+
+.product-thumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: cover; /* Maintains aspect ratio while filling container */
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column; /* Stacks product name and price vertically */
+}
+
+.product-name {
+    font-weight: 500; /* Medium font weight for product names */
+}
+
+.product-price {
+    font-size: 12px;
+    color: #dc3545; /* Red color for product prices */
+}
+
+.no-results {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+}
+
+.view-all-container {
+    text-align: center;
+    padding: 10px 0;
+    border-top: 1px solid #e0e0e0; /* Top border to separate from results */
+    margin-top: 10px;
+}
+
+.view-all-link {
+    color: #dc3545; /* Red color for view all link */
+    font-weight: 500;
+    text-decoration: none;
+}
+
+    .view-all-link:hover {
+        text-decoration: underline; /* Adds underline on hover for better UX */
+    }
+
+.shop-filter-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #6c757d;
+    transition: all 0.3s ease; /* Smooth transition for all button properties */
+}
+
+    .shop-filter-btn:hover {
+        background-color: #e9ecef; /* Darker gray background on hover */
+        border-color: #ced4da;
+        color: #495057;
+    }
+
+    .shop-filter-btn.active {
+        background-color: #dc3545; /* Red background for active filter buttons */
+        border-color: #dc3545;
+        color: white;
+    }
+
+        .shop-filter-btn.active:hover {
+            background-color: #c82333; /* Darker red on hover for active buttons */
+            border-color: #bd2130;
+        }
+
+.shop-clear-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #dc3545; /* Red text for clear button */
+    transition: all 0.3s ease;
+}
+
+    .shop-clear-btn:hover {
+        background-color: #dc3545; /* Red background on hover */
+        border-color: #dc3545;
+        color: white;
+    }
+
+/* DARK MODE STYLES - FIXED */
+
+/* Dark mode for search input wrapper */
+body.dark-mode .navbar-search-wrapper {
+    background-color: #495057;
+    border-color: #6c757d;
+}
+
+/* Dark mode for search input text */
+body.dark-mode .navbar-search-input,
+body.dark-mode #navbar-search-input {
+    color: #ffffff !important; /* White text for search input in dark mode */
+    background: transparent;
+}
+
+    body.dark-mode .navbar-search-input::placeholder,
+    body.dark-mode #navbar-search-input::placeholder {
+        color: #adb5bd; /* Light gray placeholder text */
+    }
+
+/* Dark mode for search results dropdown */
+body.dark-mode .navbar-search-results {
+    background: #343a40 !important; /* Dark background for search results dropdown */
+    border: 1px solid #495057 !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Dark mode for search results header */
+body.dark-mode .navbar-search-results-header {
+    background-color: #343a40 !important; /* Dark background for results header */
+    color: #ffffff !important; /* White text for header */
+    border-bottom-color: #495057 !important;
+}
+
+/* Dark mode for search result items */
+body.dark-mode .navbar-search-result-item {
+    color: #ffffff !important; /* White text for result items in dark mode */
+    border-bottom-color: #495057 !important;
+}
+
+    body.dark-mode .navbar-search-result-item:hover {
+        background-color: #495057 !important; /* Gray background on hover in dark mode */
+        color: #ffffff !important;
+    }
+
+/* Dark mode for product names */
+body.dark-mode .navbar-search-result-name {
+    color: #ffffff !important; /* White text for product names in dark mode */
+}
+
+/* Dark mode for category text */
+body.dark-mode .navbar-search-result-category {
+    color: #adb5bd !important; /* Light gray for category text in dark mode */
+}
+
+/* Dark mode for product prices */
+body.dark-mode .navbar-search-result-price {
+    color: #dc3545 !important; /* Red color for prices in dark mode */
+}
+
+/* Dark mode for no results message */
+body.dark-mode .navbar-search-no-results {
+    color: #adb5bd !important; /* Light gray for no results message in dark mode */
+    background-color: #343a40;
+}
+
+    body.dark-mode .navbar-search-no-results p {
+        color: #adb5bd !important;
+    }
+
+/* Dark mode scrollbar for search results */
+body.dark-mode .navbar-search-results-list::-webkit-scrollbar-track {
+    background: #495057;
+}
+
+body.dark-mode .navbar-search-results-list::-webkit-scrollbar-thumb {
+    background: #6c757d;
+}
+
+    body.dark-mode .navbar-search-results-list::-webkit-scrollbar-thumb:hover {
+        background: #868e96;
+    }
+
+/* Dark mode for other search components */
+body.dark-mode .search-results-container {
+    background-color: #343a40; /* Dark background for search container in dark mode */
+    border: 1px solid #495057;
+}
+
+body.dark-mode .search-results-header {
+    border-bottom-color: #495057; /* Gray border for headers in dark mode */
+    color: #fff;
+}
+
+body.dark-mode .category-link,
+body.dark-mode .product-link {
+    color: #fff; /* White text for links in dark mode */
+}
+
+    body.dark-mode .category-link:hover,
+    body.dark-mode .product-price,
+    body.dark-mode .view-all-link {
+        color: #dc3545; /* Red color on hover and for prices in dark mode */
+    }
+
+body.dark-mode .search-result-item:hover {
+    background-color: #495057; /* Gray background on hover in dark mode */
+}
+
+body.dark-mode .no-results {
+    color: #adb5bd; /* Light gray for no results text in dark mode */
+}
+
+body.dark-mode .shop-filter-btn {
+    background-color: #343a40; /* Dark background for filter buttons in dark mode */
+    border-color: #495057;
+    color: #adb5bd;
+}
+
+    body.dark-mode .shop-filter-btn:hover {
+        background-color: #495057; /* Gray background on hover in dark mode */
+        color: #e9ecef;
+    }
+
+    body.dark-mode .shop-filter-btn.active {
+        background-color: #dc3545; /* Red background for active buttons in dark mode */
+        border-color: #dc3545;
+        color: white;
+    }
+
+body.dark-mode .shop-clear-btn {
+    background-color: #343a40; /* Dark background for clear button in dark mode */
+    border-color: #495057;
+    color: #dc3545;
+}
+
+    body.dark-mode .shop-clear-btn:hover {
+        background-color: #dc3545; /* Red background on hover in dark mode */
+        border-color: #dc3545;
+        color: white;
+    }

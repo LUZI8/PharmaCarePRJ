@@ -1,0 +1,112 @@
+﻿.thank-you-section {
+    padding: 60px 0 !important; /* Extra padding for thank you page section */
+}
+
+.order-details-card {
+    background-color: var(--card-bg) !important; /* Dynamic background using CSS variables */
+    border-radius: 10px !important; /* Rounded corners for card appearance */
+    box-shadow: 0 0 15px rgba(0,0,0,0.05) !important; /* Subtle shadow for depth effect */
+    padding: 30px !important; /* Generous padding for content spacing */
+    margin-bottom: 30px !important;
+}
+
+.order-table {
+    background-color: var(--card-bg) !important; /* Dynamic background for order table */
+    color: var(--text-color) !important; /* Dynamic text color using CSS variables */
+}
+
+    .order-table th,
+    .order-table td {
+        border-color: var(--border-color) !important; /* Dynamic border color for table cells */
+    }
+
+.success-icon {
+    color: #28a745 !important; /* Green color for success checkmark icon */
+    font-size: 5rem !important; /* Large size for prominent success indicator */
+    margin-bottom: 20px !important;
+}
+
+.btn-primary,
+.btn-outline-primary,
+.btn-secondary {
+    color: #fff !important; /* White text for all button types */
+}
+
+    .btn-primary:hover,
+    .btn-outline-primary:hover,
+    .btn-secondary:hover {
+        color: #fff !important; /* Maintains white text on hover */
+    }
+
+.btn-custom-danger {
+    background-color: #dc3545 !important; /* Red background for custom danger buttons */
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+    .btn-custom-danger:hover,
+    .btn-custom-danger:focus,
+    .btn-custom-danger:active {
+        background-color: #dc3545 !important; /* Consistent red color for all button states */
+        border-color: #dc3545 !important;
+        color: #ffffff !important;
+        box-shadow: none !important; /* Removes default button shadow effects */
+        transform: none !important; /* Disables transform animations */
+    }
+
+.btn-custom-outline {
+    border: 1px solid #dc3545 !important; /* Red border for outline button style */
+    background-color: transparent !important; /* Transparent background for outline effect */
+    transition: all 0.3s ease !important; /* Smooth transition for hover effects */
+}
+
+.btn-custom-outline {
+    color: #dc3545 !important; /* Red text for outline buttons */
+}
+
+    .btn-custom-outline:hover,
+    .btn-custom-outline:focus,
+    .btn-custom-outline:active {
+        color: #000000 !important; /* Black text on hover in light mode */
+        background-color: #dc3545 !important; /* Red background fill on hover */
+        border-color: #dc3545 !important;
+    }
+
+[data-theme="dark"] .btn-custom-outline {
+    color: #dc3545 !important; /* Red text for data-theme dark mode */
+    border-color: #dc3545 !important;
+}
+
+    [data-theme="dark"] .btn-custom-outline:hover,
+    [data-theme="dark"] .btn-custom-outline:focus,
+    [data-theme="dark"] .btn-custom-outline:active {
+        color: #ffffff !important; /* White text on hover in data-theme dark mode */
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+.dark-mode .btn-custom-outline {
+    color: #dc3545 !important; /* Red text for dark-mode class */
+    border-color: #dc3545 !important;
+}
+
+    .dark-mode .btn-custom-outline:hover,
+    .dark-mode .btn-custom-outline:focus,
+    .dark-mode .btn-custom-outline:active {
+        color: #ffffff !important; /* White text on hover for dark-mode class */
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+body.dark .btn-custom-outline {
+    color: #dc3545 !important; /* Red text for body.dark selector */
+    border-color: #dc3545 !important;
+}
+
+    body.dark .btn-custom-outline:hover,
+    body.dark .btn-custom-outline:focus,
+    body.dark .btn-custom-outline:active {
+        color: #ffffff !important; /* White text on hover for body.dark selector */
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }

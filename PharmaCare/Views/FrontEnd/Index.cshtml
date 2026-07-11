@@ -1,0 +1,302 @@
+﻿@{
+    ViewData["Title"] = "PharmaCare Home";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/HomePage.css">
+
+<!-- Bootstrap modal for displaying registration success message -->
+<div class="modal fade" id="registrationSuccessModal" tabindex="-1" role="dialog" aria-labelledby="registrationSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="registrationSuccessModalLabel">
+                    <i class="fas fa-check-circle mr-2"></i>Welcome to PharmaCare!
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <h4>Registration successful!</h4>
+                <p class="mb-0">You are now logged in and ready to explore our services.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Get Started</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login success modal for returning users -->
+<div class="modal fade" id="loginSuccessModal" tabindex="-1" role="dialog" aria-labelledby="loginSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="loginSuccessModalLabel">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Welcome Back!
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <h4>Login successful!</h4>
+                <p class="mb-0">Welcome back to PharmaCare. Ready to continue shopping?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero section with inline background image styling -->
+<div class="hero-section" style="background-image: url('/assets/images/bg.jpg');">
+    <div class="container">
+        <div class="hero-content">
+            <h2 class="sub-title mb-2">Effective Medicine, New Medicine Everyday</h2>
+            <h1 class="mb-3">Welcome To PharmaCare</h1>
+            <p class="lead mb-4">Your Trusted Healthcare Partner</p>
+            <div class="d-flex justify-content-center">
+                <!-- Primary and secondary call-to-action buttons -->
+                <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-danger px-4 py-2 mr-2">SHOP NOW</a>
+                <a href="@Url.Action("About", "FrontEnd")" class="btn btn-outline-light px-4 py-2">LEARN MORE</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features section highlighting key benefits -->
+<div class="site-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="text-danger">Why Choose Us</h2>
+            </div>
+            <!-- Feature blocks with FontAwesome icons -->
+            <div class="col-md-4 text-center mb-4">
+                <div class="feature-block">
+                    <span class="icon mb-3">
+                        <i class="fas fa-shipping-fast fa-3x text-danger"></i>
+                    </span>
+                    <h3>Fast Delivery</h3>
+                    <p>Free shipping on orders over $50 with quick delivery to your doorstep.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="feature-block">
+                    <span class="icon mb-3">
+                        <i class="fas fa-certificate fa-3x text-danger"></i>
+                    </span>
+                    <h3>Certified Products</h3>
+                    <p>All our products are authentic and sourced from trusted manufacturers.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="feature-block">
+                    <span class="icon mb-3">
+                        <i class="fas fa-headset fa-3x text-danger"></i>
+                    </span>
+                    <h3>24/7 Support</h3>
+                    <p>Our PharmaCare pharmacists are available round the clock to answer your queries.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BMI Calculator section with health metrics functionality -->
+<div class="site-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center mb-5 fade-in">
+                <h2 class="text-danger">Health Metrics Calculator</h2>
+                <p class="lead">Calculate your BMI and get insights into your health status</p>
+            </div>
+            <div class="col-md-6 fade-in">
+                <div class="health-calculator shadow">
+                    <h4 class="mb-4 text-center">BMI Calculator</h4>
+                    <!-- BMI calculator form inputs -->
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" class="form-control" placeholder="Your Age">
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Height (cm)</label>
+                        <input type="number" id="height" class="form-control" placeholder="Your Height">
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" id="weight" class="form-control" placeholder="Your Weight">
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" class="form-control">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <!-- Calculate button with ID for JavaScript targeting -->
+                    <button id="calculateBtn" class="btn btn-danger btn-block mt-4">CALCULATE NOW</button>
+                    <!-- Loading indicator and results container -->
+                    <div class="loader mt-3" id="calculator-loader"></div>
+                    <div id="results" class="mt-4"></div>
+
+                    <div class="results-section">
+                        <!-- Medical disclaimer for BMI results -->
+                        <div class="alert alert-warning mt-3" role="alert">
+                            <strong>Disclaimer:</strong> This BMI result is for educational purposes only and should not be considered a medical diagnosis. For a more accurate assessment of your health, please consult a qualified healthcare professional.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prescription medication notice section -->
+<div class="site-section bg-light">
+    <div class="container">
+        <div class="prescription-notice p-4 mb-4 rounded shadow-sm bg-white">
+            <div class="row align-items-center">
+                <div class="col-md-1 text-center mb-3 mb-md-0">
+                    <i class="fas fa-prescription fa-3x text-danger"></i>
+                </div>
+                <div class="col-md-11">
+                    <h4 class="mb-2">We Now Offer Prescription Medications</h4>
+                    <p class="mb-0">Browse our wide range of prescription medications. All prescription items require valid doctor's prescriptions that must be verified before pickup. Visit our store page to learn more about our prescription policy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured products section -->
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="title-section text-center col-12">
+                <h2 class="text-danger text-uppercase">Our Recent Products</h2>
+                <p class="text-muted">Safe, effective medicines available without prescription</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Conditional rendering of featured products from ViewBag -->
+            @if (ViewBag.FeaturedProducts != null && ViewBag.FeaturedProducts.Count > 0)
+            {
+                foreach (var product in ViewBag.FeaturedProducts)
+                {
+                    <div class="col-sm-6 col-lg-4 text-center item mb-4">
+                        <div class="product-card">
+                            <!-- Product status tags based on stock and activity -->
+                            @if (!product.IsActive)
+                            {
+                                <span class="tag">Inactive</span>
+                            }
+                            else if (product.Stock <= 0)
+                            {
+                                <span class="tag">Out of Stock</span>
+                            }
+                            else if (product.Stock < 10)
+                            {
+                                <span class="tag">Low Stock</span>
+                            }
+
+                            <!-- Product image with link to detailed view -->
+                            <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">
+                                @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                {
+                                    <!-- Inline styles for consistent image display -->
+                                    <img src="@product.ImageUrl" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
+                                }
+                                else
+                                {
+                                    <!-- Fallback image for products without images -->
+                                    <img src="~/assets/images/product_01.png" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
+                                }
+                            </a>
+                            <!-- Product name link and price display -->
+                            <h3 class="text-dark"><a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">@product.ProductName</a></h3>
+                            <!-- Format price to 2 decimal places -->
+                            <p class="price text-dark">$@product.Price.ToString("F2")</p>
+                            <div class="medication-badges">
+                                <!-- Stock status badges with conditional styling -->
+                                @if (product.Stock > 10)
+                                {
+                                    <span class="badge badge-success"><i class="fas fa-check-circle"></i> In Stock</span>
+                                }
+                                else if (product.Stock > 0)
+                                {
+                                    <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Low Stock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                                }
+
+                                <!-- Category badge if available -->
+                                @if (product.Category != null)
+                                {
+                                    <span class="badge badge-info"><i class="fas fa-tag"></i> @product.Category.CategoryName</span>
+                                }
+                            </div>
+                            <!-- Add to cart button with data attributes for JavaScript -->
+                            <button class="btn btn-danger btn-sm btn-add-to-cart mt-2"
+                                    data-id="@product.ProductId"
+                                    data-name="@product.ProductName"
+                                    data-price="@product.Price"
+                            @(product.Stock <= 0 ? "disabled" : "")>
+                                @(product.Stock > 0 ? "Add to Cart" : "Out of Stock")
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Empty state when no products are available -->
+                <div class="col-12 text-center">
+                    <p>No products available at the moment.</p>
+                </div>
+            }
+        </div>
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <!-- Link to view all products in shop -->
+                <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-danger px-4 py-3">View All Products</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification for cart actions -->
+<div id="toast-notification" class="toast-notification">
+    <div class="toast-content">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <div class="toast-text">
+            <!-- Dynamic content updated by JavaScript -->
+            <strong id="toast-title">Added to Cart!</strong>
+            <p id="toast-message">Product added successfully</p>
+        </div>
+    </div>
+    <!-- Close button with onclick handler -->
+    <button class="toast-close" onclick="hideToast()">&times;</button>
+</div>
+
+@section Scripts {
+    <script>
+        /* Global JavaScript object for URL endpoints used by external JS files */
+        window.homeUrls = {
+            addToCart: '@Url.Action("AddToCart", "Cart")'
+        };
+
+        /* Pass TempData and URL parameters to JavaScript for modal display */
+        @if (TempData["RegistrationSuccess"] != null)
+        {
+            <text>window.registrationSuccess = '@TempData["RegistrationSuccess"]';</text>
+        }
+    </script>
+    <script src="~/assets/js/FrontEndViewScripts/HomePage.js"></script>
+    }

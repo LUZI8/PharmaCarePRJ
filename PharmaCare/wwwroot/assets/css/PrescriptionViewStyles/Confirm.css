@@ -1,0 +1,62 @@
+﻿.site-section .site-block-order-table,
+.site-section .site-block-order-table th,
+.site-section .site-block-order-table td,
+.site-section .col-md-6 .border p,
+.site-section .col-md-6 .border h3.h6,
+.site-section .col-md-6:last-child h2.h3,
+.site-section .col-md-6 .border .fas {
+    color: black !important; /* Forces black text for all order table elements in light mode */
+}
+
+    .site-section .site-block-order-table th {
+        border-bottom: 1px solid black !important; /* Black borders for table header bottom */
+        border-top: 1px solid black !important; /* Black borders for table header top */
+    }
+
+    .site-section .site-block-order-table,
+    .site-section .site-block-order-table tbody,
+    .site-section .site-block-order-table thead {
+        border-color: black !important; /* Black borders for all table sections */
+    }
+
+body.dark-mode .site-section .site-block-order-table,
+body.dark-mode .site-section .site-block-order-table th,
+body.dark-mode .site-section .site-block-order-table td,
+body.dark-mode .site-section .col-md-6 .border p,
+body.dark-mode .site-section .col-md-6 .border h3.h6,
+body.dark-mode .site-section .col-md-6:last-child h2.h3,
+body.dark-mode .site-section .col-md-6 .border .fas {
+    color: white !important; /* Forces white text for all order table elements in dark mode */
+}
+
+    body.dark-mode .site-section .site-block-order-table th {
+        border-bottom: 1px solid white !important; /* White borders for table header in dark mode */
+        border-top: 1px solid white !important;
+    }
+
+    body.dark-mode .site-section .site-block-order-table,
+    body.dark-mode .site-section .site-block-order-table tbody,
+    body.dark-mode .site-section .site-block-order-table thead {
+        border-color: white !important; /* White borders for all table sections in dark mode */
+    }
+
+body:not(.dark-mode) .site-section .site-block-order-table,
+body:not(.dark-mode) .site-section .site-block-order-table th,
+body:not(.dark-mode) .site-section .site-block-order-table td,
+body:not(.dark-mode) .site-section .col-md-6 .border p,
+body:not(.dark-mode) .site-section .col-md-6 .border h3.h6,
+body:not(.dark-mode) .site-section .col-md-6:last-child h2.h3,
+body:not(.dark-mode) .site-section .col-md-6 .border .fas {
+    color: black !important; /* Explicit black text targeting when dark mode is not active */
+}
+
+    body:not(.dark-mode) .site-section .site-block-order-table th {
+        border-bottom: 1px solid black !important; /* Explicit black borders when not in dark mode */
+        border-top: 1px solid black !important;
+    }
+
+    body:not(.dark-mode) .site-section .site-block-order-table,
+    body:not(.dark-mode) .site-section .site-block-order-table tbody,
+    body:not(.dark-mode) .site-section .site-block-order-table thead {
+        border-color: black !important; /* Explicit black table borders for light mode specificity */
+    }

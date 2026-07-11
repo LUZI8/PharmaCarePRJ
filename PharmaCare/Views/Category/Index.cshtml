@@ -1,0 +1,110 @@
+﻿@model IEnumerable<PharmaCare.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/assets/css/CategoryViewStyles/CategoryIndex.css" />
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom page-header">
+    <h1 class="h2">Categories</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <!-- Primary action button for creating new categories -->
+        <a href="@Url.Action("Create", "Category")" class="btn btn-primary add-new">
+            <i class="fas fa-plus mr-1"></i> ADD NEW CATEGORY
+        </a>
+    </div>
+</div>
+
+<!-- Success and error message display from TempData -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fas fa-check-circle mr-2"></i> @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fas fa-exclamation-circle mr-2"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Main categories management table -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Category Inventory</h6>
+        <div class="search-box">
+            <!-- Search input with FontAwesome icon -->
+            <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search categories...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table admin-table categories-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>CATEGORY NAME</th>
+                        <th>PRODUCTS</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Conditional rendering based on categories availability -->
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <!-- Data-label attributes for responsive table design -->
+                                <td data-label="ID">@item.CategoryID</td>
+                                <td data-label="Category Name">@item.CategoryName</td>
+                                <!-- Safe navigation and null coalescing for product count -->
+                                <td data-label="Products">@(item.Products?.Count ?? 0)</td>
+                                <td data-label="Actions" class="action-btns">
+                                    <!-- Action buttons with tooltips and route parameters -->
+                                    <a href="@Url.Action("Edit", "Category", new { id = item.CategoryID })" data-toggle="tooltip" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", "Category", new { id = item.CategoryID })" data-toggle="tooltip" title="Details">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Category", new { id = item.CategoryID })" data-toggle="tooltip" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Empty state display when no categories exist -->
+                        <tr>
+                            <!-- Colspan to span entire table width -->
+                            <td colspan="4" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="fas fa-tag fa-3x text-muted mb-3"></i>
+                                    <h5>No Categories Found</h5>
+                                    <p class="text-muted">Start by adding your first category to organize your products.</p>
+                                    <!-- Call-to-action button in empty state -->
+                                    <a href="@Url.Action("Create", "Category")" class="btn btn-primary add-new mt-2">
+                                        <i class="fas fa-plus mr-1"></i> Add New Category
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- External JavaScript file reference for table functionality -->
+<link rel="stylesheet" href="~/assets/css/CategoryViewScripts/CategoryIndex.js" />

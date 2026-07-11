@@ -1,0 +1,174 @@
+﻿
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; /* Creates circular avatar shape */
+    background-color: #f8f9fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 3rem;
+    color: #d1d3e2;
+    transition: all 0.3s ease; /* Smooth animation for all property changes */
+}
+
+.delete-card {
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15); /* Subtle shadow for card depth effect */
+    margin-bottom: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+    .delete-card .card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e3e6f0; /* Separator line between header and body */
+        border-top-left-radius: 0.35rem;
+        border-top-right-radius: 0.35rem;
+        transition: all 0.3s ease;
+    }
+
+    .delete-card .card-body {
+        padding: 1.5rem;
+    }
+
+.alert-delete {
+    background-color: #f8d7da; /* Light red background for warning alert */
+    border-color: #f5c6cb;
+    color: #721c24; /* Dark red text for high contrast */
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.35rem;
+    transition: all 0.3s ease;
+}
+
+.page-title {
+    margin-bottom: 1.5rem;
+    font-weight: 500; /* Medium font weight for page titles */
+    transition: color 0.3s ease;
+}
+
+dt {
+    font-weight: 600; /* Bold font weight for definition terms */
+}
+
+dd {
+    margin-bottom: 0.75rem;
+}
+
+.edit-instead-btn,
+a.btn-outline-primary.edit-instead-btn,
+.delete-card a.btn-outline-primary.edit-instead-btn {
+    background-color: #dc3545 !important; /* Red background for edit button to match theme */
+    border-color: #dc3545 !important;
+    color: white !important;
+    transition: none !important; /* Disables transition effects for consistent appearance */
+}
+
+    .edit-instead-btn:hover,
+    a.btn-outline-primary.edit-instead-btn:hover,
+    .delete-card a.btn-outline-primary.edit-instead-btn:hover {
+        background-color: #dc3545 !important; /* Maintains red color on hover */
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important; /* Removes default button shadow effects */
+        transform: none !important;
+    }
+
+.btn-danger {
+    background-color: #dc3545 !important; /* Red background for danger buttons */
+    border-color: #dc3545 !important;
+    color: white !important;
+    transition: none !important;
+}
+
+    .btn-danger:hover {
+        background-color: #dc3545 !important; /* Consistent red color on hover */
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important;
+    }
+
+body.dark-mode .delete-card {
+    background-color: #1e1e1e; /* Dark background for cards in dark mode */
+    border-color: #2c2c2c;
+}
+
+    body.dark-mode .delete-card .card-header {
+        background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent black overlay for header */
+        border-bottom-color: #2c2c2c;
+    }
+
+body.dark-mode .page-title {
+    color: #e0e0e0; /* Light gray text for titles in dark mode */
+}
+
+body.dark-mode .user-avatar {
+    background-color: #343a40; /* Dark gray background for avatars in dark mode */
+    color: #6c757d;
+}
+
+body.dark-mode .alert-delete {
+    background-color: rgba(220, 53, 69, 0.2); /* Semi-transparent red for warning alert */
+    border-color: rgba(220, 53, 69, 0.3);
+    color: #f8d7da; /* Light red text for readability */
+}
+
+body.dark-mode .text-muted {
+    color: #aaaaaa !important; /* Light gray for muted text in dark mode */
+}
+
+body.dark-mode .text-info {
+    color: #17a2b8 !important; /* Blue color for info text in dark mode */
+}
+
+body.dark-mode dt {
+    color: #e0e0e0; /* Light color for definition terms in dark mode */
+}
+
+@media (max-width: 991.98px) {
+    .info-card {
+        margin-top: 1.5rem; /* Adds top margin for mobile layout stacking */
+    }
+}
+
+@media (max-width: 767.98px) {
+    .delete-card {
+        padding: 1rem; /* Reduced padding for smaller screens */
+    }
+
+        .delete-card .card-header {
+            padding: 0.75rem 1rem; /* Smaller header padding on mobile */
+        }
+
+    dt, dd {
+        padding: 0.25rem 0; /* Reduced padding for definition lists on mobile */
+    }
+}
+
+@media (max-width: 575.98px) {
+    .user-avatar {
+        width: 80px; /* Smaller avatar size for very small screens */
+        height: 80px;
+        font-size: 2.5rem;
+    }
+
+    .alert-delete {
+        padding: 0.75rem; /* Reduced alert padding for mobile */
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column; /* Stacks form elements vertically on mobile */
+    }
+
+        .form-group .btn {
+            margin-bottom: 0.5rem;
+            width: 100%; /* Full width buttons on mobile */
+        }
+
+            .form-group .btn + .btn {
+                margin-left: 0 !important; /* Removes left margin between stacked buttons */
+            }
+}

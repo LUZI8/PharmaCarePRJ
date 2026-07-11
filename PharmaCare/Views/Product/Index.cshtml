@@ -1,0 +1,282 @@
+﻿@model IEnumerable<PharmaCare.ViewModels.ProductViewModel>
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+@section Styles {
+    <style>
+        /* Ensure button text remains white for better contrast */
+        .btn-primary {
+            color: #fff !important;
+        }
+
+            .btn-primary:hover {
+                color: #fff !important;
+            }
+        /* Expiry status styling */
+        .expiry-info {
+            font-size: 0.8em;
+            margin-top: 2px;
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+    </style>
+}
+<!-- Page header with title and primary action controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Products</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Add new product button -->
+            <a href="@Url.Action("Create", "Product")" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> Add New Product
+            </a>
+            <!-- Category management button -->
+            <a href="@Url.Action("Index", "Category")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-tag"></i> Manage Categories
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Success message display for completed operations -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fas fa-check-circle mr-2"></i> @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- Error message display for failed operations -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fas fa-exclamation-circle mr-2"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Product inventory management table with search and filtering -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="m-0 font-weight-bold">Product Inventory</h5>
+        <div class="d-flex">
+            <!-- Search functionality for finding specific products -->
+            <div class="input-group mr-2" style="width: 250px;">
+                <input type="text" class="form-control form-control-sm" placeholder="Search products..." id="searchInput">
+                <div class="input-group-append">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Status-based filtering dropdown with expiry options -->
+            <select class="form-control form-control-sm mr-2" style="width: 150px;" id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="expired">Expired</option>
+                <option value="expiring">Expiring Soon</option>
+            </select>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <!-- Product data table with comprehensive product information -->
+            <table class="table table-hover admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th style="width: 80px;">Image</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Expiry</th>
+                        <th>Category</th>
+                        <th style="width: 130px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <!-- Product ID display -->
+                                <td>@item.ProductId</td>
+                                <!-- Product image with fallback placeholder -->
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.ProductName" class="img-thumbnail" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-image text-muted"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <!-- Product name with link to details page -->
+                                <td>
+                                    <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="font-weight-bold text-dark">
+                                        @item.ProductName
+                                    </a>
+                                </td>
+                                <!-- Price formatting with currency symbol -->
+                                <td>$@item.Price.ToString("0.00")</td>
+                                <!-- Current stock quantity -->
+                                <td>@item.Stock</td>
+                                <!-- Dynamic status badges based on active state and stock levels -->
+                                <td>
+                                    <div class="badge-group">
+                                        @if (!item.IsActive)
+                                        {
+                                            <span class="badge badge-secondary">Inactive</span>
+                                        }
+                                        else if (item.Stock > 10)
+                                        {
+                                            <span class="badge badge-success">Active</span>
+                                        }
+                                        else if (item.Stock > 0)
+                                        {
+                                            <span class="badge badge-warning">Low Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-danger">Out of Stock</span>
+                                        }
+
+                                        <!-- Additional prescription indicator badge for active products -->
+                                        @if (item.RequiresPrescription && item.IsActive)
+                                        {
+                                            <span class="badge badge-info">Prescription</span>
+                                        }
+                                    </div>
+                                </td>
+                                <!-- NEW: Expiry status badges and information -->
+                                <td>
+                                    <div class="badge-group">
+                                        <span class="badge @item.ExpiryBadgeClass">
+                                            <i class="fas fa-calendar-times"></i> @item.ExpiryDisplayText
+                                        </span>
+                                    </div>
+                                    <div class="expiry-info text-muted">
+                                        @item.ExpiryDate.ToString("MMM dd, yyyy")
+                                    </div>
+                                </td>
+                                <!-- Product category display -->
+                                <td>@item.Category.CategoryName</td>
+                                <!-- Action buttons for product management operations -->
+                                <td class="action-btns">
+                                    <!-- Edit product information -->
+                                    <a href="@Url.Action("Edit", "Product", new { id = item.ProductId })" data-toggle="tooltip" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <!-- View detailed product information -->
+                                    <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" data-toggle="tooltip" title="Details">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <!-- Delete product -->
+                                    <a href="@Url.Action("Delete", "Product", new { id = item.ProductId })" data-toggle="tooltip" title="Delete">
+                                        <i class="fas fa-trash-alt text-danger"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Empty state display when no products exist -->
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                                    <h5>No products available</h5>
+                                    <p class="text-muted">Add your first product to get started.</p>
+                                    <!-- Call-to-action button for adding first product -->
+                                    <a href="@Url.Action("Create", "Product")" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Add Product
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            /* Initialize tooltips for action buttons */
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // Auto-hide alert messages after 5 seconds
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+
+        // Search functionality for products by name or ID
+        $("#searchBtn").on("click", function() {
+            var searchTerm = $("#searchInput").val().toLowerCase();
+            $(".admin-table tbody tr").each(function() {
+                var productName = $(this).find("td:nth-child(3)").text().toLowerCase();
+                var productId = $(this).find("td:nth-child(1)").text().toLowerCase();
+                if (productName.includes(searchTerm) || productId.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Enter key search trigger for better user experience
+        $("#searchInput").on("keyup", function(e) {
+            if (e.key === 'Enter') {
+                $("#searchBtn").click();
+            }
+        });
+
+        // Enhanced status filter functionality with expiry options
+        $("#statusFilter").on("change", function() {
+            var status = $(this).val();
+            if (status === "all") {
+                $(".admin-table tbody tr").show();
+            } else if (status === "active") {
+                $(".admin-table tbody tr").each(function() {
+                    /* Show rows with success or warning badges (active products) */
+                    var isActive = $(this).find("td:nth-child(6) .badge-success, td:nth-child(6) .badge-warning").length > 0;
+                    $(this).toggle(isActive);
+                });
+            } else if (status === "inactive") {
+                $(".admin-table tbody tr").each(function() {
+                    /* Show rows with secondary badges (inactive products) */
+                    var isInactive = $(this).find("td:nth-child(6) .badge-secondary").length > 0;
+                    $(this).toggle(isInactive);
+                });
+            } else if (status === "expired") {
+                $(".admin-table tbody tr").each(function() {
+                    /* Show rows with expired badge */
+                    var isExpired = $(this).find("td:nth-child(7) .badge-danger").length > 0;
+                    $(this).toggle(isExpired);
+                });
+            } else if (status === "expiring") {
+                $(".admin-table tbody tr").each(function() {
+                    /* Show rows with expiring soon badge */
+                    var isExpiring = $(this).find("td:nth-child(7) .badge-warning").length > 0;
+                    $(this).toggle(isExpiring);
+                });
+            }
+        });
+    </script>
+}

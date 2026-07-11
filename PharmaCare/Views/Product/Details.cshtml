@@ -1,0 +1,349 @@
+@model PharmaCare.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = "Product Details";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+<style>
+    /* Ensure button text remains white for better contrast */
+    .btn-primary {
+        color: #fff !important;
+    }
+
+        .btn-primary:hover {
+            color: #fff !important;
+        }
+    /* Product description container with dark mode support */
+    body.dark-mode .product-description {
+        background-color: #2a2a2a;
+        border-color: #444;
+    }
+
+    .product-description {
+        background-color: #f8f9fc;
+        border-radius: 0.35rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        white-space: pre-wrap;
+        max-height: 400px;
+        overflow-y: auto;
+        line-height: 1.6;
+        border: 1px solid #e3e6f0;
+    }
+    /* Dark mode specific styling for product description */
+    body.dark-mode .product-description {
+        background-color: #2a2a2a;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+    /* Expiry status cards */
+    .expiry-status-card {
+        border-left: 4px solid;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .expiry-good {
+        border-left-color: #28a745;
+        background-color: #d4edda;
+    }
+
+    .expiry-warning {
+        border-left-color: #17a2b8;
+        background-color: #d1ecf1;
+    }
+
+    .expiry-soon {
+        border-left-color: #ffc107;
+        background-color: #fff3cd;
+    }
+
+    .expiry-expired {
+        border-left-color: #dc3545;
+        background-color: #f8d7da;
+    }
+</style>
+
+<!-- Page header with title and action controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Product Details</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Navigation back to product list -->
+            <a href="@Url.Action("Index", "Product")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+            <!-- Quick edit action button -->
+            <a href="@Url.Action("Edit", "Product", new { id = Model?.ProductId })" class="btn btn-sm btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content layout with product details and inventory sidebar -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="details-card">
+            <!-- Card header with product name and dynamic status badges -->
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">@(Model?.ProductName ?? "Product")</h5>
+                <div>
+                    <!-- Dynamic status badge based on product active state and stock levels -->
+                    @if (Model?.IsActive == true)
+                    {
+                        @if (Model.Stock > 10)
+                        {
+                            <span class="badge badge-success">Active</span>
+                        }
+                        else if (Model.Stock > 0)
+                        {
+                            <span class="badge badge-warning">Low Stock</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Out of Stock</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="badge badge-secondary">Inactive</span>
+                    }
+
+                    <!-- NEW: Expiry status badge -->
+                    <span class="badge @Model.ExpiryBadgeClass ml-1">
+                        <i class="fas fa-calendar-times"></i> @Model.ExpiryDisplayText
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <!-- Product image display with fallback placeholder -->
+                    @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.ProductName" class="product-image img-fluid mb-3" />
+                    }
+                    else
+                    {
+                        <div class="product-image bg-light d-flex align-items-center justify-content-center mb-3">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-8">
+                    <!-- Comprehensive product information in structured format -->
+                    <dl class="row product-info">
+                        <dt class="col-sm-4">Product ID</dt>
+                        <dd class="col-sm-8">@(Model?.ProductId ?? 0)</dd>
+
+                        <dt class="col-sm-4">Price</dt>
+                        <dd class="col-sm-8">$@(Model?.Price.ToString("0.00") ?? "0.00")</dd>
+
+                        <dt class="col-sm-4">Stock</dt>
+                        <dd class="col-sm-8">@(Model?.Stock ?? 0) units</dd>
+
+                        <!-- Category information with null safety -->
+                        <dt class="col-sm-4">Category</dt>
+                        <dd class="col-sm-8">
+                            @if (Model?.Category != null)
+                            {
+                                @Model.Category.CategoryName
+                            }
+                            else
+                            {
+                                <span>Not Categorized</span>
+                            }
+                        </dd>
+
+                        <!-- NEW: Expiry Date Information -->
+                        <dt class="col-sm-4">Expiry Date</dt>
+                        <dd class="col-sm-8">
+                            @(Model?.ExpiryDate.ToString("MMM dd, yyyy") ?? "Not Set")
+                            @if (Model != null)
+                            {
+                                var daysUntilExpiry = (Model.ExpiryDate.Date - DateTime.Now.Date).Days;
+                                <small class="text-muted d-block">
+                                    @if (daysUntilExpiry < 0)
+                                    {
+                                        <span class="text-danger">Expired @Math.Abs(daysUntilExpiry) days ago</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@daysUntilExpiry days remaining</span>
+                                    }
+                                </small>
+                            }
+                        </dd>
+
+                        <!-- Product status with text styling -->
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8">
+                            @if (Model?.IsActive == true)
+                            {
+                                <span class="text-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="text-secondary">Inactive</span>
+                            }
+                        </dd>
+
+                        <!-- Product creation timestamp -->
+                        <dt class="col-sm-4">Created</dt>
+                        <dd class="col-sm-8">
+                            @(Model?.CreatedAt.ToString("MMM dd, yyyy") ?? DateTime.Now.ToString("MMM dd, yyyy"))
+                        </dd>
+
+                        <!-- Last update timestamp with null check -->
+                        <dt class="col-sm-4">Last Updated</dt>
+                        <dd class="col-sm-8">
+                            @(Model?.UpdatedAt.HasValue == true ? Model.UpdatedAt.Value.ToString("MMM dd, yyyy") : "Not updated")
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Product description section with scrollable container -->
+            <div class="mt-4">
+                <h5>Description</h5>
+                <div class="product-description">
+                    @(string.IsNullOrEmpty(Model?.Description) ? "No description available" : Model.Description)
+                </div>
+            </div>
+
+            <!-- Action buttons for product management operations -->
+            <div class="mt-4 d-flex">
+                <!-- Edit product information button -->
+                <a href="@Url.Action("Edit", "Product", new { id = Model?.ProductId })" class="btn btn-primary mr-2">
+                    <i class="fas fa-edit"></i> Edit Product
+                </a>
+                <!-- Delete product button -->
+                <a href="@Url.Action("Delete", "Product", new { id = Model?.ProductId })" class="btn btn-outline-danger mr-2">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </a>
+                <!-- Back to list navigation -->
+                <a href="@Url.Action("Index", "Product")" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory status sidebar with visual indicators -->
+    <div class="col-lg-4">
+        <!-- Stock Status Card -->
+        <div class="details-card">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">Inventory Status</h5>
+            </div>
+            <div class="p-3">
+                <!-- Stock level visualization with progress bar -->
+                <div class="mb-3">
+                    <h6>Stock Level</h6>
+                    <div class="progress" style="height: 20px;">
+                        @{
+                            /* Calculate stock percentage (capped at 100%) and determine color coding */
+                            var stockPercentage = Model?.Stock > 100 ? 100 : Model?.Stock ?? 0;
+                            var progressClass = Model?.Stock > 10 ? "bg-success" : (Model?.Stock > 0 ? "bg-warning" : "bg-danger");
+                        }
+                        <div class="progress-bar @progressClass" role="progressbar" style="width: @stockPercentage%;" aria-valuenow="@(Model?.Stock ?? 0)" aria-valuemin="0" aria-valuemax="100">@(Model?.Stock ?? 0) units</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Expiry Status Card -->
+        <div class="details-card mt-3">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">
+                    <i class="fas fa-calendar-times"></i> Expiry Status
+                </h5>
+            </div>
+            <div class="p-3">
+                @if (Model != null)
+                {
+                    <!-- Expiry status visual indicator -->
+                    <div class="expiry-status-card @($"expiry-{Model.ExpiryStatus}")">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3">
+                                @if (Model.IsExpired)
+                                {
+                                    <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                }
+                                else if (Model.IsExpiringSoon)
+                                {
+                                    <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-check-circle fa-2x text-success"></i>
+                                }
+                            </div>
+                            <div>
+                                <h6 class="mb-1">@Model.ExpiryDisplayText</h6>
+                                <p class="mb-0 small text-muted">
+                                    Expires: @Model.ExpiryDate.ToString("MMM dd, yyyy")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed expiry information -->
+                    <div class="mt-3">
+                        <h6>Expiry Details</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Expiry Date:</strong> @Model.ExpiryDate.ToString("dddd, MMMM dd, yyyy")</li>
+                            <li>
+                                <strong>Days Remaining:</strong>
+                                @{
+                                    var daysRemaining = (Model.ExpiryDate.Date - DateTime.Now.Date).Days;
+                                }
+                                @if (daysRemaining < 0)
+                                {
+                                    <span class="text-danger">Expired @Math.Abs(daysRemaining) days ago</span>
+                                }
+                                else
+                                {
+                                    <span class="@(daysRemaining <= 30 ? "text-warning" : "text-success")">@daysRemaining days</span>
+                                }
+                            </li>
+                            <li>
+                                <strong>Status:</strong>
+                                <span class="badge @Model.ExpiryBadgeClass">@Model.ExpiryDisplayText</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Action recommendations based on expiry status -->
+                    @if (Model.IsExpired)
+                    {
+                        <div class="alert alert-danger mt-3 p-2">
+                            <small>
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Action Required:</strong> This product is expired and should be removed from inventory immediately.
+                            </small>
+                        </div>
+                    }
+                    else if (Model.IsExpiringSoon)
+                    {
+                        <div class="alert alert-warning mt-3 p-2">
+                            <small>
+                                <i class="fas fa-clock"></i>
+                                <strong>Attention:</strong> This product is expiring soon. Consider promotional pricing or staff notifications.
+                            </small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success mt-3 p-2">
+                            <small>
+                                <i class="fas fa-check"></i>
+                                <strong>Good:</strong> This product has adequate shelf life remaining.
+                            </small>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

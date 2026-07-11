@@ -1,0 +1,137 @@
+﻿@model PharmaCare.Models.Category
+
+@{
+    ViewData["Title"] = "Category Details";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+
+<!-- Inline styles for button and dark mode styling -->
+<style>
+    .btn-primary {
+        color: #fff !important;
+    }
+
+        .btn-primary:hover {
+            color: #fff !important;
+        }
+
+    .associated-products {
+        background-color: #f8f9fc;
+        border-radius: 0.35rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e3e6f0;
+    }
+
+    /* Dark mode styling for associated products section */
+    body.dark-mode .associated-products {
+        background-color: #2a2a2a;
+        border-color: #444;
+    }
+</style>
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Category Details</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Navigation and action buttons in header -->
+            <a href="@Url.Action("Index", "Category")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+            <!-- Direct edit link with category ID parameter -->
+            <a href="@Url.Action("Edit", "Category", new { id = Model?.CategoryID })" class="btn btn-sm btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Category information and associated products display -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <!-- Dynamic header with category name -->
+                <h5 class="m-0 font-weight-bold">@Model.CategoryName</h5>
+            </div>
+            <div class="card-body">
+                <!-- Definition list for category properties -->
+                <dl class="row">
+                    <dt class="col-sm-3">Category ID</dt>
+                    <dd class="col-sm-9">@Model.CategoryID</dd>
+
+                    <dt class="col-sm-3">Category Name</dt>
+                    <dd class="col-sm-9">@Model.CategoryName</dd>
+
+                    <dt class="col-sm-3">Associated Products</dt>
+                    <dd class="col-sm-9">
+                        <!-- Badge showing product count with null coalescing -->
+                        <span class="badge badge-info">@(Model.Products?.Count ?? 0) Products</span>
+                    </dd>
+                </dl>
+
+                <!-- Associated products section -->
+                <h5 class="mt-4">Associated Products</h5>
+                <div class="associated-products">
+                    <!-- Conditional rendering based on products availability -->
+                    @if (Model.Products != null && Model.Products.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loop through associated products -->
+                                    @foreach (var product in Model.Products)
+                                    {
+                                        <tr>
+                                            <td>@product.ProductId</td>
+                                            <td>@product.ProductName</td>
+                                            <!-- Format price to 2 decimal places -->
+                                            <td>$@product.Price.ToString("0.00")</td>
+                                            <td>@product.Stock</td>
+                                            <td class="action-btns">
+                                                <!-- Link to product details with tooltip -->
+                                                <a href="@Url.Action("Details", "Product", new { id = product.ProductId })" data-toggle="tooltip" title="View Product">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Empty state when no products are associated -->
+                        <p class="text-muted">No products associated with this category.</p>
+                    }
+                </div>
+
+                <!-- Action buttons section -->
+                <div class="mt-4">
+                    <!-- Edit category button -->
+                    <a href="@Url.Action("Edit", "Category", new { id = Model.CategoryID })" class="btn btn-primary mr-2">
+                        <i class="fas fa-edit"></i> Edit Category
+                    </a>
+                    <!-- Delete category button -->
+                    <a href="@Url.Action("Delete", "Category", new { id = Model.CategoryID })" class="btn btn-outline-danger mr-2">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                    <!-- Back to list button -->
+                    <a href="@Url.Action("Index", "Category")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

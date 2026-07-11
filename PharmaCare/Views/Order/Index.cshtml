@@ -1,0 +1,130 @@
+﻿@model IEnumerable<PharmaCare.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    /* Determine if current user has admin privileges for expanded view */
+    bool isAdmin = ViewBag.UserRole == "Admin";
+    ViewBag.IsLoggedIn = true;
+    /* Extract username from session with fallback */
+    var userName = Context.Session.GetString("UserName");
+    ViewBag.UserName = !string.IsNullOrEmpty(userName) ? userName : "User";
+    /* Show categories navigation on this page */
+    ViewBag.HideCategories = false;
+}
+
+<!-- Import orders list specific styling -->
+<link rel="stylesheet" href="/assets/css/OrderViewStyles/Index.css">
+
+<!-- Page header with dynamic title based on user role -->
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0">
+                <strong class="text-black">@(isAdmin ? "All Orders" : "My Orders")</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="site-section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <div class="site-blocks-table">
+                    @if (Model.Any())
+                    {
+                        <!-- Pagination information display for table navigation -->
+                        <div id="pagination-info" class="mb-3">
+                            <span class="text-muted">Showing <span id="showing-start">1</span>-<span id="showing-end">10</span> of <span id="total-items">@Model.Count()</span> items</span>
+                        </div>
+
+                        <!-- Orders data table with role-based column visibility -->
+                        <table class="table table-bordered" id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <!-- Customer column only visible to admin users -->
+                                    @if (isAdmin)
+                                    {
+                                        <th>Customer</th>
+                                    }
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr class="table-row">
+                                        <!-- Unique order identifier -->
+                                        <td>@order.OrderNumber</td>
+
+                                        <!-- Customer information - admin view only -->
+                                        @if (isAdmin)
+                                        {
+                                            <td>@order.User.FirstName @order.User.LastName</td>
+                                        }
+
+                                        <!-- Order creation date -->
+                                        <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+
+                                        <!-- Order total amount with currency formatting -->
+                                        <td>$@order.TotalAmount.ToString("0.00")</td>
+
+                                        <!-- Order status with dynamic badge styling -->
+                                        <td>
+                                            @{
+                                                /* Status badge color mapping for visual clarity */
+                                                var statusClass = order.Status.ToLower() switch
+                                                {
+                                                    "pending" => "warning",
+                                                    "processing" => "info",
+                                                    "shipped" => "primary",
+                                                    "delivered" => "success",
+                                                    "cancelled" => "danger",
+                                                    _ => "secondary"
+                                                };
+                                            }
+                                            <span class="badge badge-@statusClass">@order.Status</span>
+                                        </td>
+
+                                        <!-- Action buttons for order management -->
+                                        <td>
+                                            <a href="@Url.Action("Details", "Order", new { id = order.OrderId })" class="btn btn-danger btn-sm view-btn">View</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination controls for large order lists -->
+                        <div id="pagination-controls" class="d-flex justify-content-center mt-4">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination" id="pagination-list">
+                                    <!-- Pagination generated dynamically by JavaScript -->
+                                </ul>
+                            </nav>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Empty state when no orders exist -->
+                        <div class="empty-orders-container text-center py-5">
+                            <h3 class="text-center mb-4">No orders found</h3>
+                            <p class="text-center mb-4">
+                                <!-- Call-to-action to start shopping when no orders exist -->
+                                <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-danger no-hover-effect">CONTINUE SHOPPING</a>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import JavaScript for pagination and table functionality -->
+<script src="/assets/js/OrderViewScripts/Index.js"></script>

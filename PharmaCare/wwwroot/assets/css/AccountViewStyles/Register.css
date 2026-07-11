@@ -1,0 +1,353 @@
+﻿/* CSS custom properties for consistent theming across components */
+:root {
+    --primary-color: #dc3545; /* Main brand color - red */
+    --text-color: #fff; /* Default text color for dark theme */
+    --bg-color: #1e1e1e; /* Dark background color */
+    --card-bg: #2d2d2d; /* Card/form container background */
+    --input-bg: #333; /* Input field background color */
+    --border-color: #444; /* Border color for form elements */
+    --success-color: #28a745; /* Green color for success states */
+    --error-color: #dc3545; /* Red color for error states */
+}
+
+/* Global body styling with flexbox layout structure */
+body {
+    font-family: 'Rubik', sans-serif; /* Modern, clean font family */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column; /* Vertical layout for header, content, footer */
+}
+
+    /* Light theme color variable overrides */
+    body.light-mode {
+        --text-color: #333; /* Dark text for light backgrounds */
+        --bg-color: #f8f9fa; /* Light gray background */
+        --card-bg: #ffffff; /* White card backgrounds */
+        --input-bg: #ffffff; /* White input backgrounds */
+        --border-color: #ced4da; /* Light border colors */
+    }
+
+/* Site header with navigation and branding elements */
+.header {
+    display: flex;
+    justify-content: space-between; /* Logo on left, theme toggle on right */
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--bg-color);
+}
+
+/* Brand logo text styling */
+.logo a {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 700; /* Bold weight for brand emphasis */
+    letter-spacing: 1px; /* Slight letter spacing for modern appearance */
+}
+
+/* Theme toggle button with clean styling */
+.theme-toggle button {
+    background: none;
+    border: none !important; /* Force remove any default borders */
+    outline: none !important; /* Force remove focus outline */
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    box-shadow: none !important; /* Force remove any box shadows */
+}
+
+.theme-toggle span {
+    font-size: 24px; /* Larger icons for better visibility and interaction */
+}
+
+/* Main registration form container */
+.signup-container {
+    width: 100%;
+    max-width: 700px; /* Wider than login for multiple fields */
+    margin: 3rem auto;
+    padding: 2.5rem;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.3); /* Strong shadow for card depth */
+    flex: 1; /* Takes remaining space in flexbox layout */
+}
+
+/* Registration form title */
+.form-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    font-size: 2rem;
+}
+
+/* Error message container for validation feedback */
+.error-message {
+    background-color: var(--error-color); /* Red background for errors */
+    color: white;
+    border: 1px solid #c82333;
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+    .error-message ul {
+        margin: 0;
+        padding-left: 20px; /* Indentation for error list items */
+    }
+
+/* Two-column form layout container */
+.form-row {
+    display: flex;
+    margin: 0 -10px; /* Negative margin to offset child margins */
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+    /* Individual form groups within rows */
+    .form-row .form-group {
+        flex: 1; /* Equal width distribution */
+        margin: 0 10px 20px; /* Spacing between columns and bottom */
+        min-width: calc(50% - 20px); /* Minimum width for responsive behavior */
+    }
+
+/* Individual form field container */
+.form-group {
+    position: relative; /* Allows absolute positioning of child elements */
+    margin-bottom: 1.5rem;
+}
+
+/* Form input field styling */
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+    /* Focus state with brand color accent */
+    .form-control:focus {
+        border-color: var(--primary-color); /* Brand color border on focus */
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); /* Subtle glow effect */
+    }
+
+/* Password field container with relative positioning */
+.password-container {
+    position: relative; /* Allows absolute positioning of toggle icon */
+}
+
+/* Password visibility toggle icon positioning */
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 5; /* Ensures icon stays above input field */
+}
+
+/* Password requirements information box */
+.password-requirements {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #b0b0b0;
+    background-color: rgba(0,0,0,0.15); /* Semi-transparent dark background */
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Light mode override for password requirements */
+.light-mode .password-requirements {
+    background-color: rgba(0,0,0,0.05); /* Light semi-transparent background */
+    color: #666;
+}
+
+.password-requirements p {
+    margin: 0 0 5px 0;
+    font-weight: bold; /* Bold headings for requirement sections */
+}
+
+.password-requirements ul {
+    margin: 0;
+    padding-left: 20px; /* Indentation for requirement list */
+}
+
+/* Password requirement validation states */
+.requirement-met {
+    color: var(--success-color); /* Green for met requirements */
+}
+
+.requirement-not-met {
+    color: var(--error-color); /* Red for unmet requirements */
+}
+
+/* Form validation error messages */
+.password-error,
+.field-error {
+    color: var(--error-color);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* Primary submit button styling */
+.submit-btn {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    text-align: center;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.2s; /* Smooth color transition */
+}
+
+    .submit-btn:hover {
+        background-color: #c82333; /* Darker shade on hover */
+    }
+
+/* Sign-in link at bottom of form */
+.sign-in-link {
+    text-align: center;
+    color: var(--text-color);
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+    .sign-in-link a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+        .sign-in-link a:hover {
+            text-decoration: underline; /* Underline on hover for link indication */
+        }
+
+/* Site footer with automatic bottom positioning */
+.site-footer {
+    margin-top: auto; /* Pushes footer to bottom with flexbox */
+    background-color: var(--bg-color);
+    padding: 2rem 0;
+    color: #adb5bd;
+}
+
+    /* Footer container with responsive width */
+    .site-footer .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+        max-width: 1140px; /* Maximum width for large screens */
+    }
+
+    /* Footer flex row layout */
+    .site-footer .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    /* Footer column sizing for three-column layout */
+    .site-footer .col-md-4 {
+        flex: 0 0 33.333333%; /* One-third width for desktop */
+        max-width: 33.333333%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    /* Footer section headings */
+    .site-footer h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    /* Footer descriptive text */
+    .site-footer p {
+        color: #adb5bd;
+        font-size: 0.9rem;
+        line-height: 1.5; /* Improved readability */
+    }
+
+    /* Footer navigation lists */
+    .site-footer ul {
+        list-style: none; /* Remove default bullet points */
+        padding-left: 0;
+        margin-bottom: 1rem;
+    }
+
+        .site-footer ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer link styling with hover effects */
+        .site-footer ul.footer-link li a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.2s; /* Smooth color transition */
+        }
+
+            .site-footer ul.footer-link li a:hover {
+                color: var(--primary-color); /* Brand color on hover */
+            }
+
+    /* Contact information list styling */
+    .site-footer .contact-info li {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+        /* Contact information icons */
+        .site-footer .contact-info li i {
+            margin-right: 0.75rem;
+            color: var(--primary-color); /* Brand color for contact icons */
+        }
+
+    /* Copyright section at bottom of footer */
+    .site-footer .copyright {
+        margin-top: 2rem;
+        text-align: center;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle top border */
+        color: #adb5bd;
+        font-size: 0.9rem;
+    }
+
+/* Mobile responsive footer layout */
+@media screen and (max-width: 767px) {
+    .site-footer .col-md-4 {
+        flex: 0 0 100%; /* Full width columns on mobile */
+        max-width: 100%;
+        margin-bottom: 2rem;
+    }
+}
+
+/* Theme toggle icon animation effects */
+.moon-icon, .sun-icon {
+    display: inline-block;
+    transition: transform 0.3s ease; /* Smooth rotation animation */
+}
+
+/* Mobile responsive form adjustments */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column; /* Stack form fields vertically on mobile */
+    }
+
+        .form-row .form-group {
+            margin: 0 0 20px; /* Remove horizontal margins on mobile */
+        }
+}

@@ -1,0 +1,115 @@
+﻿body.dark-mode .site-blocks-table h2 {
+    color: white !important; /* White text for table headings in dark mode */
+}
+
+body.dark-mode .table {
+    color: white !important; /* White text for all table content in dark mode */
+}
+
+body.dark-mode .table-bordered {
+    border-color: #495057 !important; /* Gray borders for bordered tables in dark mode */
+}
+
+body.dark-mode .table thead th {
+    border-bottom-color: #495057 !important; /* Gray border under table headers */
+    background-color: #343a40 !important; /* Dark gray background for table headers */
+    color: white !important;
+}
+
+body.dark-mode .table tbody tr {
+    background-color: #2d2d2d !important; /* Dark background for table rows */
+}
+
+    body.dark-mode .table tbody tr:nth-of-type(odd) {
+        background-color: #343a40 !important; /* Alternating row color for better readability */
+    }
+
+body.dark-mode .table td,
+body.dark-mode .table th {
+    border-color: #495057 !important; /* Gray borders for all table cells */
+    color: white !important;
+}
+
+body.dark-mode .bg-light {
+    background-color: #343a40 !important; /* Dark background for light sections in dark mode */
+}
+
+body.dark-mode .text-black {
+    color: white !important; /* Converts black text to white in dark mode */
+}
+
+body.dark-mode .alert-info {
+    background-color: #1e3a5f !important; /* Dark blue background for info alerts */
+    border-color: #2e5a8a !important;
+    color: white !important;
+}
+
+body.dark-mode .alert-secondary {
+    background-color: #383d41 !important; /* Dark gray background for secondary alerts */
+    border-color: #4e555b !important;
+    color: white !important;
+}
+
+body.dark-mode .alert-success {
+    background-color: #155724 !important; /* Dark green background for success alerts */
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+body.dark-mode .alert-danger {
+    background-color: #721c24 !important; /* Dark red background for danger alerts */
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+body.dark-mode .text-muted {
+    color: #aaa !important; /* Light gray for muted text in dark mode */
+}
+
+.pagination .page-link {
+    color: #333; /* Dark gray text for pagination links */
+    border-color: #ddd;
+    padding: 0.5rem 0.75rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #dc3545; /* Red background for active pagination item */
+    border-color: #dc3545;
+    color: white;
+}
+
+.pagination .page-link:hover {
+    background-color: #f8f9fa; /* Light gray background on hover */
+    color: #dc3545; /* Red text on hover */
+    border-color: #dc3545;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d; /* Gray text for disabled pagination items */
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+body.dark-mode .pagination .page-link {
+    background-color: #2a2a2a; /* Dark background for pagination links in dark mode */
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .pagination .page-item.active .page-link {
+    background-color: #dc3545; /* Red background for active page in dark mode */
+    border-color: #dc3545;
+    color: white;
+}
+
+body.dark-mode .pagination .page-link:hover {
+    background-color: #3a3a3a; /* Darker background on hover in dark mode */
+    color: #fff;
+    border-color: #dc3545;
+}
+
+body.dark-mode .pagination .page-item.disabled .page-link {
+    color: #6c757d; /* Gray text for disabled items in dark mode */
+    background-color: #2a2a2a;
+    border-color: #444;
+}

@@ -1,0 +1,118 @@
+﻿.delete-card {
+    background-color: #fff;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15); /* Subtle shadow for card depth effect */
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+    .delete-card .card-header {
+        background-color: #f8f9fc; /* Light blue-gray background for delete card header */
+        border-bottom: 1px solid #e3e6f0; /* Separator line under header */
+        padding: 1rem 1.5rem;
+        margin: -1.5rem -1.5rem 1.5rem -1.5rem; /* Negative margin to extend header to card edges */
+        border-top-left-radius: 0.35rem;
+        border-top-right-radius: 0.35rem;
+    }
+
+.alert-delete {
+    background-color: #f8d7da; /* Light red background for delete warning alert */
+    border-color: #f5c6cb;
+    color: #721c24; /* Dark red text for high contrast */
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.35rem;
+}
+
+.category-icon {
+    font-size: 3rem; /* Large icon size for category representation */
+    color: #dc3545; /* Red color to match theme */
+    padding: 20px;
+    background-color: #f8f9fc; /* Light background for icon container */
+    border-radius: 50%; /* Creates circular icon background */
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.btn-danger {
+    color: #fff !important; /* White text for danger buttons */
+}
+
+    .btn-danger:hover {
+        color: #fff !important; /* Maintains white text on hover */
+    }
+
+.btn-edit-instead {
+    background-color: #dc3545; /* Red background for edit button */
+    border-color: #dc3545;
+    color: #fff !important;
+}
+
+    .btn-edit-instead:hover {
+        background-color: #dc3545; /* Maintains red color on hover */
+        border-color: #dc3545;
+        color: #fff !important;
+    }
+
+body.dark-mode .delete-card {
+    background-color: #1e1e1e; /* Dark background for delete card in dark mode */
+    border-color: #2c2c2c;
+}
+
+    body.dark-mode .delete-card .card-header {
+        background-color: #2a2a2a; /* Dark gray background for header in dark mode */
+        border-bottom-color: #444; /* Gray border in dark mode */
+    }
+
+body.dark-mode .category-icon {
+    background-color: #2a2a2a; /* Dark background for category icon in dark mode */
+}
+
+body.dark-mode .alert-delete {
+    background-color: #3f2328; /* Dark red background for delete alert in dark mode */
+    border-color: #58383e;
+    color: #f8d7da; /* Light red text for visibility in dark mode */
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode dt,
+body.dark-mode dd,
+body.dark-mode label {
+    color: #e0e0e0; /* Light gray text for all typography elements in dark mode */
+}
+
+body.dark-mode hr {
+    border-color: #444; /* Gray color for horizontal rules in dark mode */
+}
+
+body.dark-mode .alert-warning {
+    background-color: #46380f; /* Dark yellow background for warning alerts in dark mode */
+    border-color: #5a4a1c;
+    color: #f6e9c5; /* Light yellow text for warning alerts */
+}
+
+.validation-summary-errors {
+    color: #dc3545; /* Red text for validation errors */
+    background-color: #f8d7da; /* Light red background for error container */
+    border: 1px solid #f5c6cb;
+    border-radius: 0.35rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+    .validation-summary-errors ul {
+        margin-bottom: 0; /* Removes bottom margin from error list */
+        padding-left: 1.25rem;
+    }
+
+body.dark-mode .validation-summary-errors {
+    color: #f8d7da; /* Light red text for validation errors in dark mode */
+    background-color: #3f2328; /* Dark red background for error container */
+    border-color: #58383e;
+}

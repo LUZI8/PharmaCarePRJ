@@ -1,0 +1,40 @@
+﻿.form-card {
+    background-color: #fff;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15); /* Subtle shadow for card depth effect */
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+    .form-card .card-header {
+        background-color: #f8f9fc; /* Light blue-gray background for form header */
+        border-bottom: 1px solid #e3e6f0; /* Separator line under header */
+        padding: 1rem 1.5rem;
+        margin: -1.5rem -1.5rem 1.5rem -1.5rem; /* Negative margin to extend header to card edges */
+        border-top-left-radius: 0.35rem;
+        border-top-right-radius: 0.35rem;
+    }
+
+.create-btn {
+    background-color: #dc3545 !important; /* Red background for create button to match theme */
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+    .create-btn:hover, .create-btn:focus, .create-btn:active {
+        background-color: #dc3545 !important; /* Maintains red color for all button states */
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important; /* Removes default button shadow effects */
+        transform: none !important; /* Disables transform animations */
+    }
+
+body.dark-mode .form-card {
+    background-color: #1e1e1e; /* Dark background for form card in dark mode */
+    border-color: #2c2c2c;
+}
+
+    body.dark-mode .form-card .card-header {
+        background-color: #2a2a2a; /* Dark gray background for form header in dark mode */
+        border-bottom-color: #444; /* Gray border color in dark mode */
+    }

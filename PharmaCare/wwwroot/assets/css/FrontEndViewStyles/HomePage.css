@@ -1,0 +1,436 @@
+﻿:root {
+    --calculator-bg: #ffffff; /* CSS custom property for calculator background color */
+    --calculator-border: #e9ecef;
+    --calculator-text: #212529;
+    --calculator-label: #495057;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --input-text: #212529;
+    --input-placeholder: #6c757d;
+    --result-bg: #f8f9fa;
+    --result-border: #e9ecef;
+    --alert-bg: #fff3cd;
+    --alert-border: #ffeaa7;
+    --alert-text: #856404;
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode {
+    --calculator-bg: #343a40; /* Dark theme CSS variables override */
+    --calculator-border: #495057;
+    --calculator-text: #ffffff;
+    --calculator-label: #ffffff;
+    --input-bg: #495057;
+    --input-border: #6c757d;
+    --input-text: #ffffff;
+    --input-placeholder: #adb5bd;
+    --result-bg: #495057;
+    --result-border: #6c757d;
+    --alert-bg: #664d03;
+    --alert-border: #997404;
+    --alert-text: #ffecb5;
+    --shadow-light: rgba(255, 255, 255, 0.05);
+    --shadow-medium: rgba(255, 255, 255, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --calculator-bg: #343a40; /* Auto dark mode detection using system preferences */
+        --calculator-border: #495057;
+        --calculator-text: #ffffff;
+        --calculator-label: #ffffff;
+        --input-bg: #495057;
+        --input-border: #6c757d;
+        --input-text: #ffffff;
+        --input-placeholder: #adb5bd;
+        --result-bg: #495057;
+        --result-border: #6c757d;
+        --alert-bg: #664d03;
+        --alert-border: #997404;
+        --alert-text: #ffecb5;
+        --shadow-light: rgba(255, 255, 255, 0.05);
+        --shadow-medium: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.hero-section {
+    background-image: url('/assets/images/bg.jpg'); /* Background image for hero section */
+    background-size: cover;
+    background-position: center;
+    height: 500px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+    .hero-section::before {
+        content: ''; /* Creates overlay pseudo-element */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Dark overlay for text readability */
+    }
+
+.hero-content {
+    position: relative;
+    z-index: 2; /* Ensures content appears above overlay */
+    color: white;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+    .hero-content h1 {
+        font-size: 3rem; /* Large font size for hero heading */
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem; /* Larger font for hero description */
+        margin-bottom: 30px;
+    }
+
+/* Scale the hero heading down on small screens so long words like "PharmaCare"
+   don't overflow their container (a single word can't wrap). */
+@media (max-width: 575px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .hero-content h1 {
+        font-size: 1.6rem;
+    }
+}
+
+.product-card {
+    border: 1px solid var(--border-color, #e9ecef); /* Uses CSS variable with fallback */
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease; /* Smooth animation for all property changes */
+    height: 100%; /* Ensures all cards have equal height */
+    position: relative;
+    background-color: var(--card-bg, white);
+}
+
+    .product-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow effect on hover */
+        transform: translateY(-5px); /* Lifts card on hover */
+    }
+
+.tag {
+    position: absolute; /* Positions tag relative to product card */
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color, #ff6767); /* Uses CSS variable for theme color */
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    z-index: 2; /* Ensures tag appears above other content */
+}
+
+.modal-body {
+    color: #212529 !important; /* Dark text for modal content */
+}
+
+#registrationSuccessModal .modal-body h4,
+#registrationSuccessModal .modal-body p {
+    color: #212529 !important;
+}
+
+#registrationSuccessModal .modal-header {
+    background-color: #28a745 !important; /* Green background for success modal header */
+}
+
+#registrationSuccessModal .btn-success {
+    background-color: #28a745; /* Green background for success button */
+    border-color: #1e7e34;
+    font-weight: 500;
+}
+
+.modal-content {
+    color: #212529;
+}
+
+.health-calculator {
+    border: 1px solid var(--calculator-border); /* Uses CSS variable for dynamic theming */
+    background-color: var(--calculator-bg);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 5px 15px var(--shadow-light); /* Dynamic shadow using CSS variable */
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+
+    .health-calculator:hover {
+        box-shadow: 0 8px 25px var(--shadow-medium); /* Enhanced shadow on hover */
+    }
+
+    .health-calculator h4 {
+        color: var(--calculator-text) !important; /* Dynamic text color */
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .health-calculator label {
+        font-weight: 600;
+        color: var(--calculator-label) !important; /* Dynamic label color */
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .health-calculator .form-control {
+        border-radius: 6px;
+        padding: 12px 15px;
+        height: auto;
+        background-color: var(--input-bg) !important; /* Dynamic input background */
+        border: 2px solid var(--input-border) !important;
+        color: var(--input-text) !important;
+        font-size: 16px;
+        transition: all 0.3s ease; /* Smooth transition for focus states */
+    }
+
+        .health-calculator .form-control:focus {
+            background-color: var(--input-bg) !important;
+            border-color: #dc3545 !important; /* Red border on focus */
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important; /* Red glow effect */
+            color: var(--input-text) !important;
+            outline: none; /* Removes default browser outline */
+        }
+
+        .health-calculator .form-control::placeholder {
+            color: var(--input-placeholder) !important; /* Dynamic placeholder color */
+            opacity: 0.8;
+        }
+
+    .health-calculator select.form-control {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center; /* Positions dropdown arrow */
+        background-size: 16px 12px;
+        appearance: none; /* Removes default dropdown styling */
+        cursor: pointer;
+    }
+
+body.dark-mode .health-calculator select.form-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); /* White arrow for dark mode */
+}
+
+.health-calculator .btn {
+    font-weight: 600;
+    padding: 12px 15px;
+    text-transform: uppercase; /* Capitalizes button text */
+    letter-spacing: 1px; /* Adds spacing between button letters */
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.health-calculator #results .card {
+    background-color: var(--calculator-bg) !important; /* Dynamic background for results */
+    border: 1px solid var(--calculator-border) !important;
+    color: var(--calculator-text) !important;
+}
+
+    .health-calculator #results .card .card-header {
+        background-color: #dc3545 !important; /* Red header for results card */
+        color: #ffffff !important;
+        border-bottom: 1px solid var(--calculator-border) !important;
+    }
+
+    .health-calculator #results .card .card-body {
+        background-color: var(--calculator-bg) !important;
+        color: var(--calculator-text) !important;
+    }
+
+.result-item {
+    display: flex;
+    justify-content: space-between; /* Distributes space between label and value */
+    margin-bottom: 10px;
+    padding: 12px;
+    background-color: var(--result-bg) !important; /* Dynamic background for result items */
+    border: 1px solid var(--result-border) !important;
+    border-radius: 6px;
+    color: var(--calculator-text) !important;
+}
+
+    .result-item .result-label {
+        color: var(--calculator-text) !important;
+    }
+
+    .result-item .result-value {
+        font-weight: bold; /* Bold text for result values */
+    }
+
+.health-calculator #results ul {
+    color: var(--calculator-text) !important;
+}
+
+    .health-calculator #results ul li {
+        color: var(--calculator-text) !important;
+        margin-bottom: 4px;
+    }
+
+.health-calculator .alert-warning {
+    background-color: var(--alert-bg) !important; /* Dynamic alert background */
+    border-color: var(--alert-border) !important;
+    color: var(--alert-text) !important;
+}
+
+.loader {
+    display: none; /* Hidden by default until needed */
+    border: 3px solid #f3f3f3; /* Light gray border for spinner ring */
+    border-top: 3px solid #dc3545; /* Red top border for spinning effect */
+    border-radius: 50%; /* Creates circular spinner */
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite; /* Continuous spinning animation */
+    margin: 0 auto;
+}
+
+body.dark-mode .loader {
+    border: 3px solid #495057; /* Dark gray border for dark mode */
+    border-top: 3px solid #dc3545;
+}
+
+.fade-in {
+    opacity: 0; /* Initially invisible for fade-in effect */
+    transform: translateY(20px); /* Starts slightly below final position */
+    animation: fadeIn 0.8s forwards; /* Fade-in animation */
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1; /* Fades to full opacity */
+        transform: translateY(0); /* Moves to final position */
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg); /* Starting rotation */
+    }
+
+    100% {
+        transform: rotate(360deg); /* Full rotation for spinning effect */
+    }
+}
+
+.health-calculator .alert-danger {
+    background-color: #f8d7da !important; /* Light red background for error alerts */
+    border-color: #f5c6cb !important;
+    color: #721c24 !important;
+}
+
+body.dark-mode .health-calculator .alert-danger {
+    background-color: #662d36 !important; /* Dark red background for error alerts in dark mode */
+    border-color: #843534 !important;
+    color: #f8d7da !important;
+}
+
+.health-calculator .form-group {
+    margin-bottom: 1.5rem; /* Consistent spacing between form groups */
+}
+
+    .health-calculator .form-group:last-of-type {
+        margin-bottom: 1rem; /* Reduced margin for last form group */
+    }
+
+
+/* Let dark mode use its original variables - don't override them */
+body.dark-mode .health-calculator {
+    /* Allow dark mode to use its original CSS variables */
+    /* Remove any forced overrides for dark mode */
+}
+
+/* Light mode specific styling - only when dark mode is NOT active */
+body:not(.dark-mode):not([data-theme="dark"]) .health-calculator {
+    /* Force light theme variables only when NOT in dark mode */
+    --calculator-bg: #ffffff !important;
+    --calculator-border: #e9ecef !important;
+    --calculator-text: #212529 !important;
+    --calculator-label: #495057 !important;
+    --input-bg: #f8f9fa !important;
+    --input-border: #ced4da !important;
+    --input-text: #212529 !important;
+    --input-placeholder: #6c757d !important;
+    --result-bg: #f8f9fa !important;
+    --result-border: #e9ecef !important;
+    --shadow-light: rgba(0, 0, 0, 0.05) !important;
+    --shadow-medium: rgba(0, 0, 0, 0.1) !important;
+}
+
+
+    /* Improve form control styling for light mode only */
+    body:not(.dark-mode):not([data-theme="dark"]) .health-calculator .form-control {
+        /* Enhanced light mode input styling */
+        background-color: var(--input-bg) !important;
+        border: 2px solid var(--input-border) !important;
+        color: var(--input-text) !important;
+        transition: all 0.3s ease;
+    }
+
+        /* Enhanced focus states for light mode only */
+        body:not(.dark-mode):not([data-theme="dark"]) .health-calculator .form-control:focus {
+            /* Improved focus styling with red accent */
+            background-color: #ffffff !important;
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
+            color: var(--input-text) !important;
+        }
+
+        /* Light mode placeholder styling */
+        body:not(.dark-mode):not([data-theme="dark"]) .health-calculator .form-control::placeholder {
+            /* Softer placeholder text for light mode */
+            color: var(--input-placeholder) !important;
+            opacity: 0.7;
+        }
+
+    /* Light mode select dropdown arrow */
+    body:not(.dark-mode):not([data-theme="dark"]) .health-calculator select.form-control {
+        /* Custom dropdown arrow for light mode */
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    /* Light mode result styling */
+    body:not(.dark-mode):not([data-theme="dark"]) .health-calculator #results .card {
+        /* Enhanced results card styling for light mode */
+        background-color: var(--calculator-bg) !important;
+        border: 1px solid var(--calculator-border) !important;
+        box-shadow: 0 2px 8px var(--shadow-light) !important;
+    }
+
+    /* Light mode alert styling */
+    body:not(.dark-mode):not([data-theme="dark"]) .health-calculator .alert-warning {
+        /* Custom warning alert colors for light mode */
+        background-color: #fff3cd !important;
+        border-color: #ffeaa7 !important;
+        color: #856404 !important;
+    }
+
+
+@media (max-width: 768px) {
+    body:not(.dark-mode):not([data-theme="dark"]) .health-calculator {
+        /* Mobile-optimized light mode calculator */
+        padding: 20px !important;
+        margin: 0 10px !important;
+        box-shadow: 0 2px 10px var(--shadow-light) !important;
+    }
+
+        body:not(.dark-mode):not([data-theme="dark"]) .health-calculator .form-control {
+            /* Larger touch targets for mobile */
+            padding: 14px 16px !important;
+            font-size: 16px !important; /* Prevents zoom on iOS */
+        }
+}

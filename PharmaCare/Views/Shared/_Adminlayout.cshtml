@@ -1,0 +1,221 @@
+﻿@{
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>@ViewData["Title"] - PharmaCare Admin</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- External font imports for consistent typography -->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+    <link rel="stylesheet" href="~/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Site favicon for browser tab icon -->
+    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
+
+    <!-- Core CSS framework and component stylesheets -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="~/assets/css/jquery-ui.css">
+    <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/assets/css/aos.css">
+
+    <!-- Custom admin panel specific styles -->
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="~/assets/css/custom.css">
+    <link rel="stylesheet" href="~/assets/css/AdminViewStyles/AdminPageStyle.css">
+    <link rel="stylesheet" href="~/assets/css/AdminViewStyles/AdminLayout.css">
+
+    <!-- Render additional page-specific styles if provided -->
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <div class="site-wrap">
+
+        <!-- Overlay for mobile sidebar - darkens background when sidebar is open -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Top navigation bar with admin controls and user info -->
+        <div class="top-nav">
+            <div class="top-nav-left">
+                <!-- Hamburger menu button to toggle sidebar on mobile/tablet -->
+                <button class="hamburger-menu" id="hamburger-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Search trigger button (opens search overlay) -->
+                <a href="#" class="js-search-open"><i class="icon-search"></i></a>
+            </div>
+
+            <div class="top-nav-right">
+                <!-- Admin user information display with logout functionality -->
+                <div class="admin-info">
+                    <span class="admin-name">
+                        <i class="fas fa-user-shield"></i> @ViewBag.AdminName
+                    </span>
+                    <a href="@Url.Action("Logout", "Account")" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+                </div>
+
+                <!-- Theme toggle button for dark/light mode switching -->
+                <button id="theme-toggle-btn" class="btn">
+                    <span id="moon-icon" class="theme-icon">🌙</span>
+                    <span id="sun-icon" class="theme-icon" style="display: none;">☀️</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Admin sidebar navigation panel -->
+                <div class="admin-sidebar" id="admin-sidebar">
+                    <!-- Sidebar header with branding and user role display -->
+                    <div class="sidebar-header">
+                        <a class="pharmacare-logo">PHARMACARE</a>
+                        <h5 class="mb-0">@(ViewBag.AdminName ?? "Admin")</h5>
+                        <p class="small text-muted">
+                            @{
+                                // Determine and display user role based on session data
+                                var userRole = Context.Session.GetString("UserRole");
+                                if (userRole == "Admin")
+                                {
+                                    <text>System Administrator</text>
+                                }
+                                else if (userRole == "Pharmacist")
+                                {
+                                    <text>Pharmacist</text>
+                                }
+                                else
+                                {
+                                    <text>Staff</text>
+                                }
+                            }
+                        </p>
+                    </div>
+
+                    <hr class="my-2">
+
+                    <!-- Main navigation menu with active state detection -->
+                    <ul class="nav flex-column">
+                        <!-- Link to view public site -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "FrontEnd" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                               href="@Url.Action("Index", "FrontEnd")">
+                                <i class="fas fa-globe"></i> View Site
+                            </a>
+                        </li>
+
+                        <!-- Admin dashboard main page -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                               href="@Url.Action("Index", "Admin")">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+
+                        <!-- Product management section -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")"
+                               href="@Url.Action("Index", "Product")">
+                                <i class="fas fa-box"></i> Products
+                            </a>
+                        </li>
+
+                        <!-- Category management section -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Category" ? "active" : "")"
+                               href="@Url.Action("Index", "Category")">
+                                <i class="fas fa-tag"></i> Categories
+                            </a>
+                        </li>
+
+                        <!-- Order management and tracking -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" && ViewContext.RouteData.Values["Action"].ToString() == "ManageOrders" ? "active" : "")"
+                               href="@Url.Action("ManageOrders", "Order")">
+                                <i class="fas fa-shopping-cart"></i> Orders
+                            </a>
+                        </li>
+
+                        <!-- Prescription pickup management -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Prescription" && ViewContext.RouteData.Values["Action"].ToString() == "Pickups" ? "active" : "")"
+                               href="@Url.Action("Pickups", "Prescription")">
+                                <i class="fas fa-prescription-bottle-alt"></i> Pickups
+                            </a>
+                        </li>
+
+                        <!-- User management - only visible to Admin role -->
+                        @if (userRole == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" || (ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "Users") ? "active" : "")"
+                                   href="@Url.Action("Index", "Users")">
+                                    <i class="fas fa-users"></i> Users Page
+                                </a>
+                            </li>
+                        }
+
+                        <!-- Customer feedback and contact management -->
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "Feedback" ? "active" : "")"
+                               href="@Url.Action("Feedback", "Admin")">
+                                <i class="fas fa-comments"></i> Feedback/Contact Us
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Main content area where page content is rendered -->
+                <main class="admin-content">
+                    <!-- Global search overlay (hidden by default) -->
+                    <div class="search-wrap" style="display: none;">
+                        <div class="container">
+                            <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
+                            <form action="#" method="post">
+                                <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Page-specific content is rendered here -->
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+
+        <!-- Admin footer with copyright information -->
+        <footer class="bg-light mt-5 py-3 border-top">
+            <div class="container">
+                <div class="text-center">
+                    <p>Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare | Admin Panel</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Core JavaScript libraries for functionality -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/jquery-ui.js"></script>
+    <script src="/assets/js/popper.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="/assets/js/aos.js"></script>
+    <script src="/assets/js/main.js"></script>
+
+    <!-- Admin layout specific JavaScript for sidebar, theme toggle, etc. -->
+    <script src="/assets/js/AdminViewScripts/AdminLayout.js"></script>
+
+    <!-- Render additional page-specific scripts if provided -->
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

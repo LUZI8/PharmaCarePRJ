@@ -1,0 +1,520 @@
+﻿@model IEnumerable<PharmaCare.Models.Order>
+
+@{
+    ViewData["Title"] = "Manage Orders";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+<link rel="stylesheet" href="~/assets/css/OrderViewStyles/ManageOrders.css" />
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Order Management</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <a href="@Url.Action("Index", "Admin")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics cards displaying order counts by status with Bootstrap grid system -->
+<div class="row mb-4">
+    <div class="col-xl-2 col-md-4 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Orders</div>
+                        <!-- ViewBag dictionary lookup to display total order count from controller -->
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Total"]</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-shopping-bag fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-4 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Pending"]</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-4 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Processing</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Processing"]</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-spinner fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-4 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Shipped</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Shipped"]</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-truck fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-4 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Delivered</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Delivered"]</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-4 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Cancelled</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Cancelled"]</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter panel for searching and filtering orders by status, date, and text search -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold">Order Filters</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="orderStatus">Status</label>
+                    <!-- Dropdown for filtering orders by status -->
+                    <select id="orderStatus" class="form-control">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="dateRange">Date Range</label>
+                    <!-- Predefined date range options for filtering orders -->
+                    <select id="dateRange" class="form-control">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchOrder">Search</label>
+                    <!-- Text input for searching orders by order number, customer name, or email -->
+                    <input type="text" id="searchOrder" class="form-control" placeholder="Order #, Customer Name or Email">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <!-- Button to trigger client-side filtering functionality -->
+                    <button id="filterOrders" class="btn btn-danger btn-block">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main orders table displaying order information in a responsive table format -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold">Orders</h6>
+        <div>
+            <!-- Badge indicator showing when filters are active -->
+            <span id="activeFilters" class="badge badge-info mr-2" style="display: none;">Filters Active</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered admin-table" id="ordersTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Order Details</th>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through each order in the model collection -->
+                    @foreach (var order in Model)
+                    {
+                        <!-- Each row contains data-order-id attribute for JavaScript targeting -->
+                        <tr data-order-id="@order.OrderId">
+                            <!-- Clickable cell to toggle detailed order information -->
+                            <td class="text-center toggle-details">
+                                <i class="fas fa-chevron-down"></i>
+                            </td>
+                            <td>@order.OrderNumber</td>
+                            <!-- Format order date to readable format -->
+                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                            <!-- Display customer full name by concatenating first and last name -->
+                            <td>@order.User.FirstName @order.User.LastName</td>
+                            <!-- Count total items in the order -->
+                            <td>@order.OrderItems.Count</td>
+                            <!-- Format total amount with 2 decimal places -->
+                            <td>$@order.TotalAmount.ToString("0.00")</td>
+                            <td>
+                                @{
+                                    /* Switch expression to determine badge color class based on order status */
+                                    var statusClass = order.Status.ToLower() switch
+                                    {
+                                        "pending" => "warning",
+                                        "processing" => "info",
+                                        "shipped" => "primary",
+                                        "delivered" => "success",
+                                        "cancelled" => "danger",
+                                        _ => "secondary"
+                                    };
+                                }
+                                <!-- Status badge with dynamically assigned color class -->
+                                <span class="badge badge-@statusClass status-badge">@order.Status</span>
+                            </td>
+                            <td class="action-btns">
+                                <!-- Link to view detailed order information -->
+                                <a href="@Url.Action("Details", "Order", new { id = order.OrderId })" data-toggle="tooltip" title="View">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                                <!-- Button to trigger status update modal with order ID -->
+                                <a href="#" class="update-status-btn" data-order-id="@order.OrderId" data-toggle="modal" data-target="#updateStatusModal" title="Update Status">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Container for expandable order details cards -->
+<div id="orderDetailsContainer">
+    @foreach (var order in Model)
+    {
+        <!-- Hidden order details card that expands when toggle is clicked -->
+        <div class="card shadow mb-4 order-details-card" id="details-@order.OrderId" style="display: none;">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Order #@order.OrderNumber Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Shipping Details</h5>
+                        <p><strong>Address:</strong> @order.ShippingAddress</p>
+                        <p><strong>City:</strong> @order.City</p>
+                        <p><strong>Phone:</strong> @order.PhoneNumber</p>
+                        <p><strong>Payment Method:</strong> @order.PaymentMethod</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Items</h5>
+                        <!-- Table displaying individual order items with pricing -->
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in order.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.Quantity</td>
+                                        <td>$@item.Price.ToString("0.00")</td>
+                                        <!-- Calculate and display line total -->
+                                        <td>$@((item.Price * item.Quantity).ToString("0.00"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Bootstrap modal for updating order status -->
+<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateStatusModalLabel">Update Order Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- Form targeting OrderController UpdateStatus action with anti-forgery token -->
+            <form asp-controller="Order" asp-action="UpdateStatus" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <!-- Hidden input to store selected order ID -->
+                    <input type="hidden" id="modalOrderId" name="orderId" value="">
+                    <div class="form-group">
+                        <label for="modalOrderStatus">Status</label>
+                        <!-- Status dropdown with all available order statuses -->
+                        <select id="modalOrderStatus" name="status" class="form-control">
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-update-status">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            /* Toggle order details visibility when chevron icon is clicked */
+            $('.toggle-details').click(function() {
+                var orderId = $(this).closest('tr').data('order-id');
+                $('#details-' + orderId).toggle();
+
+                /* Switch between down and up chevron icons */
+                var icon = $(this).find('i');
+                if (icon.hasClass('fa-chevron-down')) {
+                    icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                } else {
+                    icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                }
+            });
+
+            /* Populate modal with current order data when edit button is clicked */
+            $('.update-status-btn').click(function() {
+                var orderId = $(this).data('order-id');
+                var currentStatus = $(this).closest('tr').find('.status-badge').text().trim();
+
+                $('#modalOrderId').val(orderId);
+                $('#modalOrderStatus').val(currentStatus);
+            });
+
+            /* Handle form submission via AJAX to update order status without page reload */
+            $('#updateStatusModal form').on('submit', function(e) {
+                e.preventDefault();
+
+                var form = $(this);
+                var orderId = $('#modalOrderId').val();
+                var newStatus = $('#modalOrderStatus').val();
+                var formData = form.serialize();
+
+                /* Set AJAX header for proper request identification */
+                $.ajaxSetup({
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    }
+                });
+
+                /* Send POST request to update order status */
+                $.post(form.attr('action'), formData)
+                    .done(function(response) {
+                        if (response.success) {
+                            /* Find the table row and update the status badge */
+                            var row = $('tr[data-order-id="' + orderId + '"]');
+                            var statusBadge = row.find('.status-badge');
+
+                            /* Remove all existing badge classes and add new one */
+                            statusBadge.removeClass('badge-warning badge-info badge-primary badge-success badge-danger badge-secondary');
+                            statusBadge.addClass('badge-' + response.statusClass);
+                            statusBadge.text(response.newStatus);
+
+                            $('#updateStatusModal').modal('hide');
+
+                            showAlert('success', response.message);
+                        } else {
+                            showAlert('danger', response.message);
+                        }
+                    })
+                    .fail(function(xhr, status, error) {
+                        showAlert('danger', 'An error occurred while updating the order status.');
+                        console.error('Error:', error);
+                    });
+            });
+
+            /* Filter orders based on status, date range, and search criteria */
+            $('#filterOrders').click(function() {
+                var status = $('#orderStatus').val();
+                var dateRange = $('#dateRange').val();
+                var search = $('#searchOrder').val().toLowerCase();
+
+                /* Show/hide active filters indicator */
+                if (status || dateRange || search) {
+                    $('#activeFilters').show();
+                } else {
+                    $('#activeFilters').hide();
+                }
+
+                /* Iterate through each table row to apply filters */
+                $('#ordersTable tbody tr').each(function() {
+                    var $row = $(this);
+                    var rowStatus = $row.find('.status-badge').text();
+                    var rowDate = new Date($row.find('td:eq(2)').text());
+                    var rowOrderNum = $row.find('td:eq(1)').text().toLowerCase();
+                    var rowCustomer = $row.find('td:eq(3)').text().toLowerCase();
+
+                    var showRow = true;
+
+                    /* Apply status filter */
+                    if (status && rowStatus !== status) {
+                        showRow = false;
+                    }
+
+                    /* Apply date range filter with various time periods */
+                    if (dateRange) {
+                        var today = new Date();
+                        var yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+
+                        if (dateRange === 'today') {
+                            if (rowDate.toDateString() !== today.toDateString()) {
+                                showRow = false;
+                            }
+                        } else if (dateRange === 'yesterday') {
+                            if (rowDate.toDateString() !== yesterday.toDateString()) {
+                                showRow = false;
+                            }
+                        } else if (dateRange === 'week') {
+                            /* Calculate start of current week */
+                            var weekStart = new Date();
+                            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+                            if (rowDate < weekStart) {
+                                showRow = false;
+                            }
+                        } else if (dateRange === 'month') {
+                            if (rowDate.getMonth() !== today.getMonth() ||
+                                rowDate.getFullYear() !== today.getFullYear()) {
+                                showRow = false;
+                            }
+                        } else if (dateRange === 'year') {
+                            if (rowDate.getFullYear() !== today.getFullYear()) {
+                                showRow = false;
+                            }
+                        }
+                    }
+
+                    /* Apply text search filter on order number and customer name */
+                    if (search) {
+                        if (!rowOrderNum.includes(search) && !rowCustomer.includes(search)) {
+                            showRow = false;
+                        }
+                    }
+
+                    /* Show or hide the row based on filter results */
+                    $row.toggle(showRow);
+
+                    /* Hide order details if parent row is hidden */
+                    var orderId = $row.data('order-id');
+                    if (!showRow) {
+                        $('#details-' + orderId).hide();
+                    }
+                });
+
+                refreshPagination();
+            });
+
+            /* Refresh pagination after filtering to maintain proper page structure */
+            function refreshPagination() {
+                $('.admin-pagination').closest('.d-flex.justify-content-between').remove();
+
+                if (typeof initializePagination === 'function') {
+                    initializePagination('.admin-table', 10);
+                }
+            }
+
+            /* Display Bootstrap alert messages with auto-dismiss for success messages */
+            function showAlert(type, message) {
+                var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
+                    message +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                    '</button>' +
+                    '</div>';
+
+                $('.alert').remove();
+
+                $('.d-flex.justify-content-between.flex-wrap').after(alertHtml);
+
+                /* Auto-hide success alerts after 3 seconds */
+                if (type === 'success') {
+                    setTimeout(function() {
+                        $('.alert-success').fadeOut();
+                    }, 3000);
+                }
+            }
+
+            /* Initialize Bootstrap tooltips for action buttons */
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

@@ -1,0 +1,1344 @@
+.site-navbar .site-navigation .site-menu .active > a:before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 2px;
+    background: #000 !important; /* Creates black underline indicator for active navigation items in light mode */
+    bottom: 0;
+}
+
+body.dark-mode {
+    background-color: #222; /* Sets dark background color for entire page in dark mode */
+    color: #f8f9fa; /* Sets light text color for better contrast in dark mode */
+}
+
+    body.dark-mode .site-navbar {
+        background-color: #222 !important; /* Forces dark background for navigation bar in dark mode */
+    }
+
+        body.dark-mode .site-navbar a {
+            color: #f8f9fa !important; /* Makes all navbar links light colored in dark mode */
+        }
+
+    body.dark-mode .site-footer {
+        background-color: #222 !important; /* Applies dark background to footer in dark mode */
+        color: #f8f9fa !important;
+    }
+
+        body.dark-mode .site-footer a,
+        body.dark-mode .site-footer h3 {
+            color: #f8f9fa !important; /* Ensures footer links and headings are visible in dark mode */
+        }
+
+    body.dark-mode .text-dark,
+    body.dark-mode h3.text-dark a {
+        color: #f8f9fa !important; /* Overrides default dark text to light in dark mode */
+    }
+
+@media (prefers-color-scheme: dark) {
+    .site-navbar .site-navigation .site-menu .active > a:before {
+        background: #fff !important; /* Changes active nav indicator to white when system prefers dark mode */
+    }
+}
+
+.form-control:focus {
+    border-color: #dc3545 !important; /* Sets red border color when form inputs are focused */
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important; /* Adds red glow effect around focused inputs */
+}
+
+body.dark-mode .form-control:focus {
+    background-color: #2b2b2b; /* Dark background for focused form inputs in dark mode */
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.3) !important; /* Slightly stronger red glow in dark mode */
+    color: #fff;
+}
+
+.theme-toggle {
+    margin-left: 15px;
+    cursor: pointer; /* Makes theme toggle clickable with pointer cursor */
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    outline: none; /* Removes default focus outline for custom button styling */
+}
+
+.user-icon {
+    position: relative;
+    margin-left: 15px;
+}
+
+.user-dropdown {
+    display: none; /* Hides dropdown menu by default */
+    position: absolute; /* Positions dropdown relative to parent user icon */
+    right: 0;
+    top: 100%;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Creates subtle shadow for dropdown depth effect */
+    padding: 10px 0;
+    min-width: 150px;
+    z-index: 1000; /* Ensures dropdown appears above other content */
+}
+
+body.dark-mode .user-dropdown {
+    background-color: #222; /* Dark background for user dropdown in dark mode */
+}
+
+.user-icon:hover .user-dropdown {
+    display: block; /* Shows dropdown when hovering over user icon */
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 8px 15px;
+    color: #222;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+body.dark-mode .user-dropdown a {
+    color: #f8f9fa; /* Light text for dropdown links in dark mode */
+}
+
+.user-dropdown a:hover {
+    background-color: #f8f9fa; /* Light background on hover for dropdown items */
+    color: #007bff;
+}
+
+body.dark-mode .user-dropdown a:hover {
+    background-color: #222; /* Maintains dark background on hover in dark mode */
+}
+
+.site-footer {
+    padding: 2rem 0;
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.footer-link {
+    margin-bottom: 0;
+}
+
+    .footer-link li {
+        margin-bottom: 10px;
+    }
+
+    .footer-link a {
+        color: #6c757d;
+        transition: all 0.3s ease; /* Smooth transition effect for footer link hover states */
+    }
+
+        .footer-link a:hover {
+            color: #007bff; /* Changes footer links to blue on hover */
+            text-decoration: none;
+        }
+
+.feature-block {
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05); /* Subtle shadow for card-like appearance */
+    height: 100%;
+    transition: transform 0.3s ease; /* Enables smooth hover animation */
+}
+
+    .feature-block:hover {
+        transform: translateY(-5px); /* Lifts feature blocks up on hover for interactive effect */
+    }
+
+body.dark-mode .feature-block {
+    background-color: #222; /* Dark background for feature blocks in dark mode */
+}
+
+.item {
+    transition: all 0.3s ease; /* Smooth animation for all property changes */
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+}
+
+    .item:hover {
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1); /* Adds shadow effect on hover for depth */
+    }
+
+    .item img {
+        max-height: 200px;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease; /* Enables smooth image scaling animation */
+    }
+
+    .item:hover img {
+        transform: scale(1.05); /* Slightly enlarges images on hover for zoom effect */
+    }
+
+.product-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+    min-height: 40px; /* Ensures consistent height across product descriptions */
+}
+
+body.dark-mode .product-description {
+    color: #ccc; /* Lighter gray text for product descriptions in dark mode */
+}
+
+.medication-info {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+}
+
+body.dark-mode .medication-info {
+    color: #aaa; /* Slightly lighter color for medication info in dark mode */
+}
+
+.tag {
+    position: absolute; /* Positions tag relative to parent container */
+    top: 10px;
+    right: 10px;
+    background-color: #dc3545; /* Red background for sale/promotional tags */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2; /* Ensures tag appears above other content */
+}
+
+.medication-badges {
+    margin-top: 10px;
+}
+
+    .medication-badges .badge {
+        margin: 0 3px;
+        padding: 5px 8px;
+        font-weight: 400;
+    }
+
+.badge-success {
+    background-color: #28a745; /* Green background for success badges */
+}
+
+.badge-primary {
+    background-color: #007bff; /* Blue background for primary badges */
+}
+
+body.dark-mode .badge-success {
+    background-color: #198754; /* Darker green for success badges in dark mode */
+}
+
+body.dark-mode .badge-primary {
+    background-color: #0d6efd; /* Adjusted blue for primary badges in dark mode */
+}
+
+.category-item {
+    padding: 30px 15px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    cursor: pointer; /* Indicates category items are clickable */
+}
+
+    .category-item:hover {
+        transform: translateY(-5px); /* Elevates category items on hover */
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1); /* Intensifies shadow on hover for depth */
+    }
+
+.category-icon {
+    display: inline-block;
+    font-size: 40px;
+    color: #dc3545; /* Red color for category icons to match theme */
+    margin-bottom: 15px;
+}
+
+.category-item h4 {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+body.dark-mode .category-item {
+    background-color: #222; /* Dark background for category items in dark mode */
+}
+
+.trust-badges {
+    margin: 20px 0 40px;
+}
+
+.badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px;
+    text-align: center;
+}
+
+    .badge-item i {
+        font-size: 24px;
+        color: #dc3545; /* Red color for trust badge icons */
+        margin-bottom: 10px;
+    }
+
+    .badge-item span {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+body.dark-mode .badge-item i {
+    color: #e34c5c; /* Slightly lighter red for icons in dark mode */
+}
+
+.tag, .col-sm-6 .tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2;
+    transform: rotate(0); /* Ensures no rotation applied to tags */
+    width: auto; /* Allows tag width to adjust to content */
+    height: auto; /* Allows tag height to adjust to content */
+    writing-mode: horizontal-tb; /* Forces horizontal text layout */
+    text-orientation: mixed; /* Default text orientation for proper display */
+}
+
+.sale {
+    display: none; /* Hides vertical sale banners completely */
+}
+
+.sticky-header {
+    position: fixed; /* Fixes header to top of viewport */
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensures header stays above other content */
+    transition: all 0.3s ease; /* Smooth transition for sticky header appearance */
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Shadow for sticky header depth */
+}
+
+body.has-sticky-header {
+    padding-top: 70px; /* Prevents content from hiding behind fixed header */
+}
+
+body.dark-mode .sticky-header {
+    background-color: #222 !important; /* Dark background for sticky header in dark mode */
+}
+
+.row.justify-content-center {
+    background-color: #ffffff; /* White background for product grid area */
+}
+
+body.dark-mode .row.justify-content-center {
+    background-color: #222; /* Dark background for product grid in dark mode */
+}
+
+body.dark-mode {
+    background-color: #222;
+    color: #f5f5f5; /* Light gray text color for better readability in dark mode */
+}
+
+    body.dark-mode .site-wrap,
+    body.dark-mode .site-navbar,
+    body.dark-mode .bg-light {
+        background-color: #222; /* Ensures all light backgrounds become dark */
+        color: #f5f5f5;
+    }
+
+    body.dark-mode .text-black,
+    body.dark-mode .text-dark,
+    body.dark-mode h3 a {
+        color: #f5f5f5 !important; /* Converts all dark text to light in dark mode */
+    }
+
+    body.dark-mode .card,
+    body.dark-mode .dropdown-menu {
+        background-color: #222; /* Dark background for cards and dropdowns */
+        color: #f5f5f5;
+    }
+
+    body.dark-mode .dropdown-item {
+        color: #f5f5f5; /* Light text for dropdown items */
+    }
+
+        body.dark-mode .dropdown-item:hover {
+            background-color: #555; /* Gray background for hovered dropdown items */
+        }
+
+    body.dark-mode .site-menu li.active a {
+        color: #fff !important; /* White text for active menu items in dark mode */
+    }
+
+    body.dark-mode .bg-light .col-md-12 a.clll,
+    body.dark-mode .bg-light .col-md-12 strong.text-black {
+        color: #f5f5f5 !important; /* Light color for breadcrumb links and text */
+    }
+
+    body.dark-mode .filter-section h3.text-uppercase.text-black {
+        color: #ffffff !important; /* White text for filter section headings */
+    }
+
+    body.dark-mode #amount {
+        color: #ffffff !important; /* White text for price range display */
+    }
+
+    body.dark-mode .filter-section {
+        background-color: #222 !important; /* Dark background for filter sections */
+        border: 1px solid #555; /* Gray border for filter sections in dark mode */
+        border-radius: 5px;
+    }
+
+    body.dark-mode .filter-dropdown .btn {
+        color: #ffffff; /* White text for filter dropdown buttons */
+    }
+
+    body.dark-mode #slider-range .ui-slider-handle {
+        background: #dc3545; /* Red background for slider handles */
+        border-color: #dc3545;
+    }
+
+    body.dark-mode #slider-range .ui-slider-range {
+        background: #dc3545; /* Red background for active slider range */
+    }
+
+    body.dark-mode #slider-range {
+        background: #555; /* Gray background for slider track */
+        border-color: #666;
+    }
+
+    body.dark-mode .site-block-27 ul li a,
+    body.dark-mode .site-block-27 ul li span {
+        color: #f5f5f5 !important; /* Light color for pagination links */
+        border-color: #555;
+    }
+
+    body.dark-mode .site-block-27 ul li.active span {
+        background-color: #dc3545; /* Red background for active pagination item */
+        color: white !important;
+    }
+
+    body.dark-mode .bg-light.py-3 {
+        background-color: #222 !important; /* Dark background for breadcrumb section */
+    }
+
+    body.dark-mode .bg-light .col-md-12 a {
+        color: #f5f5f5 !important; /* Light color for breadcrumb links */
+    }
+
+    body.dark-mode .bg-light .col-md-12 strong.text-black {
+        color: #f5f5f5 !important; /* Light color for breadcrumb current page */
+    }
+
+    body.dark-mode .bg-light .mx-2 {
+        color: #f5f5f5 !important; /* Light color for breadcrumb separators */
+    }
+
+.product-container {
+    margin-bottom: 50px; /* Adds spacing between product grid and pagination */
+}
+
+.theme-toggle {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.user-icon {
+    position: relative;
+    margin-left: 15px;
+}
+
+.user-dropdown {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Creates dropdown shadow effect */
+    z-index: 1;
+    right: 0;
+    border-radius: 4px;
+}
+
+body.dark-mode .user-dropdown {
+    background-color: #222; /* Dark background for user dropdown */
+}
+
+.user-icon:hover .user-dropdown {
+    display: block; /* Shows dropdown on hover */
+}
+
+.user-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+body.dark-mode .user-dropdown a {
+    color: white; /* White text for dropdown links in dark mode */
+}
+
+.user-dropdown a:hover {
+    background-color: #f1f1f1; /* Light gray background on hover */
+    border-radius: 4px;
+}
+
+body.dark-mode .user-dropdown a:hover {
+    background-color: #555; /* Dark gray background on hover in dark mode */
+}
+
+.filter-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+
+body.dark-mode .filter-section {
+    background-color: #222 !important; /* Dark background for filter sections */
+    color: #f5f5f5;
+    border: 1px solid #555;
+}
+
+.filter-section h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.filter-dropdown .dropdown-menu {
+    width: 100%; /* Makes dropdown menu full width of parent */
+    padding: 10px;
+}
+
+.filter-dropdown .dropdown-item {
+    padding: 8px 12px;
+}
+
+.item {
+    transition: transform 0.3s ease; /* Smooth animation for item hover effects */
+    border-radius: 8px;
+    padding: 15px;
+}
+
+    .item:hover {
+        transform: translateY(-5px); /* Lifts items up on hover */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+body.dark-mode .item:hover {
+    box-shadow: 0 10px 20px rgba(255,255,255,0.1); /* White shadow effect in dark mode */
+}
+
+.tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.price {
+    font-weight: bold;
+    color: #dc3545; /* Red color for product prices */
+}
+
+body.dark-mode .price {
+    color: #ff6b6b; /* Lighter red for prices in dark mode */
+}
+
+del {
+    color: #6c757d; /* Gray color for strikethrough prices */
+}
+
+.sticky-navbar {
+    position: fixed !important; /* Forces navbar to stay fixed at top */
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+body.dark-mode .sticky-navbar {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Stronger shadow for sticky navbar in dark mode */
+}
+
+body.has-sticky-navbar {
+    padding-top: 70px !important; /* Prevents content overlap with fixed navbar */
+}
+
+body.dark-mode #slider-range {
+    background: #555; /* Dark background for price range slider */
+    border-color: #666;
+}
+
+    body.dark-mode #slider-range .ui-slider-handle {
+        background: white !important; /* White handles for better visibility in dark mode */
+        border-color: white !important;
+    }
+
+    body.dark-mode #slider-range .ui-slider-range {
+        background: #dc3545 !important; /* Red active range on slider */
+    }
+
+body.dark-mode #amount {
+    color: white !important; /* White text for price amount display */
+}
+
+.filter-section h3.text-uppercase.text-black {
+    color: #000; /* Black text for filter headings in light mode */
+}
+
+body.dark-mode .filter-section h3.text-uppercase.text-black {
+    color: #fff !important; /* White text for filter headings in dark mode */
+}
+
+#amount {
+    background: transparent !important; /* Removes background from price display input */
+    border: none !important;
+    color: #000;
+    padding-left: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+body.dark-mode #amount {
+    color: #fff !important; /* White text for price display in dark mode */
+}
+
+.ui-widget input {
+    background: transparent !important; /* Removes background from slider widget inputs */
+    border: 0 !important;
+}
+
+.breadcrumb-section {
+    padding: 15px 0 !important;
+    background-color: #f8f9fa !important; /* Light background for breadcrumb section */
+}
+
+.breadcrumb {
+    background: transparent !important; /* Removes default breadcrumb background */
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #495057; /* Darker color for active breadcrumb item */
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "/"; /* Forward slash separator between breadcrumb items */
+    color: #6c757d;
+    padding: 0 0.5rem;
+}
+
+body.dark-mode .breadcrumb-section {
+    background-color: #222 !important; /* Dark background for breadcrumb section */
+}
+
+body.dark-mode .breadcrumb-item a {
+    color: #adb5bd !important; /* Light gray for breadcrumb links in dark mode */
+}
+
+body.dark-mode .breadcrumb-item.active {
+    color: #dee2e6 !important; /* Lighter color for active breadcrumb in dark mode */
+}
+
+body.dark-mode .breadcrumb-item + .breadcrumb-item::before {
+    color: #adb5bd !important; /* Light gray for breadcrumb separators in dark mode */
+}
+
+.sticky-navbar {
+    position: fixed !important;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+body.has-sticky-navbar {
+    padding-top: 70px !important;
+}
+
+body.dark-mode .bg-light {
+    background-color: #222 !important; /* Dark background for light sections in dark mode */
+}
+
+    body.dark-mode .bg-light .text-black,
+    body.dark-mode .bg-white .text-black {
+        color: #fff !important; /* White text for feedback section in dark mode */
+    }
+
+body.dark-mode .bg-light,
+body.dark-mode .bg-white {
+    background-color: #222 !important;
+    border-color: #555 !important; /* Gray borders for sections in dark mode */
+}
+
+#amount {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #000;
+    padding-left: 0;
+}
+
+body.dark-mode #amount {
+    color: #fff !important;
+}
+
+.product-container {
+    margin: 0 -15px; /* Negative margin to align with grid system */
+}
+
+    .product-container .item {
+        padding: 15px !important;
+        transition: all 0.3s ease;
+    }
+
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    height: 100%; /* Ensures all product cards have equal height */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+}
+
+body.dark-mode .product-card {
+    background: #2d2d2d; /* Dark background for product cards */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.product-card img {
+    margin-bottom: 15px !important; /* Consistent spacing below product images */
+}
+
+.product-card .price {
+    margin: 10px 0; /* Consistent margin around price display */
+}
+
+.medication-badges {
+    margin-top: 15px;
+    padding-top: 10px; /* Separates badges from content above */
+}
+
+.product-title {
+    font-weight: 700; /* Bold font weight for product titles */
+    letter-spacing: -0.5px; /* Tighter letter spacing for modern look */
+}
+
+.product-image {
+    border-radius: 10px;
+    overflow: hidden; /* Ensures image corners follow border radius */
+    background: #fff;
+}
+
+.add-to-cart {
+    transition: all 0.3s ease; /* Smooth animation for button interactions */
+    text-transform: uppercase; /* Capitalizes button text */
+    font-weight: 600;
+}
+
+.product-table th {
+    font-weight: 600; /* Bold table headers */
+}
+
+.spec-item {
+    font-size: 0.95rem; /* Slightly smaller font for specification items */
+}
+
+body.dark-mode .product-title,
+body.dark-mode .product-description,
+body.dark-mode .spec-item {
+    color: #fff !important; /* White text for product details in dark mode */
+}
+
+body.dark-mode .product-image {
+    background: #2d2d2d; /* Dark background for product images */
+    border-color: #222 !important;
+}
+
+body.dark-mode .product-warnings {
+    background: #2d2d2d !important; /* Dark background for warning sections */
+    border: 1px solid #222;
+}
+
+body.dark-mode .product-table th {
+    background: #dc3545; /* Red background for table headers */
+}
+
+body.dark-mode table {
+    color: #fff !important; /* White text for tables in dark mode */
+}
+
+body.dark-mode .product-card {
+    background: transparent !important; /* Removes card background in dark mode */
+    box-shadow: none !important;
+}
+
+.btn-primary {
+    background-color: #dc3545 !important; /* Red background for primary buttons */
+    border-color: #dc3545 !important;
+}
+
+    .btn-primary:hover {
+        background-color: #c82333 !important; /* Darker red on hover */
+        border-color: #bd2130 !important;
+    }
+
+body.dark-mode .btn-primary {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.btn-outline-danger.text-black {
+    color: #000; /* Black text for outline buttons in light mode */
+}
+
+body.dark-mode .btn-outline-danger.text-black {
+    color: #fff !important; /* White text for outline buttons in dark mode */
+    border-color: #dc3545;
+}
+
+.bg-light a {
+    color: #dc3545 !important; /* Red color for links in light sections */
+}
+
+    .bg-light a:hover {
+        color: #c82333 !important; /* Darker red on hover */
+        text-decoration: underline;
+    }
+
+body.dark-mode .bg-light a {
+    color: #dc3545 !important;
+}
+
+    body.dark-mode .bg-light a:hover {
+        color: #ff6b6b !important; /* Lighter red on hover in dark mode */
+    }
+
+.site-footer.bg-light {
+    background-color: #f8f9fa !important; /* Light background for footer */
+}
+
+.site-footer .text-black,
+.site-footer a:not(.btn) {
+    color: #000 !important; /* Black text for footer content */
+}
+
+body.dark-mode .site-footer {
+    background-color: #222 !important; /* Dark background for footer */
+    border-top: 1px solid #222;
+}
+
+    body.dark-mode .site-footer .text-black,
+    body.dark-mode .site-footer a:not(.btn),
+    body.dark-mode .site-footer .footer-link li span {
+        color: #fff !important; /* White text for footer content in dark mode */
+    }
+
+    body.dark-mode .site-footer a:hover {
+        color: #dc3545 !important; /* Red color on hover for footer links */
+    }
+
+.site-footer .fas {
+    color: #dc3545 !important; /* Red color for footer icons */
+    width: 20px;
+}
+
+body.dark-mode .site-footer .fas {
+    color: #fff !important; /* White color for footer icons in dark mode */
+}
+
+.site-footer p {
+    color: #6c757d; /* Gray color for footer copyright text */
+}
+
+body.dark-mode .site-footer p {
+    color: #ccc !important; /* Light gray for footer text in dark mode */
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    transition: transform 0.3s ease; /* Smooth scaling animation on hover */
+}
+
+.moon-icon, .sun-icon {
+    position: absolute;
+    font-size: 20px;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth icon transition effects */
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1); /* Slightly enlarges button on hover */
+}
+
+.moon-icon {
+    opacity: 1; /* Moon icon visible by default */
+    transform: rotate(0deg);
+}
+
+.sun-icon {
+    opacity: 0; /* Sun icon hidden by default */
+    transform: rotate(-90deg);
+}
+
+.theme-toggle-btn.dark-mode .moon-icon {
+    opacity: 0; /* Hides moon icon in dark mode */
+    transform: rotate(90deg);
+}
+
+.theme-toggle-btn.dark-mode .sun-icon {
+    opacity: 1; /* Shows sun icon in dark mode */
+    transform: rotate(0deg);
+}
+
+.dark-mode {
+    background-color: #1a1a1a; /* Very dark background for dark mode */
+    color: #ffffff; /* Pure white text for maximum contrast */
+}
+
+    .dark-mode .text-black,
+    .dark-mode .product-title,
+    .dark-mode .price {
+        color: #ffffff !important; /* Ensures all text elements are white in dark mode */
+    }
+
+    .dark-mode .product-image {
+        background-color: #2d2d2d !important; /* Dark gray background for product images */
+        border-color: #222 !important;
+    }
+
+    .dark-mode .table {
+        background-color: #222 !important; /* Dark background for tables */
+        color: #fff !important;
+    }
+
+        .dark-mode .table th {
+            background-color: #222 !important; /* Dark background for table headers */
+        }
+
+    .dark-mode .btn-primary {
+        background-color: #dc3545 !important; /* Maintains red color for primary buttons */
+        border-color: #dc3545 !important;
+    }
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg); /* Starting rotation angle */
+    }
+
+    to {
+        transform: rotate(360deg); /* Ending rotation angle for full circle */
+    }
+}
+
+.theme-toggle-btn {
+    transition: all 0.3s ease; /* Smooth transition for all button properties */
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+    .theme-toggle-btn:hover .moon-icon,
+    .theme-toggle-btn:hover .sun-icon {
+        transform: scale(1.1); /* Enlarges icons slightly on hover */
+    }
+
+.border.mb-3 {
+    border-color: #dc3545 !important; /* Red border for accordion sections */
+}
+
+    .border.mb-3 .h6 a {
+        color: #000 !important; /* Black text for accordion headers in light mode */
+    }
+
+body.dark-mode .border.mb-3 .h6 a {
+    color: #fff !important; /* White text for accordion headers in dark mode */
+}
+
+.border.mb-3 .h6 a:hover {
+    color: #dc3545 !important; /* Red color on hover for accordion headers */
+}
+
+body.dark-mode .border.mb-3 .h6 a:hover {
+    color: #dc3545 !important;
+}
+
+.border.mb-3 .collapse.show {
+    border-top: 1px solid #dc3545; /* Red border separator for expanded accordion content */
+}
+
+.border.mb-3 .collapse p {
+    color: #6c757d; /* Gray text for accordion content */
+}
+
+body.dark-mode .border.mb-3 .collapse p {
+    color: #ccc !important; /* Light gray text for accordion content in dark mode */
+}
+
+.border.mb-3 .paypal.show {
+    border-top: 1px solid #dc3545; /* Red border for PayPal section when expanded */
+}
+
+.border.mb-3 .paypal p {
+    color: #6c757d; /* Gray text for PayPal content */
+}
+
+body.dark-mode .border.mb-3 .paypal p {
+    color: #ccc !important; /* Light gray text for PayPal content in dark mode */
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.moon-icon, .sun-icon {
+    transition: all 0.5s ease; /* Extended transition duration for smoother icon changes */
+}
+
+.theme-toggle-btn.dark-mode .moon-icon {
+    transform: rotate(360deg); /* Full rotation animation when switching to dark mode */
+    opacity: 0;
+}
+
+.theme-toggle-btn.dark-mode .sun-icon {
+    transform: rotate(360deg); /* Full rotation animation for sun icon */
+    opacity: 1;
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+#theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.moon-icon, .sun-icon {
+    font-size: 1.2rem;
+    display: inline-block;
+    position: relative;
+}
+
+.sun-icon {
+    display: none; /* Hides sun icon by default */
+}
+
+    .sun-icon.hide {
+        display: none;
+    }
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px; /* Adds spacing between theme toggle and adjacent elements */
+}
+
+#theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.moon-icon, .sun-icon {
+    font-size: 1.2rem;
+    display: inline-block;
+    position: relative;
+}
+
+.sun-icon {
+    display: none;
+}
+
+    .sun-icon.hide {
+        display: none;
+    }
+
+.icons {
+    display: flex;
+    align-items: center; /* Vertically centers icon elements */
+}
+
+.theme-toggle {
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+}
+
+#theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.moon-icon, .sun-icon {
+    font-size: 1.2rem;
+    line-height: 1; /* Prevents extra spacing around icons */
+}
+
+.sun-icon {
+    display: none;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevents horizontal scrollbar */
+}
+
+.site-wrap {
+    overflow: hidden; /* Prevents content overflow */
+}
+
+:root {
+    --primary-color: #dc3545; /* CSS custom property for primary red color */
+    --secondary-color: #f8f9fa; /* CSS custom property for light gray background */
+    --text-color: #333; /* CSS custom property for dark text */
+    --bg-color: #fff; /* CSS custom property for white background */
+}
+
+body.dark-mode {
+    --primary-color: #e63946; /* Slightly different red for dark mode */
+    --secondary-color: #343a40; /* Dark gray for secondary elements */
+    --text-color: #f8f9fa; /* Light text for dark mode */
+    --bg-color: #212529; /* Dark background for dark mode */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+body {
+    background-color: var(--bg-color); /* Uses CSS custom property for background */
+    color: var(--text-color); /* Uses CSS custom property for text color */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition between light and dark modes */
+}
+
+.fade-in {
+    opacity: 0; /* Initially invisible for fade-in animation */
+    transition: opacity 1s ease-in-out; /* Slow fade-in transition */
+}
+
+    .fade-in.visible {
+        opacity: 1; /* Fully visible when visible class is added */
+    }
+
+.category-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation for hover effects */
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: var(--secondary-color); /* Uses CSS custom property for background */
+}
+
+    .category-item:hover {
+        transform: translateY(-10px); /* Moves item up by 10px on hover */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Creates elevation shadow effect */
+    }
+
+.product-card {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%;
+    background-color: var(--secondary-color);
+    border: 1px solid rgba(0,0,0,0.1); /* Subtle border for card definition */
+}
+
+    .product-card:hover {
+        transform: translateY(-5px); /* Lifts card slightly on hover */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+.toast-notification {
+    position: fixed; /* Fixed positioning for toast notifications */
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50; /* Green background for success notifications */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9999; /* Highest z-index to appear above everything */
+    display: flex;
+    align-items: center;
+    transform: translateX(150%); /* Initially positioned off-screen to the right */
+    transition: transform 0.3s ease;
+}
+
+    .toast-notification.show {
+        transform: translateX(0); /* Slides toast into view */
+    }
+
+.loader {
+    border: 5px solid #f3f3f3; /* Light gray border for loader ring */
+    border-radius: 50%; /* Creates circular loader */
+    border-top: 5px solid var(--primary-color); /* Colored top border for spinning effect */
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite; /* Continuous spinning animation */
+    margin: 20px auto;
+    display: none; /* Hidden by default until needed */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg); /* Starting rotation */
+    }
+
+    100% {
+        transform: rotate(360deg); /* Full rotation for spinning effect */
+    }
+}
+
+#results {
+    display: none; /* Hidden by default until calculations are complete */
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+#back-to-top {
+    position: fixed; /* Fixed positioning relative to viewport */
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
+    width: 50px;
+    height: 50px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%; /* Creates circular button */
+    opacity: 0; /* Initially invisible */
+    visibility: hidden;
+    transition: all 0.3s ease; /* Smooth transition for appearance and hover effects */
+    background-color: #dc3545;
+    color: white;
+}
+
+    #back-to-top.active {
+        opacity: 1; /* Fully visible when active */
+        visibility: visible;
+    }
+
+    #back-to-top:hover {
+        transform: translateY(-3px); /* Lifts button slightly on hover */
+        background-color: #dc3545;
+    }
+
+body.dark-mode #back-to-top {
+    background-color: #dc3545; /* Maintains red color in dark mode */
+    color: white;
+}
+
+.site-navbar .container {
+    max-width: 1200px; /* Limits maximum width for better readability on large screens */
+    padding: 0 15px;
+}
+
+.site-navbar .d-flex {
+    align-items: center;
+    justify-content: space-between; /* Distributes space between navbar elements */
+    width: 100%;
+}
+
+.site-logo {
+    margin-right: 30px; /* Creates space between logo and navigation menu */
+}
+
+    .site-logo a {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #000;
+        text-decoration: none;
+    }
+
+.main-nav {
+    flex-grow: 1; /* Allows navigation to take up available space */
+}
+
+.site-menu {
+    display: flex;
+    align-items: center;
+    list-style: none; /* Removes default list bullets */
+    margin: 0;
+    padding: 0;
+}
+
+    .site-menu > li {
+        margin-right: 20px; /* Spacing between menu items */
+    }
+
+        .site-menu > li > a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 500;
+        }
+
+.icons {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Pushes icons to the right side of navbar */
+}
+
+    .icons > * {
+        margin-left: 15px; /* Consistent spacing between icon elements */
+    }

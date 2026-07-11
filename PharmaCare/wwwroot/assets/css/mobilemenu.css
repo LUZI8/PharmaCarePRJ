@@ -1,0 +1,194 @@
+﻿/* Mobile Menu Fixes - Responsive navigation system for mobile devices */
+
+/* Force mobile navigation to hide on screens smaller than 992px */
+@media (max-width: 991.98px) {
+    /* Hide the main desktop navigation menu completely */
+    .site-navbar .site-navigation .site-menu {
+        display: none !important;
+    }
+
+    /* Remove desktop search container from mobile view */
+    .navbar-search-container {
+        display: none !important;
+    }
+
+    /* Show the hamburger menu toggle button */
+    .site-menu-toggle {
+        display: block !important;
+    }
+}
+
+/* Mobile menu navigation structure - unstyled list for menu items */
+.mobile-menu-nav {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Individual mobile menu item container */
+.mobile-menu-item {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    border-bottom: 1px solid #eee; /* Separator line between menu items */
+}
+
+/* Flex container for menu item content and toggle button */
+.mobile-menu-item-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+}
+
+/* Mobile menu link styling with uppercase transformation */
+.mobile-menu-link {
+    display: block !important;
+    padding: 15px 0 !important;
+    color: #212529 !important;
+    text-decoration: none !important;
+    text-transform: uppercase !important; /* Convert text to uppercase for consistency */
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    flex-grow: 1 !important; /* Take up remaining space in flex container */
+    transition: color 0.3s ease !important; /* Smooth color transition on hover */
+}
+
+    .mobile-menu-link:hover {
+        text-decoration: none !important;
+    }
+
+/* Toggle button for expanding/collapsing submenus */
+.mobile-menu-toggle {
+    padding: 10px !important;
+    cursor: pointer !important;
+    color: #666 !important;
+    font-size: 0.9rem !important;
+}
+
+    .mobile-menu-toggle:hover {
+    }
+
+/* Submenu container with light background */
+.mobile-submenu {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: #f8f9fa !important; /* Light gray background to distinguish from main menu */
+}
+
+    /* Full-width submenu items */
+    .mobile-submenu li {
+        display: block !important;
+        width: 100% !important;
+    }
+
+/* Submenu links with indentation and smaller font */
+.mobile-submenu-link {
+    display: block !important;
+    padding: 12px 20px !important; /* Extra left padding for visual hierarchy */
+    color: #495057 !important;
+    text-decoration: none !important;
+    font-size: 0.85rem !important; /* Smaller font than main menu items */
+    border-bottom: 1px solid #e9ecef !important;
+    transition: all 0.3s ease !important; /* Smooth transition for hover effects */
+}
+
+    /* Submenu hover effect with background change and increased indentation */
+    .mobile-submenu-link:hover {
+        background-color: #fff !important;
+        text-decoration: none !important;
+        padding-left: 25px !important; /* Increase left padding on hover for interactive feedback */
+    }
+
+/* Active menu item styling with bold font weight */
+.mobile-menu-item.active .mobile-menu-link {
+    font-weight: 600 !important; /* Make active items bold */
+}
+
+/* Dark mode theme support for mobile menu */
+body.dark-mode .mobile-menu-link {
+    color: #fff !important; /* White text in dark mode */
+}
+
+    body.dark-mode .mobile-menu-link:hover {
+        color: #f8f9fa !important;
+    }
+
+/* Dark mode border colors */
+body.dark-mode .mobile-menu-item {
+    border-bottom-color: #495057 !important;
+}
+
+/* Dark mode submenu background */
+body.dark-mode .mobile-submenu {
+    background-color: #495057 !important;
+}
+
+/* Dark mode submenu text and borders */
+body.dark-mode .mobile-submenu-link {
+    color: #e9ecef !important;
+    border-bottom-color: #6c757d !important;
+}
+
+    body.dark-mode .mobile-submenu-link:hover {
+        color: #fff !important;
+        background-color: #6c757d !important;
+    }
+
+/* Dark mode active menu item */
+body.dark-mode .mobile-menu-item.active .mobile-menu-link {
+    color: #f8f9fa !important;
+}
+
+/* Mobile search results dropdown container */
+.mobile-search-results {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    max-height: 300px; /* Limit height to prevent overflow */
+    overflow-y: auto; /* Enable scrolling for long result lists */
+}
+
+/* Search result item hover effect */
+.mobile-search-item:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Dark mode search results styling */
+body.dark-mode .mobile-search-results {
+    background: #343a40;
+    border-color: #495057;
+}
+
+body.dark-mode .mobile-search-item:hover {
+    background-color: #495057 !important;
+}
+
+/* Mobile menu body container with proper spacing */
+.site-mobile-menu-body {
+    padding: 0 20px 20px 20px !important; /* Consistent padding around menu content */
+}
+
+/* Ensure mobile menu items display as block elements */
+.mobile-menu-nav > .mobile-menu-item {
+    display: block !important;
+    flex-direction: column !important;
+}
+
+/* Box sizing fix for mobile menu elements */
+.site-mobile-menu * {
+    box-sizing: border-box; /* Prevent layout issues with padding and borders */
+}
+
+/* Mobile menu positioning and dimensions */
+.site-mobile-menu {
+    position: fixed !important; /* Fixed positioning to overlay content */
+    top: 0 !important;
+    right: 0 !important;
+    width: 300px !important;
+    max-width: 90vw !important; /* Responsive width with viewport units */
+    height: 100vh !important; /* Full viewport height */
+    z-index: 2000 !important; /* High z-index to appear above other content */
+}

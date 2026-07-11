@@ -1,0 +1,167 @@
+﻿@model PharmaCare.Models.User
+
+@{
+    ViewData["Title"] = "Create User";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* primary button styling to use PharmaCare red color scheme */
+    .btn-primary,
+    button.btn-primary,
+    input.btn-primary,
+    .btn-primary:hover,
+    .btn-primary:active,
+    .btn-primary:focus,
+    .btn-primary:not(:disabled):not(.disabled):active {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important;
+        transform: none !important;
+        transition: none !important;
+    }
+</style>
+
+<!-- Page header with title and navigation controls -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Create New User</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Back to user list navigation link -->
+            <a href="@Url.Action("Index", "Users")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content layout with form and help sidebar -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <!-- User creation form with model binding and validation -->
+            <form asp-action="Create" id="createUserForm">
+                <!-- Display model-level validation errors -->
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Name fields arranged in two columns for better layout -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FirstName" class="control-label"></label>
+                            <input asp-for="FirstName" class="form-control" required />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LastName" class="control-label"></label>
+                            <input asp-for="LastName" class="form-control" required />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email field - serves as username for login authentication -->
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- Password field for initial account security -->
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" required />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Role assignment dropdown for permission control -->
+                <div class="form-group">
+                    <label asp-for="Role" class="control-label"></label>
+                    <select asp-for="Role" class="form-control" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Pharmacist">Pharmacist</option>
+                        <option value="Customer">Customer</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+
+                <!-- Address information fields arranged in two columns -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Address" class="control-label"></label>
+                            <!-- Address is optional - not marked as required -->
+                            <input asp-for="Address" class="form-control " />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="City" class="control-label"></label>
+                            <!-- City is optional - not marked as required -->
+                            <input asp-for="City" class="form-control " />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone number field for contact and verification purposes -->
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <!-- Phone number is optional - not marked as required -->
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <!-- Account creation timestamp field with current datetime default -->
+                <div class="form-group">
+                    <label asp-for="DateCreated" class="control-label"></label>
+                    <input asp-for="DateCreated" class="form-control" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" required />
+                    <span asp-validation-for="DateCreated" class="text-danger"></span>
+                </div>
+
+                <!-- Hidden field to automatically activate new user accounts -->
+                <input asp-for="IsActive" type="hidden" value="true" />
+
+                <!-- Form submission and cancellation controls -->
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Create User
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary ml-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Help sidebar with field descriptions and guidance -->
+    <div class="col-lg-4">
+        <div class="form-card">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">Help</h5>
+            </div>
+            <div class="p-3">
+                <!-- Field-by-field explanation for admin users -->
+                <p><strong>First & Last Name:</strong> Enter the user's full name.</p>
+                <p><strong>Email:</strong> This will be used as the username for login.</p>
+                <p><strong>Password:</strong> Create a secure password for the user.</p>
+                <p><strong>Role:</strong> Assign appropriate permissions level.</p>
+                <p><strong>Address & City:</strong> User's physical location.</p>
+                <p><strong>Phone Number:</strong> Contact number for account verification.</p>
+                <p><strong>Date Created:</strong> When the account was established.</p>
+                <p><strong>Account Status:</strong> New accounts are automatically activated.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        /* Include client-side validation scripts for form validation */
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

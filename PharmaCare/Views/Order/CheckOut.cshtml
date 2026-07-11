@@ -1,0 +1,171 @@
+﻿@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    /* Extract user and cart data from ViewBag with null safety fallbacks */
+    var user = ViewBag.User ?? new { };
+    var cart = ViewBag.Cart ?? new { Items = new List<object>(), SubTotal = 0.0M, Tax = 0.0M, ShippingCost = 0.0M, Total = 0.0M };
+
+    /* Hide category navigation during checkout process for focused user experience */
+    ViewBag.HideCategories = true;
+}
+
+<!-- Import checkout specific styling -->
+<link src="~/assets/css/OrderViewStyles/CheckOut.css" />
+
+<div class="site-section">
+    <div class="container">
+        <!-- Error message display for checkout validation failures -->
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Checkout form with CSRF protection for secure order placement -->
+        <form asp-controller="Order" asp-action="PlaceOrder" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <!-- Left column: Customer billing and shipping information -->
+                <div class="col-md-6 mb-5 mb-md-0">
+                    <h2 class="h3 mb-3 text-black">Billing Details</h2>
+                    <div class="p-3 p-lg-5 border">
+                        <!-- Customer name fields - pre-filled from user data, read-only -->
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="firstName" class="text-black">First Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" value="@(user?.FirstName ?? "")" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="text-black">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" value="@(user?.LastName ?? "")" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Shipping address field - editable for delivery customization -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="shippingAddress" class="text-black">Shipping Address <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="shippingAddress" name="shippingAddress" value="@(user?.Address ?? "")" required>
+                            </div>
+                        </div>
+
+                        <!-- City field - editable for accurate delivery location -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="city" class="text-black">City <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="city" name="city" value="@(user?.City ?? "")" required>
+                            </div>
+                        </div>
+
+                        <!-- Phone number field with validation for delivery coordination -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="phoneNumber" class="text-black">Phone <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="@(user?.PhoneNumber ?? "")" required pattern="[0-9]{10,15}" title="Phone number must be between 10 and 15 digits" minlength="10" maxlength="15">
+                                <small class="form-text text-muted">Phone number must be between 10-15 digits</small>
+                            </div>
+                        </div>
+
+                        <!-- Email field - pre-filled and read-only for order confirmation -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="email" class="text-black">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" value="@(user?.Email ?? "")" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Optional order notes field for special delivery instructions -->
+                        <div class="form-group">
+                            <label for="orderNotes" class="text-black">Order Notes</label>
+                            <textarea name="orderNotes" id="orderNotes" cols="30" rows="5" class="form-control" placeholder="Write your notes here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column: Order summary and payment options -->
+                <div class="col-md-6">
+                    <div class="row mb-5">
+                        <div class="col-md-12">
+                            <h2 class="h3 mb-3 text-black">Your Order</h2>
+                            <div class="p-3 p-lg-5 border">
+                                <!-- Order items summary table with pricing breakdown -->
+                                <table class="table site-block-order-table mb-5">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-black">Product</th>
+                                            <th class="text-black">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic cart items display with quantity and pricing -->
+                                        @foreach (var item in cart.Items)
+                                        {
+                                            <tr>
+                                                <td class="text-black">@item.ProductName <strong class="mx-2">x</strong> @item.Quantity</td>
+                                                <td class="text-black">$@item.Total.ToString("0.00")</td>
+                                            </tr>
+                                        }
+
+                                        <!-- Order totals breakdown for transparency -->
+                                        <tr>
+                                            <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
+                                            <td class="text-black">$@cart.SubTotal.ToString("0.00")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-black font-weight-bold"><strong>Tax</strong></td>
+                                            <td class="text-black">$@cart.Tax.ToString("0.00")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-black font-weight-bold"><strong>Shipping</strong></td>
+                                            <td class="text-black">$@cart.ShippingCost.ToString("0.00")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+                                            <td class="text-black font-weight-bold"><strong>$@cart.Total.ToString("0.00")</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Payment method selection - currently only cash on delivery available -->
+                                <div class="border mb-3">
+                                    <h3 class="h6 mb-0"><a class="d-block" data-toggle="collapse" href="#collapsecheque" role="button" aria-expanded="true" aria-controls="collapsecheque">Cash on Delivery</a></h3>
+
+                                    <div class="collapse show" id="collapsecheque">
+                                        <div class="py-2 px-4">
+                                            <!-- Cash on delivery explanation and selection -->
+                                            <p class="mb-0">Pay with cash upon delivery. Our delivery person will collect the payment when your order arrives at your doorstep.</p>
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input payment-option" type="radio" name="paymentMethod" id="cashOnDelivery" value="Cash on Delivery" checked>
+                                                <label class="form-check-label" for="cashOnDelivery">
+                                                    Choose Cash on Delivery
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Order placement button -->
+                                <div class="form-group">
+                                    <button class="btn btn-danger btn-lg btn-block" type="submit" id="place-order-btn">Place Order</button>
+                                </div>
+
+                                <!-- Navigation back to cart for order modifications -->
+                                <div class="form-group text-center mt-3">
+                                    <a href="@Url.Action("Cart", "FrontEnd")" class="btn btn-outline-cart">
+                                        <i class="fas fa-arrow-left mr-2"></i>Back to Cart
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Import checkout specific JavaScript functionality -->
+    <script src="~/assets/js/OrderViewScripts/CheckOut.js"></script>
+}

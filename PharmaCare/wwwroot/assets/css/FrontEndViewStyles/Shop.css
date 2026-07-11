@@ -1,0 +1,134 @@
+﻿.product-card {
+    border: 1px solid var(--border-color, #e9ecef); /* Uses CSS variable with fallback */
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease; /* Smooth animation for all property changes */
+    height: 100%; /* Ensures equal height for all product cards */
+    position: relative;
+    background-color: var(--card-bg, white);
+}
+
+    .product-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow effect on hover */
+        transform: translateY(-5px); /* Lifts card slightly on hover */
+    }
+
+.tag {
+    position: absolute; /* Positions tag relative to product card */
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color, #ff6767); /* Uses CSS variable for theme color */
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    z-index: 2; /* Ensures tag appears above other content */
+}
+
+.medication-badges {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap; /* Allows badges to wrap to next line */
+    justify-content: center; /* Centers badges horizontally */
+    gap: 5px; /* Consistent spacing between badges */
+}
+
+.badge {
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 11px;
+}
+
+    .badge i {
+        margin-right: 4px; /* Spacing between icon and badge text */
+    }
+
+.prescription-notice {
+    border-left: 4px solid var(--primary-color, #ff6767); /* Colored left border for emphasis */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.filter-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg); /* Dynamic background using CSS variable */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+}
+
+.btn-group .btn-outline-danger.active,
+.btn-group .btn-outline-danger:active {
+    background-color: var(--danger, #dc3545) !important; /* Red background for active filter buttons */
+    color: white !important;
+    border-color: var(--danger, #dc3545) !important;
+}
+
+/* On small screens let the "Sort by" button group wrap instead of overflowing.
+   Bootstrap keeps .btn-group on one line; allow wrapping and restore per-button
+   rounded corners since they're no longer visually joined. */
+@media (max-width: 575px) {
+    .filter-section .btn-group {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+        .filter-section .btn-group > .btn {
+            border-radius: 4px !important;
+            flex: 1 1 auto;
+        }
+}
+
+.prescription-filter {
+    margin-top: 15px;
+}
+
+    .prescription-filter .btn-outline-danger {
+        transition: all 0.3s ease; /* Smooth transition for button state changes */
+    }
+
+        .prescription-filter .btn-outline-danger.active {
+            background-color: var(--danger, #dc3545) !important; /* Red background for active prescription filter */
+            color: white !important;
+            border-color: var(--danger, #dc3545) !important;
+        }
+
+.btn-add-to-cart {
+    margin-top: 10px;
+    width: 100%; /* Full width button within product card */
+}
+
+.site-block-27 ul {
+    padding: 0;
+    margin: 0; /* Removes default list spacing */
+}
+
+    .site-block-27 ul li {
+        display: inline-block; /* Displays pagination items horizontally */
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+        .site-block-27 ul li a,
+        .site-block-27 ul li span {
+            color: #333;
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px; /* Centers text vertically within circular pagination buttons */
+            border-radius: 50%; /* Creates circular pagination buttons */
+            border: 1px solid #e6e6e6;
+            text-align: center;
+        }
+
+        .site-block-27 ul li.active span {
+            background: #dc3545; /* Red background for active pagination number */
+            color: #fff;
+            border-color: #dc3545;
+        }
+
+        .site-block-27 ul li.disabled a {
+            color: #ccc; /* Gray color for disabled pagination links */
+            cursor: not-allowed; /* Indicates non-clickable state */
+        }

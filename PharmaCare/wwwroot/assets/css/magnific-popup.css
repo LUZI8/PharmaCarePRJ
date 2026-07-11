@@ -1,0 +1,495 @@
+/* Magnific Popup CSS - Modal and lightbox functionality */
+
+/* Full-screen overlay background */
+.mfp-bg {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2042;
+    overflow: hidden;
+    position: fixed;
+    background: #0b0b0b; /* Dark semi-transparent background */
+    opacity: 0.8;
+}
+
+/* Main popup wrapper container */
+.mfp-wrap {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2043;
+    position: fixed;
+    outline: none !important;
+    -webkit-backface-visibility: hidden; /* Prevent flickering during animations */
+}
+
+/* Content container with centering */
+.mfp-container {
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    padding: 0 8px;
+    box-sizing: border-box; /* Include padding in width calculations */
+}
+
+    /* Vertical centering helper element */
+    .mfp-container:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle; /* Center content vertically */
+    }
+
+/* Remove centering for top-aligned popups */
+.mfp-align-top .mfp-container:before {
+    display: none;
+}
+
+/* Main content wrapper */
+.mfp-content {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 auto;
+    text-align: left;
+    z-index: 2045;
+}
+
+/* Full-width content for inline and AJAX popups */
+.mfp-inline-holder .mfp-content,
+.mfp-ajax-holder .mfp-content {
+    width: 100%;
+    cursor: auto;
+}
+
+/* Loading cursor for AJAX content */
+.mfp-ajax-cur {
+    cursor: progress;
+}
+
+/* Zoom-out cursor for images */
+.mfp-zoom-out-cur, .mfp-zoom-out-cur .mfp-image-holder .mfp-close {
+    cursor: -moz-zoom-out;
+    cursor: -webkit-zoom-out;
+    cursor: zoom-out;
+}
+
+/* Zoom-in cursor for zoomable content */
+.mfp-zoom {
+    cursor: pointer;
+    cursor: -webkit-zoom-in;
+    cursor: -moz-zoom-in;
+    cursor: zoom-in;
+}
+
+/* Auto cursor for content areas */
+.mfp-auto-cursor .mfp-content {
+    cursor: auto;
+}
+
+/* Prevent text selection on control elements */
+.mfp-close,
+.mfp-arrow,
+.mfp-preloader,
+.mfp-counter {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+/* Hide loading figures */
+.mfp-loading.mfp-figure {
+    display: none;
+}
+
+/* Hidden element utility class */
+.mfp-hide {
+    display: none !important;
+}
+
+/* Loading indicator with centered positioning */
+.mfp-preloader {
+    color: #CCC;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    text-align: center;
+    margin-top: -0.8em; /* Center vertically */
+    left: 8px;
+    right: 8px;
+    z-index: 2044;
+}
+
+    /* Preloader link styling */
+    .mfp-preloader a {
+        color: #CCC;
+    }
+
+        .mfp-preloader a:hover {
+            color: #FFF;
+        }
+
+/* Hide preloader when content is ready */
+.mfp-s-ready .mfp-preloader {
+    display: none;
+}
+
+/* Hide content on error */
+.mfp-s-error .mfp-content {
+    display: none;
+}
+
+/* Button reset and base styling for popup controls */
+button.mfp-close,
+button.mfp-arrow {
+    overflow: visible;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none; /* Remove default button styling */
+    display: block;
+    outline: none;
+    padding: 0;
+    z-index: 2046;
+    box-shadow: none;
+    touch-action: manipulation; /* Optimize for touch devices */
+}
+
+/* Remove Firefox button inner padding */
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+/* Close button positioning and styling */
+.mfp-close {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-decoration: none;
+    text-align: center;
+    opacity: 0.65; /* Semi-transparent by default */
+    padding: 0 0 18px 10px;
+    color: #FFF;
+    font-style: normal;
+    font-size: 28px;
+    font-family: Arial, Baskerville, monospace;
+}
+
+    /* Close button hover and focus states */
+    .mfp-close:hover,
+    .mfp-close:focus {
+        opacity: 1; /* Fully opaque on interaction */
+    }
+
+    /* Active state with slight position shift */
+    .mfp-close:active {
+        top: 1px;
+    }
+
+/* Close button inside content styling */
+.mfp-close-btn-in .mfp-close {
+    color: #333;
+}
+
+/* Close button for image and iframe popups */
+.mfp-image-holder .mfp-close,
+.mfp-iframe-holder .mfp-close {
+    color: #FFF;
+    right: -6px;
+    text-align: right;
+    padding-right: 6px;
+    width: 100%;
+}
+
+/* Item counter display */
+.mfp-counter {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #CCC;
+    font-size: 12px;
+    line-height: 18px;
+    white-space: nowrap; /* Prevent counter text wrapping */
+}
+
+/* Navigation arrow base styling */
+.mfp-arrow {
+    position: absolute;
+    opacity: 0.65;
+    margin: 0;
+    top: 50%;
+    margin-top: -55px; /* Center vertically */
+    padding: 0;
+    width: 90px;
+    height: 110px;
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+    /* Arrow active state */
+    .mfp-arrow:active {
+        margin-top: -54px;
+    }
+
+    /* Arrow hover and focus states */
+    .mfp-arrow:hover,
+    .mfp-arrow:focus {
+        opacity: 1;
+    }
+
+    /* Arrow shape creation using CSS borders */
+    .mfp-arrow:before,
+    .mfp-arrow:after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin-top: 35px;
+        margin-left: 35px;
+        border: medium inset transparent; /* Create arrow shape with borders */
+    }
+
+    /* Inner arrow border */
+    .mfp-arrow:after {
+        border-top-width: 13px;
+        border-bottom-width: 13px;
+        top: 8px;
+    }
+
+    /* Outer arrow border for depth effect */
+    .mfp-arrow:before {
+        border-top-width: 21px;
+        border-bottom-width: 21px;
+        opacity: 0.7;
+    }
+
+/* Left arrow positioning and colors */
+.mfp-arrow-left {
+    left: 0;
+}
+
+    .mfp-arrow-left:after {
+        border-right: 17px solid #FFF; /* White arrow pointing right */
+        margin-left: 31px;
+    }
+
+    .mfp-arrow-left:before {
+        margin-left: 25px;
+        border-right: 27px solid #3F3F3F; /* Dark border for depth */
+    }
+
+/* Right arrow positioning and colors */
+.mfp-arrow-right {
+    right: 0;
+}
+
+    .mfp-arrow-right:after {
+        border-left: 17px solid #FFF; /* White arrow pointing left */
+        margin-left: 39px;
+    }
+
+    .mfp-arrow-right:before {
+        border-left: 27px solid #3F3F3F; /* Dark border for depth */
+    }
+
+/* Iframe popup container with padding */
+.mfp-iframe-holder {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+    /* Iframe content sizing */
+    .mfp-iframe-holder .mfp-content {
+        line-height: 0;
+        width: 100%;
+        max-width: 900px; /* Limit maximum width */
+    }
+
+    /* Close button positioning for iframes */
+    .mfp-iframe-holder .mfp-close {
+        top: -40px;
+    }
+
+/* Responsive iframe scaler with aspect ratio */
+.mfp-iframe-scaler {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+    /* Iframe element positioning within scaler */
+    .mfp-iframe-scaler iframe {
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.6); /* Subtle shadow around iframe */
+        background: #000;
+    }
+
+/* Main image styling in popup */
+img.mfp-img {
+    width: auto;
+    max-width: 100%; /* Responsive image sizing */
+    height: auto;
+    display: block;
+    line-height: 0;
+    box-sizing: border-box;
+    padding: 40px 0 40px; /* Vertical padding around image */
+    margin: 0 auto; /* Center horizontally */
+}
+
+/* Image figure container */
+.mfp-figure {
+    line-height: 0;
+}
+
+    /* Shadow behind image for depth effect */
+    .mfp-figure:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 40px;
+        bottom: 40px;
+        display: block;
+        right: 0;
+        width: auto;
+        height: auto;
+        z-index: -1; /* Place behind image */
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+        background: #444;
+    }
+
+    /* Image caption styling */
+    .mfp-figure small {
+        color: #BDBDBD;
+        display: block;
+        font-size: 12px;
+        line-height: 14px;
+    }
+
+    /* Remove default figure margins */
+    .mfp-figure figure {
+        margin: 0;
+    }
+
+/* Bottom bar for image titles and captions */
+.mfp-bottom-bar {
+    margin-top: -36px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    cursor: auto;
+}
+
+/* Image title styling */
+.mfp-title {
+    text-align: left;
+    line-height: 18px;
+    color: #F3F3F3;
+    word-wrap: break-word; /* Handle long titles gracefully */
+    padding-right: 36px; /* Space for close button */
+}
+
+/* Full-width content for image galleries */
+.mfp-image-holder .mfp-content {
+    max-width: 100%;
+}
+
+/* Clickable figure in gallery mode */
+.mfp-gallery .mfp-image-holder .mfp-figure {
+    cursor: pointer;
+}
+
+/* Mobile landscape and small screen optimizations */
+@media screen and (max-width: 800px) and (orientation: landscape), screen and (max-height: 300px) {
+    /* Remove padding on mobile devices */
+    .mfp-img-mobile .mfp-image-holder {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .mfp-img-mobile img.mfp-img {
+        padding: 0;
+    }
+
+    .mfp-img-mobile .mfp-figure:after {
+        top: 0;
+        bottom: 0;
+    }
+
+    .mfp-img-mobile .mfp-figure small {
+        display: inline;
+        margin-left: 5px;
+    }
+    /* Fixed bottom bar for mobile */
+    .mfp-img-mobile .mfp-bottom-bar {
+        background: rgba(0, 0, 0, 0.6);
+        bottom: 0;
+        margin: 0;
+        top: auto;
+        padding: 3px 5px;
+        position: fixed;
+        box-sizing: border-box;
+    }
+
+        .mfp-img-mobile .mfp-bottom-bar:empty {
+            padding: 0;
+        }
+    /* Mobile counter positioning */
+    .mfp-img-mobile .mfp-counter {
+        right: 5px;
+        top: 3px;
+    }
+    /* Mobile close button styling */
+    .mfp-img-mobile .mfp-close {
+        top: 0;
+        right: 0;
+        width: 35px;
+        height: 35px;
+        line-height: 35px;
+        background: rgba(0, 0, 0, 0.6); /* Dark background for visibility */
+        position: fixed;
+        text-align: center;
+        padding: 0;
+    }
+}
+
+/* Medium screen optimizations */
+@media all and (max-width: 900px) {
+    /* Scale down arrows on smaller screens */
+    .mfp-arrow {
+        -webkit-transform: scale(0.75);
+        transform: scale(0.75);
+    }
+
+    .mfp-arrow-left {
+        -webkit-transform-origin: 0;
+        transform-origin: 0;
+    }
+
+    .mfp-arrow-right {
+        -webkit-transform-origin: 100%;
+        transform-origin: 100%;
+    }
+    /* Reduce container padding */
+    .mfp-container {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}

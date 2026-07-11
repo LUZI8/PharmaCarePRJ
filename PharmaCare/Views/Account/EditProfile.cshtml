@@ -1,0 +1,144 @@
+﻿@model PharmaCare.Models.User
+@{
+    ViewData["Title"] = "Edit Profile";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.IsLoggedIn = true;
+    /* Concatenate first and last name for display in layout */
+    ViewBag.UserName = Model.FirstName + " " + Model.LastName;
+    ViewBag.HideCategories = false;
+}
+
+<link rel="stylesheet" href="~/assets/css/AccountViewStyles/EditProfile.css" />
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-5">
+                <h2 class="h3 mb-3 text-danger">Edit Profile</h2>
+
+                <!-- Success and error message display from TempData -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Account navigation sidebar -->
+            <div class="col-md-3 mb-5">
+                <div class="account-sidebar">
+                    <div class="sidebar-header">
+                        <h5 class="mb-0"><i class="fas fa-user-circle mr-2"></i> Account Menu</h5>
+                    </div>
+                    <div class="list-group">
+                        <a href="@Url.Action("Profile", "Account")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user mr-2"></i> Profile Information
+                        </a>
+                        <!-- Active navigation item indicating current page -->
+                        <a href="@Url.Action("EditProfile", "Account")" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-edit mr-2"></i> Edit Profile
+                        </a>
+                        <a href="@Url.Action("ChangePassword", "Account")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-key mr-2"></i> Change Password
+                        </a>
+                        <a href="@Url.Action("Index", "Order")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-bag mr-2"></i> My Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="account-content">
+                    <h4 class="mb-4 border-bottom pb-3">Edit Your Profile</h4>
+                    <!-- Form with model binding and anti-forgery protection -->
+                    <form asp-action="EditProfile" method="post">
+                        @Html.AntiForgeryToken()
+                        <!-- Display model validation summary excluding property-specific errors -->
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group row">
+                            <!-- ASP.NET Core tag helpers for automatic model binding -->
+                            <label asp-for="FirstName" class="col-md-4 col-form-label">First Name:</label>
+                            <div class="col-md-8">
+                                <input asp-for="FirstName" class="form-control" required />
+                                <!-- Client-side validation span -->
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label asp-for="LastName" class="col-md-4 col-form-label">Last Name:</label>
+                            <div class="col-md-8">
+                                <input asp-for="LastName" class="form-control" required />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label asp-for="Email" class="col-md-4 col-form-label">Email:</label>
+                            <div class="col-md-8">
+                                <!-- Email input with HTML5 validation type -->
+                                <input asp-for="Email" class="form-control" required type="email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label asp-for="PhoneNumber" class="col-md-4 col-form-label">Phone Number:</label>
+                            <div class="col-md-8">
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label asp-for="Address" class="col-md-4 col-form-label">Address:</label>
+                            <div class="col-md-8">
+                                <!-- Textarea for multi-line address input -->
+                                <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label asp-for="City" class="col-md-4 col-form-label">City:</label>
+                            <div class="col-md-8">
+                                <input asp-for="City" class="form-control" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Hidden fields to preserve critical user data during form submission -->
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="Role" />
+                        <input type="hidden" asp-for="Password" />
+                        <input type="hidden" asp-for="DateCreated" />
+                        <input type="hidden" asp-for="IsActive" />
+
+                        <div class="form-group row">
+                            <div class="col-md-8 offset-md-4">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-save mr-2"></i> Save Changes
+                                </button>
+                                <!-- Cancel link returning to profile view -->
+                                <a href="@Url.Action("Profile", "Account")" class="btn btn-outline-secondary ml-2">
+                                    <i class="fas fa-times mr-2"></i> Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

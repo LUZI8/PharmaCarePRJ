@@ -1,0 +1,316 @@
+﻿@model IEnumerable<PharmaCare.Models.ContactMessage>
+@{
+    // Set the page title that appears in the browser tab
+    ViewData["Title"] = "Feedback/Contact Us";
+    // Use the admin layout template for consistent admin panel styling
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Add smooth transition effect when hovering over message rows */
+    .message-item {
+        transition: all 0.2s ease;
+    }
+
+        /* Change background color slightly when hovering over a message row */
+        .message-item:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+    /* Style the message content area to preserve line breaks and add scrolling */
+    .message-content {
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    /* Force all primary buttons to use red color instead of default blue */
+    .btn-primary,
+    a.btn-primary,
+    .modal-footer .btn-primary,
+    button.btn-primary {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: white !important;
+        transition: none !important;
+    }
+
+        /* Keep red color when hovering over primary buttons */
+        .btn-primary:hover,
+        a.btn-primary:hover,
+        .modal-footer .btn-primary:hover,
+        button.btn-primary:hover {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        /* Keep red color when clicking or focusing on primary buttons */
+        .btn-primary:active,
+        .btn-primary:focus,
+        .btn-primary:not(:disabled):not(.disabled):active {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+            box-shadow: none !important;
+        }
+
+    /* Style modal popup for dark mode theme */
+    body.dark-mode .modal-content {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border-color: #2c2c2c;
+    }
+
+    /* Style modal header and footer borders for dark mode */
+    body.dark-mode .modal-header,
+    body.dark-mode .modal-footer {
+        border-color: #2c2c2c;
+    }
+
+    /* Style modal close button for dark mode */
+    body.dark-mode .close {
+        color: #e0e0e0;
+    }
+
+    /* Style form input fields for dark mode */
+    body.dark-mode .form-control {
+        background-color: #2a2a2a;
+        border-color: #2c2c2c;
+        color: #e0e0e0;
+    }
+
+    /* Change hover effect color for dark mode */
+    body.dark-mode .message-item:hover {
+        background-color: rgba(255,255,255,0.05);
+    }
+
+    /* Make view message buttons smaller and more compact */
+    .view-message {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.85rem;
+    }
+</style>
+
+<!-- Page header with title and empty toolbar area -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 page-title">Feedback/Contact Us</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <!-- Main card container for the messages table -->
+        <div class="card shadow-sm mb-4">
+            <!-- Card header with title -->
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="m-0 font-weight-bold">Contact & Feedback Messages</h5>
+            </div>
+            <div class="card-body">
+                <!-- Main data table showing all contact messages -->
+                <table class="table table-hover admin-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Subject</th>
+                            <th>User Status</th>
+                            <th style="width: 100px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Check if there are any messages to display -->
+                        @if (Model != null && Model.Any())
+                        {
+                            <!-- Loop through each contact message and create a table row -->
+                            @foreach (var message in Model)
+                            {
+                                <tr class="message-item">
+                                    <!-- Display formatted date and time -->
+                                    <td>@message.DateSubmitted.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <!-- Display full name by combining first and last name -->
+                                    <td>@message.FirstName @message.LastName</td>
+                                    <!-- Display email address -->
+                                    <td>@message.Email</td>
+                                    <!-- Display subject or "No Subject" if empty -->
+                                    <td>@(string.IsNullOrEmpty(message.Subject) ? "No Subject" : message.Subject)</td>
+                                    <td>
+                                        <!-- Check if message is from a registered user or guest -->
+                                        @if (message.UserId.HasValue)
+                                        {
+                                            <!-- Show green badge for registered users with their ID -->
+                                            <span class="badge badge-success">User (ID: @message.UserId)</span>
+                                        }
+                                        else
+                                        {
+                                            <!-- Show gray badge for non-registered users -->
+                                            <span class="badge badge-secondary">non-user</span>
+                                        }
+                                    </td>
+                                    <td class="action-btns">
+                                        <!-- View button that opens modal with full message details -->
+                                        <button type="button" class="btn btn-sm btn-info view-message" data-toggle="modal" data-target="#messageModal"
+                                                data-name="@message.FirstName @message.LastName"
+                                                data-email="@message.Email"
+                                                data-subject="@(string.IsNullOrEmpty(message.Subject) ? "No Subject" : message.Subject)"
+                                                data-message="@message.Message"
+                                                data-date="@message.DateSubmitted.ToString("yyyy-MM-dd HH:mm")"
+                                                data-userid="@(message.UserId.HasValue ? message.UserId.Value.ToString() : "non-user")">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Show empty state message when no contact messages exist -->
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="empty-state">
+                                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                        <h5>No messages available</h5>
+                                        <p class="text-muted">You'll see feedback and contact messages here when customers send them.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal popup that shows full message details when View button is clicked -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <!-- Modal header with title and close button -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- First row showing sender name and email -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><strong>From:</strong></label>
+                            <!-- Placeholder for sender's full name -->
+                            <p id="modal-name" class="form-control"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><strong>Email:</strong></label>
+                            <!-- Placeholder for sender's email address -->
+                            <p id="modal-email" class="form-control"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Second row showing date and user status -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><strong>Date:</strong></label>
+                            <!-- Placeholder for message submission date -->
+                            <p id="modal-date" class="form-control"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><strong>User Status:</strong></label>
+                            <!-- Placeholder for user registration status -->
+                            <p id="modal-userid" class="form-control"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Message subject field -->
+                <div class="form-group">
+                    <label><strong>Subject:</strong></label>
+                    <!-- Placeholder for message subject -->
+                    <p id="modal-subject" class="form-control"></p>
+                </div>
+                <!-- Full message content field -->
+                <div class="form-group">
+                    <label><strong>Message:</strong></label>
+                    <!-- Placeholder for full message text with scrolling -->
+                    <div id="modal-message" class="form-control message-content"></div>
+                </div>
+            </div>
+            <!-- Modal footer with action buttons -->
+            <div class="modal-footer">
+                <!-- Close modal button -->
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <!-- Email reply button that opens user's email client -->
+                <a id="reply-email" href="#" class="btn btn-primary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important;">
+                    <i class="fas fa-reply"></i> Reply via Email
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Handle click events on View message buttons
+            $('.view-message').click(function() {
+                // Get all message data from the clicked button's data attributes
+                var name = $(this).data('name');
+                var email = $(this).data('email');
+                var subject = $(this).data('subject');
+                var message = $(this).data('message');
+                var date = $(this).data('date');
+                var userid = $(this).data('userid');
+
+                // Fill in the modal fields with the message data
+                $('#modal-name').text(name);
+                $('#modal-email').text(email);
+                $('#modal-subject').text(subject);
+                $('#modal-message').text(message);
+                $('#modal-date').text(date);
+
+                // Display appropriate user status badge
+                if (userid === 'non-user') {
+                    $('#modal-userid').html('<span class="badge badge-secondary">non-user</span>');
+                } else {
+                    $('#modal-userid').html('<span class="badge badge-success">User (ID: ' + userid + ')</span>');
+                }
+
+                // Create mailto link for reply button that opens email client
+                $('#reply-email').attr('href', 'mailto:' + email + '?subject=Re: ' + subject);
+            });
+
+            // Initialize table pagination if the function exists
+            if (typeof initializePagination === 'function') {
+                initializePagination('.admin-table', 10);
+            }
+
+            // Function to update button styling based on current theme
+            function updateForDarkMode() {
+                if ($('body').hasClass('dark-mode')) {
+                    $('.btn-primary').addClass('dark-mode-btn');
+                } else {
+                    $('.btn-primary').removeClass('dark-mode-btn');
+                }
+            }
+
+            // Apply dark mode styling when page loads
+            updateForDarkMode();
+
+            // Watch for theme toggle button clicks and update styling
+            $('#theme-toggle-btn, #mobile-theme-toggle').on('click', function() {
+                // Small delay to ensure theme change is complete
+                setTimeout(updateForDarkMode, 50);
+            });
+        });
+    </script>
+}

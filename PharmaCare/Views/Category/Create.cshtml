@@ -1,0 +1,90 @@
+﻿@model PharmaCare.Models.Category
+
+@{
+    ViewData["Title"] = "Create Category";
+    Layout = "~/Views/Shared/_Adminlayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/assets/css/CategoryViewStyles/CategoryCreate.css" />
+
+<!-- Page header with navigation and action buttons -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Create New Category</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <!-- Back navigation to category list -->
+            <a href="@Url.Action("Index", "Category")" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Two-column layout: form on left, help on right -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">Category Information</h5>
+            </div>
+
+            <!-- Form with ASP.NET Core tag helpers for model binding -->
+            <form asp-action="Create" method="post">
+                <!-- Display model validation errors -->
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <!-- Label and input with ASP.NET Core tag helpers -->
+                    <label asp-for="CategoryName" class="control-label">Category Name</label>
+                    <input asp-for="CategoryName" class="form-control" placeholder="Enter category name" required />
+                    <!-- Client-side validation span -->
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <!-- Submit button with FontAwesome icon -->
+                    <button type="submit" class="btn btn-primary create-btn">
+                        <i class="fas fa-save"></i> Create Category
+                    </button>
+                    <!-- Cancel link returning to index -->
+                    <a asp-action="Index" class="btn btn-outline-secondary ml-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Help sidebar with guidelines and recommendations -->
+    <div class="col-lg-4">
+        <div class="form-card">
+            <div class="card-header">
+                <h5 class="m-0 font-weight-bold">Help</h5>
+            </div>
+            <div class="p-3">
+                <p><strong>Category Name:</strong> Enter a descriptive name for the category. This name will be displayed to customers and used for organizing products.</p>
+
+                <!-- Informational alert with icon -->
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle mr-2"></i> Categories help organize your products and make it easier for customers to find what they're looking for.
+                </div>
+
+                <div class="mt-3">
+                    <h6>Recommendations</h6>
+                    <!-- Unstyled list with custom checkmark icons -->
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success mr-2"></i> Keep category names short and clear</li>
+                        <li><i class="fas fa-check text-success mr-2"></i> Use common search terms in category names</li>
+                        <li><i class="fas fa-check text-success mr-2"></i> Avoid duplicate categories</li>
+                        <li><i class="fas fa-check text-success mr-2"></i> Plan your category structure carefully</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        /* Render client-side validation scripts for form validation */
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

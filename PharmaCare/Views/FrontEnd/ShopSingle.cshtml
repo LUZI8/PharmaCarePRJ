@@ -1,0 +1,338 @@
+﻿@model ProductViewModel
+@{
+    ViewData["Title"] = Model.ProductName;
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+}
+<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/ShopSingle.css" />
+
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 mr-auto">
+                <div class="border text-center">
+                    <!-- Product image with fallback handling -->
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.ProductName" class="img-fluid p-5">
+                    }
+                    else
+                    {
+                        <!-- Default image when product has no image -->
+                        <img src="~/assets/images/no-image.png" alt="@Model.ProductName" class="img-fluid p-5">
+                    }
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="text-black">@Model.ProductName</h2>
+                <p class="mb-4">
+                    <!-- Format price with 2 decimal places -->
+                    <strong class="text-primary h4">$@Model.Price.ToString("0.00")</strong>
+                </p>
+
+                <!-- NEW: Expiry status warning for customers -->
+                @if (Model.IsExpired)
+                {
+                    <div class="alert alert-danger mb-4">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <strong>Product Expired:</strong> This product has expired and is not available for purchase.
+                        <br><small>Expired on: @Model.ExpiryDate.ToString("MMM dd, yyyy")</small>
+                    </div>
+                }
+                else if (Model.IsExpiringSoon)
+                {
+                    <div class="alert alert-warning mb-4">
+                        <i class="fas fa-clock mr-2"></i>
+                        <strong>Limited Time:</strong> This product expires soon. Purchase before @Model.ExpiryDate.ToString("MMM dd, yyyy").
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-success mb-4">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <strong>Fresh Product:</strong> Expires @Model.ExpiryDate.ToString("MMM dd, yyyy")
+                    </div>
+                }
+
+                <!-- Stock status display with conditional styling -->
+                @if (Model.Stock > 0 && !Model.IsExpired)
+                {
+                    <div class="mb-4">
+                        <span class="badge badge-success p-2">In Stock</span>
+                        <small class="text-muted ml-2">(@Model.Stock units available)</small>
+                    </div>
+                }
+                else if (Model.IsExpired)
+                {
+                    <div class="mb-4">
+                        <span class="badge badge-danger p-2">Expired - Not Available</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-4">
+                        <span class="badge badge-danger p-2">Out of Stock</span>
+                    </div>
+                }
+
+                <!-- Prescription requirement warning section -->
+                @if (Model.RequiresPrescription)
+                {
+                    <div class="prescription-warning mb-4">
+                        <h5><i class="fas fa-prescription-bottle-alt mr-2"></i> Prescription Required</h5>
+                        <p class="mb-0">
+                            <!-- Display custom prescription note or default message -->
+                            @(string.IsNullOrEmpty(Model.PrescriptionNote) ?
+                                "This medication requires a valid prescription. You must visit our pharmacy with your prescription to complete the purchase." :
+                                Model.PrescriptionNote)
+                        </p>
+                    </div>
+                }
+
+                <!-- Quantity selector with different behavior for prescription drugs -->
+                <div class="mb-4">
+                    @if (Model.RequiresPrescription)
+                    {
+                        <!-- Fixed quantity for prescription medications -->
+                        <div class="input-group mb-3" style="max-width: 200px;">
+                            <!-- Readonly input with disabled styling -->
+                            <input type="text" id="quantity-input" class="form-control text-center shop-quantity-input" value="1" readonly aria-label="Quantity" style="background-color: #f8f9fa; cursor: not-allowed; color:black">
+                        </div>
+                        <small class="text-muted">Quantity is fixed at 1 for prescription medications</small>
+                    }
+                    else
+                    {
+                        <!-- Interactive quantity controls for regular products -->
+                        <div class="input-group mb-3" style="max-width: 200px;">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-primary quantity-minus shop-quantity-btn" type="button">&minus;</button>
+                            </div>
+                            <input type="text" id="quantity-input" class="form-control text-center shop-quantity-input" value="1" min="1" aria-label="Quantity" aria-describedby="button-addon1">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-primary quantity-plus shop-quantity-btn" type="button">&plus;</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Action buttons with different behavior for prescription vs regular products -->
+                @if (Model.IsExpired)
+                {
+                    <!-- Disabled button for expired products -->
+                    <button class="btn btn-secondary btn-lg btn-block" disabled>
+                        <i class="fas fa-times mr-2"></i> Product Expired - Not Available
+                    </button>
+                }
+                else if (Model.RequiresPrescription)
+                {
+                    @if (Model.Stock > 0)
+                    {
+                        <!-- Reserve button for prescription medications -->
+                        <a href="@Url.Action("Confirm", "Prescription", new { id = Model.ProductId })" id="reserve-pickup-btn" class="btn btn-info btn-lg btn-block">
+                            <i class="fas fa-bookmark mr-2"></i> Reserve for Pickup
+                        </a>
+                    }
+                    else
+                    {
+                        <!-- Disabled button when out of stock -->
+                        <button class="btn btn-secondary btn-lg btn-block" disabled>
+                            <i class="fas fa-times mr-2"></i> Out of Stock
+                        </button>
+                    }
+                }
+                else
+                {
+                    @if (Model.Stock > 0)
+                    {
+                        <!-- Add to cart button with product data attributes -->
+                        <button id="add-to-cart-btn" class="btn btn-primary btn-lg btn-block" data-product-id="@Model.ProductId" style="color:white">
+                            <i class="fas fa-shopping-cart mr-2" style="color:white"></i> Add To Cart
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary btn-lg btn-block" disabled>
+                            <i class="fas fa-times mr-2"></i> Out of Stock
+                        </button>
+                    }
+                }
+
+                <!-- Product information tabs -->
+                <div class="mt-5">
+                    <!-- Bootstrap nav tabs for product information -->
+                    <ul class="nav nav-tabs shop-nav-tabs" id="productTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active shop-nav-link" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="true">Product Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link shop-nav-link" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="false">Product Information</a>
+                        </li>
+                        <!-- NEW: Expiry Information Tab -->
+                        <li class="nav-item">
+                            <a class="nav-link shop-nav-link" id="expiry-tab" data-toggle="tab" href="#expiry" role="tab" aria-controls="expiry" aria-selected="false">Expiry Info</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab content panels -->
+                    <div class="tab-content mt-3 shop-tab-content" id="productTabContent">
+                        <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                            <!-- Product details table with key information -->
+                            <table class="table table-striped shop-table">
+                                <tbody>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <td>@Model.ProductId</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Price</th>
+                                        <td>$@Model.Price.ToString("0.00")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Stock</th>
+                                        <td>@Model.Stock units</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Category</th>
+                                        <!-- Null coalescing operator for category display -->
+                                        <td>@(Model.Category?.CategoryName ?? "N/A")</td>
+                                    </tr>
+                                    <!-- NEW: Expiry Date Display -->
+                                    <tr>
+                                        <th>Expiry Date</th>
+                                        <td>
+                                            @Model.ExpiryDate.ToString("MMM dd, yyyy")
+                                            <span class="badge @Model.ExpiryBadgeClass ml-2">@Model.ExpiryDisplayText</span>
+                                        </td>
+                                    </tr>
+                                    <!-- Conditional prescription requirement row -->
+                                    @if (Model.RequiresPrescription)
+                                    {
+                                        <tr>
+                                            <th>Prescription Required</th>
+                                            <td>Yes</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="p-3">
+                                <h4>Product Description</h4>
+                                <div class="product-description">
+                                    <!-- Display description with fallback message -->
+                                    @(string.IsNullOrEmpty(Model.Description) ? "No description available." : Model.Description)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NEW: Expiry Information Tab -->
+                        <div class="tab-pane fade" id="expiry" role="tabpanel" aria-labelledby="expiry-tab">
+                            <div class="p-3">
+                                <h4>Expiry Information</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card border-left-primary shadow h-100 py-2">
+                                            <div class="card-body">
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col mr-2">
+                                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                            Expiry Date
+                                                        </div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                            @Model.ExpiryDate.ToString("MMM dd, yyyy")
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-left-info shadow h-100 py-2">
+                                            <div class="card-body">
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col mr-2">
+                                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                            Days Remaining
+                                                        </div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                            @{
+                                                                var daysRemaining = (Model.ExpiryDate.Date - DateTime.Now.Date).Days;
+                                                            }
+                                                            @if (daysRemaining < 0)
+                                                            {
+                                                                <span class="text-danger">Expired @Math.Abs(daysRemaining) days ago</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="@(daysRemaining <= 30 ? "text-warning" : "text-success")">@daysRemaining days</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <h5>Safety Information</h5>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        <strong>Important:</strong> Do not use this product after the expiry date for your safety.
+                                        Expired pharmaceutical products may lose their effectiveness or become harmful.
+                                    </div>
+
+                                    @if (Model.IsExpiringSoon)
+                                    {
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <strong>Notice:</strong> This product is expiring soon. Please use it before the expiry date
+                                            or consult with our pharmacist for alternatives.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        /* Global JavaScript object containing product data and URLs for external JS file */
+        window.shopSingleData = {
+            addToCartUrl: '@Url.Action("AddToCart", "Cart")',
+            productId: @Model.ProductId,
+            /* JSON serialize product name to handle special characters */
+            productName: '@Html.Raw(Json.Serialize(Model.ProductName))',
+            maxStock: @Model.Stock,
+            /* Convert boolean to lowercase string for JavaScript */
+            requiresPrescription: @Model.RequiresPrescription.ToString().ToLower(),
+            isExpired: @Model.IsExpired.ToString().ToLower()
+        };
+    </script>
+    <script src="~/assets/js/FrontEndViewScripts/ShopSingle.js"></script>
+}
+
+<!-- Toast notification for cart actions -->
+<div id="toast-notification" class="toast-notification">
+    <div class="toast-content">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <div class="toast-text">
+            <!-- Dynamic content updated by JavaScript -->
+            <strong id="toast-title">Added to Cart!</strong>
+            <p id="toast-message">Product added successfully</p>
+        </div>
+    </div>
+    <!-- Close button with onclick handler -->
+    <button class="toast-close" onclick="hideToast()">&times;</button>
+</div>

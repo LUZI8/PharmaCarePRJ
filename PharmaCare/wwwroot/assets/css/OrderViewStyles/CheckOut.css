@@ -1,0 +1,49 @@
+﻿.form-control:focus {
+    border-color: #dc3545; /* Red border color when form inputs are focused */
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); /* Red glow effect around focused form controls */
+}
+
+.site-block-order-table th {
+    color: var(--text-color); /* Uses CSS custom property for dynamic text color */
+    padding: 12px;
+    font-weight: bold; /* Bold text for table headers */
+    border-bottom: 2px solid var(--border-color); /* Thicker bottom border for header separation */
+}
+
+.site-block-order-table td {
+    color: var(--text-color); /* Dynamic text color for table cells */
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color); /* Thinner border for cell separation */
+}
+
+.border {
+    border-color: var(--border-color) !important; /* Dynamic border color using CSS variables */
+    background-color: var(--card-bg); /* Dynamic background color for cards */
+    border-radius: 0.25rem;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important; /* Red border for invalid form fields */
+}
+
+.btn-outline-cart {
+    color: #dc3545; /* Red text for outline cart button */
+    border-color: #dc3545; /* Red border for outline style */
+}
+
+    .btn-outline-cart:hover {
+        color: #fff; /* White text on hover */
+        background-color: #dc3545; /* Red background fill on hover */
+        border-color: #dc3545;
+    }
+
+body.dark-mode .btn-outline-cart {
+    color: #dc3545; /* Maintains red color in dark mode */
+    border-color: #dc3545;
+}
+
+    body.dark-mode .btn-outline-cart:hover {
+        color: #fff; /* White text on hover in dark mode */
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }

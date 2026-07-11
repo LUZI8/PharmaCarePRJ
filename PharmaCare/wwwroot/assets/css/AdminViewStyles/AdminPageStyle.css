@@ -1,0 +1,151 @@
+/* Admin sidebar with fixed positioning for persistent navigation */
+.admin-sidebar {
+    background-color: #343a40; /* Dark gray background */
+    color: #fff;
+    min-height: 100vh; /* Full viewport height coverage */
+    position: fixed; /* Fixed positioning for persistent sidebar */
+    top: 0; /* Align to top of viewport */
+    bottom: 0; /* Extend to bottom of viewport */
+    left: 0; /* Align to left edge */
+    padding-top: 100px; /* Space for top navigation bar */
+    width: 16.666667%; /* Bootstrap col-lg-2 equivalent width */
+    z-index: 100; /* Layer above main content */
+}
+
+/* Main content area with sidebar accommodation */
+.admin-content {
+    margin-left: 16.666667%; /* Offset by exact sidebar width */
+    padding: 20px;
+}
+
+/* Mobile responsive sidebar behavior */
+@media (max-width: 991.98px) {
+    .admin-sidebar {
+        position: static; /* Normal document flow on mobile */
+        width: 100%; /* Full width on mobile devices */
+        min-height: auto; /* Auto height on mobile */
+        padding-top: 20px; /* Reduced top padding */
+    }
+
+    .admin-content {
+        margin-left: 0; /* Remove sidebar offset on mobile */
+    }
+}
+
+/* Sidebar navigation link styling */
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8); /* Semi-transparent white text */
+    padding: 0.75rem 1rem;
+    border-left: 3px solid transparent; /* Invisible left border for hover effect */
+}
+
+    /* Active and hover states for navigation links */
+    .admin-sidebar .nav-link:hover,
+    .admin-sidebar .nav-link.active {
+        color: #fff; /* Full opacity white on hover/active */
+        border-left: 3px solid #dc3545; /* Brand color left accent border */
+        background-color: rgba(255, 255, 255, 0.05); /* Subtle background highlight */
+    }
+
+    /* Icon spacing and alignment in navigation links */
+    .admin-sidebar .nav-link i {
+        margin-right: 10px;
+        width: 20px; /* Fixed width for consistent icon alignment */
+        text-align: center;
+    }
+
+/* Main content area general styling */
+.admin-content {
+    padding: 20px;
+}
+
+/* Statistics card with accent border and hover effect */
+.stat-card {
+    border-left: 4px solid; /* Left accent border (color set via classes) */
+    border-radius: 4px;
+    transition: transform 0.3s; /* Smooth lift animation */
+}
+
+    /* Hover effect with subtle lift animation */
+    .stat-card:hover {
+        transform: translateY(-5px); /* Lift card on hover */
+    }
+
+/* Product table image sizing */
+.product-table img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain; /* Maintain aspect ratio without cropping */
+}
+
+/* Action icons styling and spacing */
+.action-icons i {
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+/* Specific colors for different action types */
+.action-icons .fa-edit {
+    color: #17a2b8; /* Teal for edit actions */
+}
+
+.action-icons .fa-trash-alt {
+    color: #dc3545; /* Red for delete actions */
+}
+
+/* Recent orders section badge sizing */
+.recent-orders .badge {
+    font-size: 85%; /* Slightly smaller than default text */
+}
+
+/* Inventory alert styling with warning color scheme */
+.alert-inventory {
+    background-color: #fff3cd; /* Light yellow background */
+    border-left: 4px solid #ffc107; /* Yellow left accent border */
+}
+
+/* Dark theme sidebar styling */
+body.dark-mode .admin-sidebar {
+    background-color: #1a1a1a; /* Very dark background for dark theme */
+}
+
+/* Dark theme card styling */
+body.dark-mode .card {
+    background-color: #2d2d2d; /* Dark gray card background */
+    color: #e4e4e4; /* Light gray text */
+}
+
+/* Dark theme statistics card */
+body.dark-mode .stat-card {
+    background-color: #383838; /* Slightly lighter than card background */
+}
+
+/* Dark theme table styling */
+body.dark-mode .table {
+    color: #e4e4e4; /* Light gray text for tables */
+}
+
+    /* Dark theme table header borders */
+    body.dark-mode .table thead th {
+        border-bottom-color: #4d4d4d; /* Dark border for headers */
+    }
+
+    /* Dark theme table cell borders */
+    body.dark-mode .table td,
+    body.dark-mode .table th {
+        border-top-color: #4d4d4d; /* Dark borders for cells */
+    }
+
+/* Dark theme inventory alert */
+body.dark-mode .alert-inventory {
+    background-color: #3d3a2a; /* Dark yellow-brown background */
+    color: #e4e4e4; /* Light text for readability */
+}
+
+/* Customer row hover interaction */
+.customer-row {
+    cursor: pointer; /* Indicates clickable row */
+}
+
+    .customer-row:hover {
+        background-color: rgba( /* Note: This rule appears incomplete in the original file */

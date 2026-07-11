@@ -1,0 +1,126 @@
+﻿@model PharmaCare.Models.User
+@{
+    ViewData["Title"] = "My Account";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.IsLoggedIn = true;
+    /* Concatenate first and last name for layout display */
+    ViewBag.UserName = Model.FirstName + " " + Model.LastName;
+    ViewBag.HideCategories = false;
+}
+<link rel="stylesheet" href="~/assets/css/AccountViewStyles/Profile.css">
+<div class="site-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-5">
+                <h2 class="h3 mb-3 text-danger">My Account</h2>
+
+                <!-- Error message display from TempData -->
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Account navigation sidebar -->
+            <div class="col-md-3 mb-5">
+                <div class="account-sidebar">
+                    <div class="sidebar-header">
+                        <h5 class="mb-0"><i class="fas fa-user-circle mr-2"></i> Account Menu</h5>
+                    </div>
+                    <div class="list-group">
+                        <!-- Active navigation item for current page -->
+                        <a href="@Url.Action("Profile", "Account")" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-user mr-2"></i> Profile Information
+                        </a>
+                        <a href="@Url.Action("EditProfile", "Account")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-edit mr-2"></i> Edit Profile
+                        </a>
+                        <a href="@Url.Action("ChangePassword", "Account")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-key mr-2"></i> Change Password
+                        </a>
+                        <a href="@Url.Action("Index", "Order")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-bag mr-2"></i> My Orders
+                        </a>
+                        <!-- Additional navigation for prescription reservations -->
+                        <a href="@Url.Action("MyReservations", "Prescription")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-bookmark mr-2"></i> My Reservations
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile information display area -->
+            <div class="col-md-9">
+                <div class="account-content">
+                    <h4 class="mb-4 border-bottom pb-3">Profile Information</h4>
+
+                    <!-- Profile information items with consistent layout -->
+                    <div class="profile-info-item">
+                        <div class="row">
+                            <div class="col-md-4 profile-info-label">Full Name:</div>
+                            <!-- Concatenate first and last name for display -->
+                            <div class="col-md-8">@Model.FirstName @Model.LastName</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="row">
+                            <div class="col-md-4 profile-info-label">Email:</div>
+                            <div class="col-md-8">@Model.Email</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="row">
+                            <div class="col-md-4 profile-info-label">Phone Number:</div>
+                            <div class="col-md-8">
+                                <!-- Display phone number with fallback text for null/empty values -->
+                                @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not provided" : Model.PhoneNumber)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="row">
+                            <div class="col-md-4 profile-info-label">Address:</div>
+                            <div class="col-md-8">
+                                <!-- Conditional display with fallback for missing address -->
+                                @(string.IsNullOrEmpty(Model.Address) ? "Not provided" : Model.Address)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="row">
+                            <div class="col-md-4 profile-info-label">City:</div>
+                            <div class="col-md-8">
+                                @(string.IsNullOrEmpty(Model.City) ? "Not provided" : Model.City)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <div class="row">
+                            <div class="col-md-4 profile-info-label">Account Created:</div>
+                            <div class="col-md-8">
+                                <!-- Format date to readable long format -->
+                                @Model.DateCreated.ToString("MMMM dd, yyyy")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <!-- Edit profile action button -->
+                        <a href="@Url.Action("EditProfile", "Account")" class="btn btn-danger">
+                            <i class="fas fa-edit mr-2"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "PharmaCare";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+}
+
+<link rel="stylesheet" href="/assets/css/FrontEndViewStyles/About.css" />
+
+<!-- Hero section with inline background image styling -->
+<div class="hero-section" style="background-image: url('/assets/Images/bg_3.jpg');">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="mb-3">Your Trusted Healthcare Partner</h1>
+            <p class="lead mb-4">At PharmaCare, we blend decades of pharmacy expertise with compassionate care to keep your family healthy.</p>
+            <div class="d-flex justify-content-center">
+                <!-- Call-to-action button linking to shop page -->
+                <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-danger px-4 py-2">Explore Our Products</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Our story section with image and text side by side -->
+<div class="site-section bg-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <img src="~/assets/images/Pharmapic.jpg" alt="a picture of a pharmacy from the inside" class="img-fluid rounded">
+            </div>
+            <div class="col-md-6 pl-md-5">
+                <h2 class="text-danger mb-4">How It Began</h2>
+                <p class="lead">In 2010, we opened our doors as a modest neighborhood pharmacy in Amman, with just a single shelf of medicines and a big dream: to serve our community with care and honesty.</p>
+                <p>Back then, we knew every customer by name. We'd listen to their stories, remember their prescriptions, and even deliver medicines by hand to those who couldn't visit us. That personal touch became our foundation.</p>
+                <p>Today, though we've grown, we still hold onto those early values. Every recommendation, every product we stock, and every smile we share is a reflection of where we started.</p>
+                <div class="mt-4">
+                    <!-- Link to contact page for user engagement -->
+                    <a href="@Url.Action("Contact", "FrontEnd")" class="btn btn-outline-danger">Contact Our Team</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Why choose us section with feature highlights -->
+<div class="site-section bg-white py-5 border-bottom">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Bootstrap order classes for responsive column reordering -->
+            <div class="col-md-6 pr-md-5 order-md-1 order-2">
+                <h2 class="text-danger mb-4">Why Choose PharmaCare?</h2>
+                <p class="lead">We combine <strong>expertise</strong>, <strong>speed</strong>, and <strong>unmatched reliability</strong>—so you get the right care, without the wait.</p>
+
+                <!-- Feature list using Bootstrap media object component -->
+                <div class="feature-list">
+                    <div class="media mb-4">
+                        <div class="icon-box bg-danger text-white mr-4">
+                            <span class="icon-medkit"></span>
+                        </div>
+                        <div class="media-body">
+                            <h5 class="mt-0">Expert Pharmacists</h5>
+                            <p class="mb-0">Our licensed team stays updated on the latest treatments to provide precise, evidence-based recommendations.</p>
+                        </div>
+                    </div>
+
+                    <div class="media mb-4">
+                        <div class="icon-box bg-danger text-white mr-4">
+                            <span class="icon-clock"></span>
+                        </div>
+                        <div class="media-body">
+                            <h5 class="mt-0">Same-Day Delivery</h5>
+                            <p class="mb-0">Order by 2 PM, get it before sunset.</p>
+                        </div>
+                    </div>
+
+                    <div class="media mb-4">
+                        <div class="icon-box bg-danger text-white mr-4">
+                            <span class="icon-lock"></span>
+                        </div>
+                        <div class="media-body">
+                            <h5 class="mt-0">Privacy Guaranteed</h5>
+                            <p class="mb-0">Discreet packaging and confidential consultations—your health data stays protected.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-danger mt-3">Shop with Confidence</a>
+            </div>
+
+            <!-- Image column with responsive ordering -->
+            <div class="col-md-6 mb-4 mb-md-0 order-md-2 order-1">
+                <img src="~/assets/images/pharmacistconsult.png" alt="Professional pharmacy consultation" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Service features section with AOS animation attributes -->
+<div class="site-section site-section-sm site-blocks-1 border-0" data-aos="fade">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Each feature block with staggered animation delays -->
+            <div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="icon mr-4 align-self-start">
+                    <span class="icon-refresh2 text-gray"></span>
+                </div>
+                <div class="text">
+                    <h2 class="text-danger">Free Returns</h2>
+                    <p class="text-dark">
+                        We offer free returns within 48 hours for unopened, unused items in their original packaging with the original receipt.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 d-lg-flex mb-4 mb-lg-0 pl-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="icon mr-4 align-self-start">
+                    <span class="icon-help text-gray"></span>
+                </div>
+                <div class="text">
+                    <h2 class="text-danger">Customer Support</h2>
+                    <p class="text-dark">
+                        Need Help? Our customer service team is here to assist you with any product inquiries, purchases, or refunds.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Team section showcasing key staff members -->
+<div class="site-section bg-light" data-aos="fade">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-12 text-center">
+                <h2 class="text-danger">The Team</h2>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Team member cards with consistent image sizing -->
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <!-- Inline styles for consistent circular image presentation -->
+                    <img src="~/assets/images/Noprofile.webp" alt="Dr. Ali Mohammad" class="mb-3 rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h3 class="h4 text-dark">Dr. Ali Mohammad</h3>
+                    <p class="text-danger mb-2">Chief Pharmacist</p>
+                    <p class="text-dark">Over 15 years of experience in clinical pharmacy and patient care.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <img src="~/assets/images/Noprofile.webp" alt="Ahmad Suleiman" class="mb-3 rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h3 class="h4 text-dark">Ahmad Suleiman</h3>
+                    <p class="text-danger mb-2">Senior Pharmacy Assistant</p>
+                    <p class="text-dark">Provides personalized medication guidance to our customers.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <img src="~/assets/images/Noprofile.webp" alt="Omar Faris" class="mb-3 rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h3 class="h4 text-dark">Omar Faris</h3>
+                    <p class="text-danger mb-2">IT Systems Manager</p>
+                    <p class="text-dark">Maintains our digital platforms and optimizes website performance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            /* Initialize AOS (Animate On Scroll) library with custom settings */
+            AOS.init({
+                duration: 800,
+                easing: 'slide',
+                once: true
+            });
+        });
+    </script>
+}

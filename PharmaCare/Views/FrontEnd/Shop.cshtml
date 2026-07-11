@@ -1,0 +1,324 @@
+﻿@model IEnumerable<PharmaCare.ViewModels.ProductViewModel>
+@{
+    ViewData["Title"] = "PharmaCare Shop";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    int pageSize = 9;
+    int pageNumber = ViewBag.PageNumber ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+    /* Calculate total pages using ceiling division for pagination */
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+}
+<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/Shop.css">
+
+<div class="site-section">
+    <div class="container">
+        <!-- Product information notice -->
+        <div class="prescription-notice bg-light p-4 mb-4 rounded">
+            <div class="row align-items-center">
+                <div class="col-md-1 text-center mb-3 mb-md-0">
+                    <i class="fas fa-prescription fa-3x text-danger"></i>
+                </div>
+                <div class="col-md-11">
+                    <h4 class="mb-2">Our Products</h4>
+                    <p class="mb-0">Browse our wide range of products. All items are carefully selected to ensure quality and value. Expiry dates are clearly marked for your safety.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter form with hidden inputs for maintaining state -->
+        <form id="shopFilterForm" method="get" action="@Url.Action("Shop", "FrontEnd")">
+            <!-- Hidden inputs to preserve current filter/sort state -->
+            <input type="hidden" name="sort" id="sortInput" value="@ViewBag.SortOption">
+            <input type="hidden" name="page" id="pageInput" value="@ViewBag.PageNumber">
+            <input type="hidden" name="prescriptionOnly" id="prescriptionInput" value="@(ViewBag.PrescriptionOnly ? "true" : "false")">
+
+            <div class="filter-section">
+                <div class="row mb-4">
+                    <div class="col-lg-12">
+                        <h3 class="mb-3 h6 text-uppercase text-black">Search Products</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Search input with current value preservation -->
+                        <input type="text" name="search" class="form-control" placeholder="Search products..." value="@ViewBag.SearchTerm">
+                    </div>
+                    <div class="col-md-2">
+                        <!-- Price range inputs with validation -->
+                        <input type="number" name="minPrice" class="form-control" placeholder="Min $" value="@ViewBag.MinPrice" min="1" step="1" oninput="if(this.value<1 && this.value!='') this.value=1;">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="maxPrice" class="form-control" placeholder="Max $" value="@ViewBag.MaxPrice" min="1" step="1" oninput="if(this.value<1 && this.value!='') this.value=1;">
+                    </div>
+                    <div class="col-md-2">
+                        <select name="category" class="form-control">
+                            <option value="">All Categories</option>
+                            <!-- Dynamically populate categories from ViewBag -->
+                            @if (ViewBag.Categories != null)
+                            {
+                                foreach (var category in ViewBag.Categories)
+                                {
+                                    /* Conditional selected attribute based on current selection */
+                                    if (ViewBag.SelectedCategory != null && ViewBag.SelectedCategory == category.CategoryID)
+                                    {
+                                        <option value="@category.CategoryID" selected>@category.CategoryName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@category.CategoryID">@category.CategoryName</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sorting options with active state indication -->
+                <div class="row mb-4">
+                    <div class="col-lg-12">
+                        <h3 class="mb-3 h6 text-uppercase text-black">Sort By:</h3>
+                        <div class="btn-group w-100">
+                            <!-- Sort buttons with conditional active classes -->
+                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "relevance" ? "active" : "")" data-sort="relevance">RELEVANCE</button>
+                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "name-asc" ? "active" : "")" data-sort="name-asc">A TO Z</button>
+                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "name-desc" ? "active" : "")" data-sort="name-desc">Z TO A</button>
+                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "price-asc" ? "active" : "")" data-sort="price-asc">$ LOW TO HIGH</button>
+                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "price-desc" ? "active" : "")" data-sort="price-desc">$ HIGH TO LOW</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription filter toggle -->
+                <div class="row mb-4 prescription-filter">
+                    <div class="col-lg-12">
+                        <h3 class="mb-3 h6 text-uppercase text-black">Product Type:</h3>
+                        <!-- Toggle button with conditional active state -->
+                        <button type="button" id="prescriptionFilterBtn" class="btn btn-outline-danger @(ViewBag.PrescriptionOnly ? "active" : "")">
+                            <i class="fas fa-prescription"></i> Prescription Only
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-lg-12">
+                        <!-- Form action buttons -->
+                        <button type="button" class="btn btn-outline-danger clear">CLEAR</button>
+                        <button type="submit" class="btn btn-danger search">SEARCH</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Product grid display -->
+        <div class="row product-container">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var product in Model)
+                {
+                    var stockClass = product.Stock > 0 ? "in-stock" : "out-of-stock";
+                    <!-- Product card with data attributes for filtering -->
+                    <div class="col-sm-6 col-lg-4 text-center item mb-4 p-3"
+                         data-name="@product.ProductName"
+                         data-price="@product.Price.ToString("F2")"
+                         data-category="@product.CategoryID"
+                         style="display: block;">
+                        <div class="product-card">
+                            <!-- Prescription indicator badge -->
+                            @if (product.RequiresPrescription)
+                            {
+                                <span class="tag" style="background-color: #17a2b8;">Prescription</span>
+                            }
+
+                            <!-- NEW: Expiry indicator badge for customer awareness -->
+                            @if (product.IsExpired)
+                            {
+                                <span class="tag" style="background-color: #dc3545; top: 40px;">Expired</span>
+                            }
+                            else if (product.IsExpiringSoon)
+                            {
+                                <span class="tag" style="background-color: #ffc107; top: 40px;">Expiring Soon</span>
+                            }
+
+                            <!-- Product image with fallback -->
+                            <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">
+                                @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                {
+                                    <!-- Inline styles for consistent image sizing -->
+                                    <img src="@product.ImageUrl" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
+                                }
+                                else
+                                {
+                                    <img src="~/assets/images/product_01.png" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
+                                }
+                            </a>
+
+                            <!-- Product details -->
+                            <h3 class="text-dark">
+                                <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">@product.ProductName</a>
+                            </h3>
+                            <!-- Format price to 2 decimal places -->
+                            <p class="price">$@product.Price.ToString("F2")</p>
+
+                            <div class="medication-badges">
+                                <!-- Stock status badges with conditional logic -->
+                                @if (product.Stock > 10)
+                                {
+                                    <span class="badge badge-success"><i class="fas fa-check-circle"></i> In Stock</span>
+                                }
+                                else if (product.Stock > 0)
+                                {
+                                    <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Low Stock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                                }
+
+                                <!-- Category badge if available -->
+                                @if (product.Category != null)
+                                {
+                                    <span class="badge badge-info"><i class="fas fa-tag"></i> @product.Category.CategoryName</span>
+                                }
+
+                                @if (product.RequiresPrescription)
+                                {
+                                    <span class="badge badge-primary"><i class="fas fa-prescription"></i> Prescription</span>
+                                }
+
+                                <!-- NEW: Expiry status badge for customer information -->
+                                @if (!product.IsExpired)
+                                {
+                                    <span class="badge @product.ExpiryBadgeClass">
+                                        <i class="fas fa-calendar-check"></i>
+                                        @if (product.IsExpiringSoon)
+                                        {
+                                            @("Expires " + product.ExpiryDate.ToString("MMM yyyy"))
+                                        }
+                                        else
+                                        {
+                                            @("Fresh")
+                                        }
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">
+                                        <i class="fas fa-calendar-times"></i> Expired
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Different action buttons for prescription vs regular products -->
+                            @if (product.IsExpired)
+                            {
+                                <!-- Disabled button for expired products -->
+                                <button class="btn btn-secondary btn-sm mt-2" disabled>
+                                    <i class="fas fa-times"></i> Expired - Not Available
+                                </button>
+                            }
+                            else if (product.RequiresPrescription && product.Stock > 0)
+                            {
+                                <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })"
+                                   class="btn btn-info btn-sm mt-2">
+                                    <i class="fas fa-prescription"></i> Reserve
+                                </a>
+                            }
+                            else
+                            {
+                                <!-- Add to cart button with data attributes for JavaScript -->
+                                <button class="btn btn-danger btn-sm btn-add-to-cart mt-2"
+                                        data-id="@product.ProductId"
+                                        data-name="@product.ProductName"
+                                        data-price="@product.Price"
+                                @(product.Stock <= 0 ? "disabled" : "")>
+                                    @(product.Stock > 0 ? "Add to Cart" : "Out of Stock")
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Empty state for no products -->
+                <div class="col-12 text-center py-5">
+                    <h3>No products available at the moment</h3>
+                    <p>Please check back later for new products.</p>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination controls (only show if multiple pages exist) -->
+        @if (totalPages > 1)
+        {
+            <div class="row mt-5">
+                <div class="col-md-12 text-center">
+                    <div class="site-block-27">
+                        <ul>
+                            <!-- Previous page link with disabled state -->
+                            <li class="@(pageNumber == 1 ? "disabled" : "")">
+                                @if (pageNumber == 1)
+                                {
+                                    <span>&lt;</span>
+                                }
+                                else
+                                {
+                                    <!-- Previous page link preserving all current filter parameters -->
+                                    <a href="@Url.Action("Shop", "FrontEnd", new { page = pageNumber - 1, search = ViewBag.SearchTerm, category = ViewBag.SelectedCategory, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, sort = ViewBag.SortOption, prescriptionOnly = ViewBag.PrescriptionOnly })">&lt;</a>
+                                }
+                            </li>
+                            <!-- Page number links with current page highlighting -->
+                            @for (int i = Math.Max(1, pageNumber - 2); i <= Math.Min(totalPages, pageNumber + 2); i++)
+                            {
+                                <li class="@(i == pageNumber ? "active" : "")">
+                                    @if (i == pageNumber)
+                                    {
+                                        <span>@i</span>
+                                    }
+                                    else
+                                    {
+                                        <!-- Page link preserving all filter parameters -->
+                                        <a href="@Url.Action("Shop", "FrontEnd", new { page = i, search = ViewBag.SearchTerm, category = ViewBag.SelectedCategory, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, sort = ViewBag.SortOption, prescriptionOnly = ViewBag.PrescriptionOnly })">@i</a>
+                                    }
+                                </li>
+                            }
+                            <!-- Next page link with disabled state -->
+                            <li class="@(pageNumber == totalPages ? "disabled" : "")">
+                                @if (pageNumber == totalPages)
+                                {
+                                    <span>&gt;</span>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Shop", "FrontEnd", new { page = pageNumber + 1, search = ViewBag.SearchTerm, category = ViewBag.SelectedCategory, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, sort = ViewBag.SortOption, prescriptionOnly = ViewBag.PrescriptionOnly })">&gt;</a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Toast notification for cart actions -->
+<div id="toast-notification" class="toast-notification">
+    <div class="toast-content">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <div class="toast-text">
+            <!-- Dynamic content updated by JavaScript -->
+            <strong id="toast-title">Added to Cart!</strong>
+            <p id="toast-message">Product added successfully</p>
+        </div>
+    </div>
+    <!-- Close button with onclick handler -->
+    <button class="toast-close" onclick="hideToast()">&times;</button>
+</div>
+
+@section Scripts {
+    <script>
+        /* Global JavaScript object for URL endpoints used by external JS files */
+        window.shopUrls = {
+            addToCart: '@Url.Action("AddToCart", "Cart")'
+        };
+    </script>
+    <script src="~/assets/js/FrontEndViewScripts/Shop.js"></script>
+}

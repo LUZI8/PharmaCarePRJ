@@ -1,0 +1,145 @@
+﻿
+.user-avatar {
+    width: 150px; /* Larger avatar for details page */
+    height: 150px;
+    border-radius: 50%;
+    background-color: #f8f9fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 4rem; /* Larger font size for details page avatar */
+    color: #d1d3e2;
+    transition: all 0.3s ease;
+}
+
+.details-card {
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    margin-bottom: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+    .details-card .card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e3e6f0;
+        border-top-left-radius: 0.35rem;
+        border-top-right-radius: 0.35rem;
+        display: flex;
+        justify-content: space-between; /* Distributes space between header elements */
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .details-card .card-body {
+        padding: 1.5rem;
+    }
+
+.page-title {
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.user-info dt {
+    font-weight: 600;
+}
+
+.user-info dd {
+    margin-bottom: 1rem;
+}
+
+.details-card .btn-primary,
+button.btn-primary,
+.btn-primary,
+.card-body .btn-primary,
+form .btn-primary,
+a.btn-primary,
+.btn-toolbar .btn-primary,
+.mt-4 .btn-primary {
+    background-color: #dc3545 !important; /* Forces red background for all primary buttons */
+    border-color: #dc3545 !important;
+    color: white !important;
+    transition: none !important;
+}
+
+    .details-card .btn-primary:hover,
+    button.btn-primary:hover,
+    .btn-primary:hover,
+    .card-body .btn-primary:hover,
+    form .btn-primary:hover,
+    a.btn-primary:hover,
+    .btn-toolbar .btn-primary:hover,
+    .mt-4 .btn-primary:hover {
+        background-color: #dc3545 !important; /* Maintains red color on hover */
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    .btn-primary:active,
+    .btn-primary:focus,
+    .btn-primary:not(:disabled):not(.disabled):active {
+        background-color: #dc3545 !important; /* Consistent red for all button states */
+        border-color: #dc3545 !important;
+        color: white !important;
+        box-shadow: none !important;
+    }
+
+body.dark-mode .details-card {
+    background-color: #1e1e1e;
+    border-color: #2c2c2c;
+}
+
+    body.dark-mode .details-card .card-header {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-bottom-color: #2c2c2c;
+    }
+
+body.dark-mode .page-title {
+    color: #e0e0e0;
+}
+
+body.dark-mode .user-avatar {
+    background-color: #343a40;
+    color: #6c757d;
+}
+
+body.dark-mode .text-muted {
+    color: #aaaaaa !important;
+}
+
+body.dark-mode .progress {
+    background-color: #2a2a2a; /* Dark background for progress bars */
+}
+
+body.dark-mode .text-success {
+    color: #28a745 !important; /* Green color for success text in dark mode */
+}
+
+body.dark-mode .text-secondary {
+    color: #adb5bd !important; /* Light gray for secondary text */
+}
+
+@media (max-width: 991.98px) {
+    .user-status-card {
+        margin-top: 1.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .details-card {
+        padding: 1rem;
+    }
+
+        .details-card .card-header {
+            padding: 0.75rem 1rem;
+            margin: -1rem -1rem 1rem -1rem; /* Negative margin to extend header to card edges */
+        }
+
+    .user-info .col-sm-4,
+    .user-info .col-sm-8 {
+        padding: 0.5rem 15px; /* Reduced padding for mobile layout */
+    }
+}

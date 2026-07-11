@@ -1,0 +1,39 @@
+﻿.hero-section {
+    background-size: cover; /* Ensures background image covers entire container */
+    background-position: center; /* Centers background image */
+    height: 500px; /* Fixed height for hero section */
+    position: relative; /* Enables absolute positioning for overlay */
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+    .hero-section::before {
+        content: ''; /* Creates empty pseudo-element for overlay */
+        position: absolute; /* Positions overlay above background image */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay for text readability */
+    }
+
+.hero-content {
+    position: relative;
+    z-index: 2; /* Ensures content appears above overlay */
+    color: white;
+    max-width: 800px; /* Limits content width for better readability */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+    .hero-content h1 {
+        font-size: 3rem; /* Large font size for main hero heading */
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem; /* Slightly larger font for hero description text */
+        margin-bottom: 30px;
+    }

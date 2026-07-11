@@ -1,0 +1,451 @@
+﻿.site-navbar .site-navigation .site-menu .active > a:before {
+    display: none !important; /* Hides default active menu indicator */
+}
+
+.site-menu li.active a {
+    position: relative; /* Enables absolute positioning for custom indicator */
+}
+
+    .site-menu li.active a::after {
+        content: ''; /* Creates custom active menu indicator */
+        display: block;
+        width: 100%;
+        height: 2px;
+        position: absolute;
+        bottom: -2px; /* Positions indicator below menu item */
+        left: 0;
+    }
+
+body:not(.dark-mode) .site-menu li.active a::after {
+    background-color: #000; /* Black indicator for light mode */
+}
+
+body.dark-mode .site-menu li.active a::after {
+    background-color: #fff; /* White indicator for dark mode */
+}
+
+.site-logo a {
+    font-size: 1.5rem;
+    font-weight: 700; /* Bold font weight for logo */
+    text-transform: uppercase; /* Capitalizes logo text */
+    letter-spacing: 1px; /* Adds spacing between logo letters */
+}
+
+.site-menu {
+    margin-bottom: 0; /* Removes default margin from menu */
+}
+
+    .site-menu > li {
+        padding: 0 10px; /* Horizontal padding for menu items */
+    }
+
+        .site-menu > li > a {
+            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px; /* Slight letter spacing for menu links */
+            padding: 20px 0;
+            display: inline-block;
+        }
+
+.user-greeting {
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: middle; /* Aligns greeting text with other navbar elements */
+    font-size: 0.85rem;
+    white-space: nowrap; /* Prevents greeting text from wrapping */
+    line-height: 1;
+}
+
+.site-navbar .site-navigation .site-menu {
+    display: flex;
+    align-items: center; /* Vertically centers menu items */
+}
+
+    .site-navbar .site-navigation .site-menu .has-children {
+        position: relative; /* Enables absolute positioning for dropdown */
+    }
+
+        .site-navbar .site-navigation .site-menu .has-children .dropdown {
+            position: absolute; /* Positions dropdown relative to parent */
+            top: 100%; /* Places dropdown below menu item */
+            left: 0;
+            width: 220px; /* Fixed width for dropdown */
+            background: #fff;
+            visibility: hidden; /* Hidden by default */
+            opacity: 0;
+            transition: 0.2s 0s; /* Smooth fade transition */
+            z-index: 1000; /* Ensures dropdown appears above other content */
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Subtle shadow for dropdown depth */
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        .site-navbar .site-navigation .site-menu .has-children:hover .dropdown,
+        .site-navbar .site-navigation .site-menu .has-children:focus .dropdown,
+        .site-navbar .site-navigation .site-menu .has-children:active .dropdown {
+            visibility: visible; /* Shows dropdown on hover/focus */
+            opacity: 1;
+            margin-top: 0px;
+        }
+
+        .site-navbar .site-navigation .site-menu .has-children .dropdown a {
+            padding: 8px 20px;
+            display: block;
+            color: #212529 !important;
+            transition: 0.3s ease; /* Smooth color transition */
+        }
+
+            .site-navbar .site-navigation .site-menu .has-children .dropdown a:hover {
+                color: #dc3545 !important; /* Red color on hover */
+                background: #f8f9fa; /* Light background on hover */
+            }
+
+body:not(.dark-mode) .site-menu .dropdown {
+    background-color: #fff !important; /* White background for dropdown in light mode */
+}
+
+    body:not(.dark-mode) .site-menu .dropdown a {
+        color: #212529 !important; /* Dark text for dropdown links */
+    }
+
+        body:not(.dark-mode) .site-menu .dropdown a:hover {
+            background-color: #f8f9fa !important; /* Light gray background on hover */
+            color: #dc3545 !important;
+        }
+
+body.dark-mode .site-menu .dropdown {
+    background-color: #343a40 !important; /* Dark background for dropdown in dark mode */
+    border: 1px solid #495057 !important;
+}
+
+    body.dark-mode .site-menu .dropdown a {
+        color: #fff !important; /* White text for dropdown links in dark mode */
+    }
+
+        body.dark-mode .site-menu .dropdown a:hover {
+            background-color: #495057 !important; /* Gray background on hover in dark mode */
+            color: #fff !important;
+        }
+
+body.dark-mode .site-navbar .site-navigation .site-menu .has-children .dropdown {
+    background: #343a40 !important;
+    border-color: #495057 !important;
+}
+
+    body.dark-mode .site-navbar .site-navigation .site-menu .has-children .dropdown > li > a {
+        color: #fff !important;
+    }
+
+        body.dark-mode .site-navbar .site-navigation .site-menu .has-children .dropdown > li > a:hover {
+            background: #495057 !important;
+            color: #fff !important;
+        }
+
+.user-dropdown a:hover {
+    color: #dc3545 !important; /* Red color for hovered user dropdown links */
+    background-color: rgba(220, 53, 69, 0.1) !important; /* Light red background on hover */
+}
+
+.user-icon {
+    position: relative;
+    cursor: pointer; /* Indicates clickable user icon */
+}
+
+    .user-icon .icon-user {
+        font-size: 1.3rem; /* Larger font size for user icon */
+    }
+
+.user-dropdown {
+    position: absolute;
+    right: 0; /* Aligns dropdown to right edge of user icon */
+    top: 100%;
+    width: 180px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    visibility: hidden;
+    opacity: 0;
+    padding: 10px 0;
+    transition: 0.2s 0s;
+    z-index: 1000;
+    border: 1px solid #eee;
+}
+
+.user-icon:hover .user-dropdown {
+    visibility: visible; /* Shows user dropdown on hover */
+    opacity: 1;
+    margin-top: 0px;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 8px 15px;
+    color: #212529;
+    transition: 0.3s ease;
+    text-decoration: none; /* Removes underline from dropdown links */
+}
+
+body.dark-mode .user-dropdown {
+    background: #343a40; /* Dark background for user dropdown */
+    border-color: #495057;
+}
+
+    body.dark-mode .user-dropdown a {
+        color: #fff; /* White text for dropdown links in dark mode */
+    }
+
+        body.dark-mode .user-dropdown a:hover {
+            background-color: #495057; /* Gray background on hover in dark mode */
+        }
+
+.site-mobile-menu {
+    position: fixed; /* Fixed positioning for mobile menu overlay */
+    right: 0;
+    z-index: 2000; /* High z-index to appear above all content */
+    width: 300px;
+    max-width: 100%;
+    background: #fff;
+    height: 100vh; /* Full viewport height */
+    transform: translateX(100%); /* Initially positioned off-screen */
+    transition: 0.3s all ease; /* Smooth slide-in transition */
+    box-shadow: -10px 0 20px -10px rgba(0, 0, 0, 0.1); /* Left shadow for depth */
+    overflow-y: auto; /* Enables scrolling for long menu content */
+}
+
+    .site-mobile-menu.active {
+        transform: translateX(0%); /* Slides menu into view */
+    }
+
+.site-mobile-menu-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e6e6e6; /* Separator line under header */
+}
+
+.site-mobile-menu-body {
+    padding: 20px;
+}
+
+    .site-mobile-menu-body ul {
+        padding: 0;
+        margin: 0;
+        list-style: none; /* Removes default list bullets */
+    }
+
+        .site-mobile-menu-body ul li {
+            margin-bottom: 10px;
+        }
+
+            .site-mobile-menu-body ul li a {
+                display: block;
+                padding: 10px 0;
+                color: #212529;
+                text-transform: uppercase;
+                font-size: 0.9rem;
+                border-bottom: 1px solid #eee; /* Separator line between menu items */
+            }
+
+@media (max-width: 991.98px) {
+    .site-navbar .site-navigation .site-menu {
+        display: none; /* Hides desktop menu on mobile */
+    }
+
+    .navbar-search-container {
+        display: none !important; /* Hides search container on mobile */
+    }
+
+    .user-greeting {
+        display: none !important; /* Hides user greeting on mobile */
+    }
+
+    .icons-btn {
+        font-size: 1.3rem; /* Larger icon buttons for mobile */
+    }
+
+    .site-mobile-menu-body .dropdown {
+        margin-top: 5px;
+        padding-left: 15px; /* Indents dropdown items in mobile menu */
+    }
+
+        .site-mobile-menu-body .dropdown a {
+            font-size: 0.85rem; /* Smaller font for dropdown items */
+            padding: 8px 0;
+        }
+}
+
+/* Narrow phones: keep the logo and the header icon row on one line without crowding */
+@media (max-width: 400px) {
+    .site-logo a {
+        font-size: 1.25rem;
+        letter-spacing: 0; /* Drop the extra tracking to save width */
+    }
+
+    /* Tighten the gaps between the cart / account / theme / menu icons */
+    .site-navbar .icons > .ml-3 {
+        margin-left: 0.55rem !important;
+    }
+
+    .site-navbar .icons-btn {
+        font-size: 1.15rem;
+    }
+
+    #theme-toggle-btn {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+}
+
+/* Very narrow phones (~320px): reclaim every pixel so all header controls stay visible */
+@media (max-width: 360px) {
+    .site-navbar .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .site-logo a {
+        font-size: 0.95rem;
+    }
+
+    .site-navbar .icons > .ml-3 {
+        margin-left: 0.25rem !important;
+    }
+
+    .site-navbar .icons-btn {
+        font-size: 1rem;
+    }
+
+    #theme-toggle-btn {
+        font-size: 1rem;
+        padding: 2px;
+        margin-left: 0.25rem !important;
+    }
+}
+
+body.dark-mode .site-mobile-menu {
+    background: #343a40; /* Dark background for mobile menu */
+}
+
+body.dark-mode .site-mobile-menu-body ul li a {
+    color: #fff; /* White text for mobile menu links */
+    border-bottom-color: #495057; /* Gray borders in dark mode */
+}
+
+body.dark-mode .site-mobile-menu-header {
+    border-bottom-color: #495057; /* Gray border for mobile menu header */
+}
+
+.site-mobile-menu-body ul li.active a {
+    font-weight: bold; /* Bold text for active menu items */
+}
+
+body.dark-mode .site-mobile-menu-body ul li.active a {
+    color: #f8f9fa; /* Light text for active items in dark mode */
+}
+
+.site-navbar .icons-btn {
+    line-height: 0; /* Removes line height for proper icon alignment */
+}
+
+.navbar-search-container {
+    margin-right: 10px; /* Spacing after search container */
+}
+
+.bag .number {
+    position: absolute; /* Positions cart number badge */
+    top: -5px;
+    right: -5px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%; /* Creates circular badge */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #dc3545; /* Red background for cart badge */
+    color: white;
+    font-size: 10px;
+}
+
+.arrow-collapse {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    z-index: 20;
+    width: 36px;
+    height: 36px;
+    text-align: center;
+    cursor: pointer; /* Indicates clickable collapse arrow */
+    border-radius: 50%;
+}
+
+    .arrow-collapse:before {
+        font-family: "icomoon";
+        content: "\f107"; /* Unicode for collapse arrow icon */
+        position: absolute;
+        right: 15px;
+        font-size: 18px;
+        top: 10px;
+        transition: .3s all ease; /* Smooth rotation transition */
+    }
+
+    .arrow-collapse.collapsed:before {
+        transform: rotate(-180deg); /* Rotates arrow when collapsed */
+    }
+
+.site-mobile-menu-body > ul > li {
+    position: relative; /* Enables absolute positioning for child elements */
+}
+
+.navbar-search-input,
+#navbar-search-input {
+    color: #000000 !important; /* Black text for search input */
+}
+
+body.dark-mode .navbar-search-input::placeholder {
+    color: #6c757d !important; /* Gray placeholder text in dark mode */
+}
+
+.navbar-search-results .btn,
+#navbar-search-results .btn,
+#view-all-results-btn,
+.navbar-search-results a.btn,
+#navbar-search-results a.btn {
+    background-color: #dc3545 !important; /* Red background for search result buttons */
+    color: #ffffff !important;
+    border-color: #dc3545 !important;
+    transition: none !important; /* Disables transition effects */
+    display: block !important;
+    width: 100% !important; /* Full width buttons */
+    text-align: center !important;
+    padding: 8px 15px !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+}
+
+body.dark-mode .navbar-search-results .btn,
+body.dark-mode #navbar-search-results .btn,
+body.dark-mode #view-all-results-btn,
+body:not(.dark-mode) .navbar-search-results .btn,
+body:not(.dark-mode) #navbar-search-results .btn,
+body:not(.dark-mode) #view-all-results-btn {
+    background-color: #dc3545 !important; /* Consistent red color across themes */
+    color: #ffffff !important;
+    border-color: #dc3545 !important;
+}
+
+.navbar-search-results .btn:hover,
+#navbar-search-results .btn:hover,
+#view-all-results-btn:hover {
+    background-color: #dc3545 !important; /* Maintains red color on hover */
+    color: #ffffff !important;
+    border-color: #dc3545 !important;
+    transform: none !important;
+    box-shadow: none !important; /* Removes hover effects */
+    opacity: 1 !important;
+}
+
+#navbar-search-results .btn:empty::before,
+.navbar-search-results .btn:empty::before {
+    content: "VIEW ALL RESULTS"; /* Default text for empty buttons */
+    color: #ffffff !important;
+}

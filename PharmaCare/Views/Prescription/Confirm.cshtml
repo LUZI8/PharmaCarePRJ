@@ -1,0 +1,253 @@
+﻿@model PharmaCare.ViewModels.PrescriptionConfirmViewModel
+
+@{
+    ViewData["Title"] = "Confirm Prescription Reservation";
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+}
+
+<!-- Import prescription confirmation specific styling -->
+<link rel="stylesheet" href="/assets/css/PrescriptionViewStyles/Confirm.css" />
+
+<!-- Light background header section -->
+<div class="bg-light py-3">
+</div>
+
+<div class="site-section">
+    <div class="container">
+        <!-- Error message display for validation failures -->
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Important prescription reservation information panel -->
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <div class="border p-4 rounded" role="alert">
+                    <div class="d-flex">
+                        <div class="mr-3">
+                            <!-- Information icon for visual emphasis -->
+                            <i class="fas fa-info-circle fa-2x text-info"></i>
+                        </div>
+                        <div>
+                            <h4 class="alert-heading">Prescription Medication Reservation</h4>
+                            <p>You are about to reserve a prescription medication. Please note that:</p>
+                            <!-- Critical reservation terms and conditions -->
+                            <ul>
+                                <li>You must bring a valid prescription to the pharmacy to pick up this medication.</li>
+                                <li><strong>Your reservation will expire in 3 days</strong> (@Model.ExpiryDate.ToString("MMM dd, yyyy")) if not picked up.</li>
+                                <li>If not picked up before the expiry date, the items will be returned to stock.</li>
+                                <li>Reservations cannot be paid for online - payment will be processed at the pharmacy.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prescription reservation confirmation form -->
+        <form method="post" action="@Url.Action("ConfirmReservation", "Prescription")">
+            @Html.AntiForgeryToken()
+            <!-- Hidden fields to pass reservation details to server -->
+            <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+            <input type="hidden" name="quantity" value="@Model.Quantity" />
+
+            <div class="row">
+                <!-- Left column: Customer reservation details form -->
+                <div class="col-md-6 mb-5 mb-md-0">
+                    <h2 class="h3 mb-3 text-black">Reservation Details</h2>
+                    <div class="p-3 p-lg-5 border">
+                        <!-- Phone number field with strict validation for contact purposes -->
+                        <div class="form-group">
+                            <label for="phone_number" class="text-black">Contact Phone Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="phone_number" name="phoneNumber"
+                                   value="@Model.User.PhoneNumber"
+                                   required
+                                   pattern="[0-9]{9,15}"
+                                   maxlength="15"
+                                   minlength="9"
+                                   title="Phone number must be between 9-15 digits only"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);">
+                            <small class="form-text text-muted">We'll use this to contact you about your reservation (9-15 digits only)</small>
+                            <div class="invalid-feedback">
+                                Please enter a valid phone number (9-15 digits only).
+                            </div>
+                        </div>
+
+                        <!-- Read-only customer information fields for confirmation -->
+                        <div class="form-group">
+                            <label for="c_fname" class="text-black">First Name</label>
+                            <input type="text" class="form-control" id="c_fname" name="c_fname" value="@Model.User.FirstName" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="c_lname" class="text-black">Last Name</label>
+                            <input type="text" class="form-control" id="c_lname" name="c_lname" value="@Model.User.LastName" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="c_email" class="text-black">Email Address</label>
+                            <input type="email" class="form-control" id="c_email" name="c_email" value="@Model.User.Email" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column: Prescription details and pickup information -->
+                <div class="col-md-6">
+                    <div class="row mb-5">
+                        <div class="col-md-12">
+                            <h2 class="h3 mb-3 text-black">Your Prescription</h2>
+                            <div class="p-3 p-lg-5 border">
+                                <!-- Prescription item summary table -->
+                                <table class="table site-block-order-table mb-5">
+                                    <thead>
+                                    <th>Product</th>
+                                    <th>Total</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                @Model.Product.ProductName <strong class="mx-2">x</strong> @Model.Quantity
+                                                <!-- Prescription indicator badge for clarity -->
+                                                @if (Model.Product.RequiresPrescription)
+                                                {
+                                                    <span class="badge badge-info ml-2">Prescription</span>
+                                                }
+                                            </td>
+                                            <td>$@Model.TotalPrice.ToString("0.00")</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Reservation expiry information with clock icon -->
+                                <div class="border p-3 mb-3">
+                                    <h3 class="h6 mb-0"><i class="fas fa-clock mr-2"></i> Reservation Expires</h3>
+                                    <p class="mb-0">@Model.ExpiryDate.ToString("dddd, MMMM dd, yyyy")</p>
+                                </div>
+
+                                <!-- Pickup location information with map icon -->
+                                <div class="border p-3 mb-5">
+                                    <h3 class="h6 mb-0"><i class="fas fa-map-marker-alt mr-2"></i> Pickup Location</h3>
+                                    <p class="mb-0">PharmaCare Main Store<br>Almadina Almonaora St, Amman, Jordan</p>
+                                </div>
+
+                                <!-- Final confirmation button -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-info btn-lg py-3 btn-block">Confirm Reservation</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var $phoneInput = $('#phone_number');
+
+            // Comprehensive phone number validation - restricts to digits only, 9-15 length
+            $phoneInput.on('input keydown paste', function(e) {
+                var $input = $(this);
+
+                // Allow control keys (backspace, delete, tab, escape, enter, arrows, etc.)
+                if (e.type === 'keydown') {
+                    if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        (e.keyCode === 67 && e.ctrlKey === true) ||
+                        (e.keyCode === 86 && e.ctrlKey === true) ||
+                        (e.keyCode === 88 && e.ctrlKey === true) ||
+                        (e.keyCode >= 35 && e.keyCode <= 39)) {
+                        return;
+                    }
+
+                    // Prevent non-numeric characters from being entered
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                // Clean and validate input after short delay
+                setTimeout(function() {
+                    var value = $input.val();
+
+                    // Remove any non-numeric characters
+                    var cleanValue = value.replace(/[^0-9]/g, '');
+
+                    // Enforce maximum length of 15 digits
+                    if (cleanValue.length > 15) {
+                        cleanValue = cleanValue.slice(0, 15);
+                    }
+
+                    // Update field if value was modified
+                    if (value !== cleanValue) {
+                        $input.val(cleanValue);
+                    }
+
+                    // Perform real-time validation
+                    validatePhoneNumber($input);
+                }, 10);
+            });
+
+            // Validate on field blur (when user leaves field)
+            $phoneInput.on('blur', function() {
+                validatePhoneNumber($(this));
+            });
+
+            // Prevent form submission if phone validation fails
+            $('form').on('submit', function(e) {
+                var isValid = validatePhoneNumber($phoneInput);
+
+                if (!isValid) {
+                    e.preventDefault();
+                    $phoneInput.focus();
+                    return false;
+                }
+            });
+
+            // Phone number validation function with comprehensive checks
+            function validatePhoneNumber($input) {
+                var value = $input.val();
+                var isValid = true;
+                var errorMessage = '';
+
+                // Clear existing validation classes
+                $input.removeClass('is-valid is-invalid');
+
+                // Validation logic for phone number requirements
+                if (value === '') {
+                    isValid = false;
+                    errorMessage = 'Phone number is required.';
+                } else if (!/^\d+$/.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Phone number must contain only digits.';
+                } else if (value.length < 9) {
+                    isValid = false;
+                    errorMessage = 'Phone number must be at least 9 digits.';
+                } else if (value.length > 15) {
+                    isValid = false;
+                    errorMessage = 'Phone number cannot exceed 15 digits.';
+                }
+
+                // Apply appropriate validation styling and feedback
+                if (isValid) {
+                    $input.addClass('is-valid');
+                    $input.siblings('.invalid-feedback').hide();
+                } else {
+                    $input.addClass('is-invalid');
+                    $input.siblings('.invalid-feedback').text(errorMessage).show();
+                }
+
+                return isValid;
+            }
+
+            // Validate pre-filled phone number on page load
+            if ($phoneInput.val()) {
+                validatePhoneNumber($phoneInput);
+            }
+        });
+    </script>
+}
