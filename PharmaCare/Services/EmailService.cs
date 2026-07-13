@@ -18,8 +18,12 @@ namespace PharmaCare.Services
             _logger = logger;
         }
 
-        /* True when real SMTP is configured; otherwise we run in log-only fallback mode. */
-        private bool IsConfigured => !string.IsNullOrWhiteSpace(_settings.Host);
+        /* True only when host AND credentials are all present. Until then we stay in
+           log-only fallback mode, so a half-filled config doesn't cause failed sends. */
+        private bool IsConfigured =>
+            !string.IsNullOrWhiteSpace(_settings.Host) &&
+            !string.IsNullOrWhiteSpace(_settings.Username) &&
+            !string.IsNullOrWhiteSpace(_settings.Password);
 
         public async Task<bool> SendEmailAsync(string toAddress, string subject, string htmlBody)
         {

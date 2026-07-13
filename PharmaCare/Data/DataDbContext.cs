@@ -47,6 +47,20 @@ namespace PharmaCare.Data
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");
 
+            /* Same explicit precision for the other money columns, so EF doesn't fall back
+               to an unconfigured default (which logs a truncation warning at startup). */
+            modelBuilder.Entity<CartItem>()
+                .Property(ci => ci.Price)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.Price)
+                .HasColumnType("decimal(18,2)");
+
             /* Configure one-to-many relationship between User and Cart */
             modelBuilder.Entity<Cart>()
                 .HasOne(c => c.User)

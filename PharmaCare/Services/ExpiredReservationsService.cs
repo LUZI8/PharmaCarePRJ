@@ -37,8 +37,17 @@
                     _logger.LogError(ex, "Error in background expired reservations check");
                 }
 
-                /* Wait for the specified interval before next check */
-                await Task.Delay(_checkInterval, stoppingToken);
+                /* Wait for the specified interval before the next check.
+                   A cancelled token here means the app is shutting down - that's expected,
+                   so exit the loop quietly instead of letting it surface as a failure. */
+                try
+                {
+                    await Task.Delay(_checkInterval, stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
             }
         }
 

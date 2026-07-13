@@ -34,6 +34,7 @@ packages/
 
 # ASP.NET Core
 appsettings.*.local.json
+appsettings.Local.json
 *.pfx
 
 # OS files

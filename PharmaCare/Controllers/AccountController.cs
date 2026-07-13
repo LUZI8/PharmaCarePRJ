@@ -193,11 +193,26 @@
 
                 if (ModelState.IsValid)
                 {
-                    /* Check for existing email to prevent duplicates */
-                    if (await _userRepository.UserExistsAsync(user.Email))
+                    /* Handle an email that's already registered. A verified account is a real
+                       duplicate; an unverified one just never finished sign-up, so resend its
+                       code and send the user to the verification screen instead of dead-ending. */
+                    var existing = await _userRepository.GetByEmailAsync(user.Email);
+                    if (existing != null)
                     {
-                        ModelState.AddModelError("Email", "Email already exists");
-                        return View(user);
+                        if (existing.IsEmailVerified)
+                        {
+                            ModelState.AddModelError("Email", "Email already exists. Please sign in.");
+                            return View(user);
+                        }
+
+                        var resendCode = GenerateCode();
+                        await _userRepository.SetEmailVerificationCodeAsync(
+                            existing.UserId, resendCode, DateTime.UtcNow.Add(CodeLifetime));
+                        await _emailService.SendVerificationCodeAsync(existing.Email, existing.FirstName, resendCode);
+
+                        TempData["PendingEmail"] = existing.Email;
+                        TempData["InfoMessage"] = "That email is already registered but not verified. We've sent a new code — enter it to finish.";
+                        return RedirectToAction("VerifyEmail");
                     }
 
                     /* Never trust a client-submitted role: self-registration is always a Customer.

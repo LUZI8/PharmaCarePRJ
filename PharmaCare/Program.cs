@@ -1,5 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
 
+// Load an untracked local overrides file last, so it wins over appsettings.json.
+// This is where the SMTP password lives on each machine; it's git-ignored, never committed.
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 
