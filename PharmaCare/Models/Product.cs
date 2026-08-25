@@ -18,12 +18,7 @@
         /* Per-product threshold instead of a hard-coded global low-stock value. */
         public int ReorderLevel { get; set; } = 10;
 
-        /* Primary storefront image plus optional gallery images. */
         public string? ImageUrl { get; set; }
-        public string? ImageUrl2 { get; set; }
-        public string? ImageUrl3 { get; set; }
-        public string? ImageUrl4 { get; set; }
-
         public bool IsActive { get; set; }
         public bool RequiresPrescription { get; set; }
         public string? PrescriptionNote { get; set; }
