@@ -1,8 +1,8 @@
-@model IEnumerable<PharmaCare.Models.ProductViewModel>
+@model IEnumerable<PharmaCare.ViewModels.ProductViewModel>
 @{
     ViewData["Title"] = "Products";
     Layout = "~/Views/Shared/_Adminlayout.cshtml";
-    var products = Model?.ToList() ?? new List<PharmaCare.Models.ProductViewModel>();
+    var products = Model?.ToList() ?? new List<PharmaCare.ViewModels.ProductViewModel>();
     var today = DateTime.Today;
     var expiryLimit = today.AddDays(90);
     var total = products.Count;
