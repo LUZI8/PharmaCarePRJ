@@ -28,7 +28,12 @@ namespace PharmaCare.Controllers
         private ProductViewModel ToViewModel(Product p)
         {
             var category = categoryRepository.Find(p.CategoryID) ?? new Category { CategoryName = "Unknown" };
-            var galleryEntities = _context.ProductImages.Where(i => i.ProductId == p.ProductId).OrderByDescending(i => i.IsPrimary).ThenBy(i => i.DisplayOrder).ToList();
+            var galleryEntities = _context.ProductImages
+                .Where(i => i.ProductId == p.ProductId)
+                .OrderByDescending(i => i.IsPrimary)
+                .ThenBy(i => i.DisplayOrder)
+                .ToList();
+
             var gallery = galleryEntities.Select(i => new ProductImageViewModel
             {
                 ProductImageId = i.ProductImageId,
@@ -108,7 +113,11 @@ namespace PharmaCare.Controllers
 
             try
             {
-                var selectedFiles = form.Files.GetFiles("galleryFiles").Where(f => f != null && f.Length > 0).Take(5).ToList();
+                var selectedFiles = form.Files.GetFiles("galleryFiles")
+                    .Where(f => f != null && f.Length > 0)
+                    .Take(5)
+                    .ToList();
+
                 if (!selectedFiles.Any() && model.File != null) selectedFiles.Add(model.File);
 
                 var savedImages = new List<string>();
@@ -164,9 +173,10 @@ namespace PharmaCare.Controllers
                 if (savedImages.Any()) _context.SaveChanges();
 
                 TempData["SuccessMessage"] = savedImages.Count > 1
-                    ? $"Product created successfully with {savedImages.Count} gallery images."
-                    : "Product created successfully. You can add more gallery images anytime.";
-                return RedirectToAction(nameof(ManageImages), new { id = product.ProductId });
+                    ? $"Product created successfully with {savedImages.Count} images."
+                    : "Product created successfully.";
+
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
@@ -193,26 +203,24 @@ namespace PharmaCare.Controllers
             SetAdminViewBagProperties();
             var existing = ProductRepository.Find(id);
             if (existing == null) return NotFound();
+
             var model = BuildFormModel(form);
             model.ProductId = id;
             model.CreatedAt = existing.CreatedAt;
             model.ImageUrl = NormalizeImageUrl(existing.ImageUrl);
             model.ListOfCategories = new SelectList(categoryRepository.View(), "CategoryID", "CategoryName");
-            if (!ValidateProduct(model, id)) return View(model);
+
+            if (!ValidateProduct(model, id))
+            {
+                var current = ToViewModel(existing);
+                model.ExistingImages = current.ExistingImages;
+                model.PrimaryImageId = current.PrimaryImageId;
+                model.UpdatedAt = existing.UpdatedAt;
+                return View(model);
+            }
 
             try
             {
-                var imageName = existing.ImageUrl;
-                if (model.File != null)
-                {
-                    imageName = SaveImage(model.File, existing.ImageUrl);
-                    if (imageName == "Error")
-                    {
-                        ModelState.AddModelError("File", "Error occurred while saving image. Please try again.");
-                        return View(model);
-                    }
-                }
-
                 existing.ProductName = model.ProductName.Trim();
                 existing.CategoryID = model.CategoryID;
                 existing.Description = model.Description?.Trim() ?? string.Empty;
@@ -222,12 +230,12 @@ namespace PharmaCare.Controllers
                 existing.Barcode = Clean(model.Barcode);
                 existing.Manufacturer = Clean(model.Manufacturer);
                 existing.ReorderLevel = model.ReorderLevel;
-                existing.ImageUrl = imageName;
                 existing.IsActive = model.IsActive;
                 existing.RequiresPrescription = model.RequiresPrescription;
                 existing.PrescriptionNote = model.RequiresPrescription ? Clean(model.PrescriptionNote) : null;
                 existing.ExpiryDate = model.ExpiryDate;
                 existing.UpdatedAt = DateTime.Now;
+
                 ProductRepository.Update(id, existing);
                 TempData["SuccessMessage"] = "Product updated successfully!";
                 return RedirectToAction(nameof(Index));
@@ -235,17 +243,18 @@ namespace PharmaCare.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating product {ProductId}", id);
+                var current = ToViewModel(existing);
+                model.ExistingImages = current.ExistingImages;
+                model.PrimaryImageId = current.PrimaryImageId;
                 ModelState.AddModelError("", "Unable to update the product. Check SKU/barcode uniqueness and try again.");
                 return View(model);
             }
         }
 
+        // Kept only for old bookmarks/links. Gallery management now lives inside Edit Product.
         public ActionResult ManageImages(int id)
         {
-            SetAdminViewBagProperties();
-            var product = ProductRepository.Find(id);
-            if (product == null) return NotFound();
-            return View(ToViewModel(product));
+            return RedirectToAction(nameof(Edit), new { id });
         }
 
         [HttpPost]
@@ -254,19 +263,31 @@ namespace PharmaCare.Controllers
         {
             var product = ProductRepository.Find(id);
             if (product == null) return NotFound();
+
             var existingCount = _context.ProductImages.Count(i => i.ProductId == id);
-            var files = (galleryFiles ?? new List<IFormFile>()).Where(f => f != null && f.Length > 0).Take(Math.Max(0, 5 - existingCount)).ToList();
+            var files = (galleryFiles ?? new List<IFormFile>())
+                .Where(f => f != null && f.Length > 0)
+                .Take(Math.Max(0, 5 - existingCount))
+                .ToList();
+
             if (!files.Any())
             {
-                TempData["ErrorMessage"] = existingCount >= 5 ? "A product can have up to 5 gallery images." : "Choose at least one image.";
-                return RedirectToAction(nameof(ManageImages), new { id });
+                TempData["ErrorMessage"] = existingCount >= 5
+                    ? "A product can have up to 5 gallery images."
+                    : "Choose at least one image.";
+                return RedirectToAction(nameof(Edit), new { id });
             }
 
-            var nextOrder = _context.ProductImages.Where(i => i.ProductId == id).Select(i => (int?)i.DisplayOrder).Max() ?? -1;
+            var nextOrder = _context.ProductImages
+                .Where(i => i.ProductId == id)
+                .Select(i => (int?)i.DisplayOrder)
+                .Max() ?? -1;
+
             foreach (var file in files)
             {
                 var saved = SaveImage(file, null);
                 if (saved == "Error") continue;
+
                 nextOrder++;
                 _context.ProductImages.Add(new ProductImage
                 {
@@ -277,7 +298,9 @@ namespace PharmaCare.Controllers
                     CreatedAt = DateTime.UtcNow
                 });
             }
+
             _context.SaveChanges();
+
             var primary = _context.ProductImages.FirstOrDefault(i => i.ProductId == id && i.IsPrimary);
             if (primary != null)
             {
@@ -285,8 +308,9 @@ namespace PharmaCare.Controllers
                 product.UpdatedAt = DateTime.Now;
                 ProductRepository.Update(id, product);
             }
-            TempData["SuccessMessage"] = "Product gallery updated.";
-            return RedirectToAction(nameof(ManageImages), new { id });
+
+            TempData["SuccessMessage"] = "Product images updated.";
+            return RedirectToAction(nameof(Edit), new { id });
         }
 
         [HttpPost]
@@ -296,13 +320,17 @@ namespace PharmaCare.Controllers
             var product = ProductRepository.Find(id);
             var selected = _context.ProductImages.FirstOrDefault(i => i.ProductImageId == imageId && i.ProductId == id);
             if (product == null || selected == null) return NotFound();
-            foreach (var image in _context.ProductImages.Where(i => i.ProductId == id)) image.IsPrimary = image.ProductImageId == imageId;
+
+            foreach (var image in _context.ProductImages.Where(i => i.ProductId == id))
+                image.IsPrimary = image.ProductImageId == imageId;
+
             _context.SaveChanges();
             product.ImageUrl = selected.ImageUrl;
             product.UpdatedAt = DateTime.Now;
             ProductRepository.Update(id, product);
-            TempData["SuccessMessage"] = "Primary product image changed.";
-            return RedirectToAction(nameof(ManageImages), new { id });
+
+            TempData["SuccessMessage"] = "Primary image changed.";
+            return RedirectToAction(nameof(Edit), new { id });
         }
 
         [HttpPost]
@@ -312,24 +340,35 @@ namespace PharmaCare.Controllers
             var product = ProductRepository.Find(id);
             var image = _context.ProductImages.FirstOrDefault(i => i.ProductImageId == imageId && i.ProductId == id);
             if (product == null || image == null) return NotFound();
+
             var wasPrimary = image.IsPrimary;
             DeletePhysicalImage(image.ImageUrl);
             _context.ProductImages.Remove(image);
             _context.SaveChanges();
+
             if (wasPrimary)
             {
-                var replacement = _context.ProductImages.Where(i => i.ProductId == id).OrderBy(i => i.DisplayOrder).FirstOrDefault();
+                var replacement = _context.ProductImages
+                    .Where(i => i.ProductId == id)
+                    .OrderBy(i => i.DisplayOrder)
+                    .FirstOrDefault();
+
                 if (replacement != null)
                 {
                     replacement.IsPrimary = true;
                     product.ImageUrl = replacement.ImageUrl;
                     _context.SaveChanges();
                 }
+                else
+                {
+                    product.ImageUrl = "/images/product_01.png";
+                }
             }
+
             product.UpdatedAt = DateTime.Now;
             ProductRepository.Update(id, product);
-            TempData["SuccessMessage"] = "Gallery image removed.";
-            return RedirectToAction(nameof(ManageImages), new { id });
+            TempData["SuccessMessage"] = "Image removed from the product.";
+            return RedirectToAction(nameof(Edit), new { id });
         }
 
         private ProductViewModel BuildFormModel(IFormCollection form)
@@ -339,12 +378,21 @@ namespace PharmaCare.Controllers
             int.TryParse(form["Stock"], out var stock);
             int.TryParse(form["ReorderLevel"], out var reorderLevel);
             DateTime.TryParse(form["ExpiryDate"], out var expiryDate);
+
             return new ProductViewModel
             {
-                ProductName = form["ProductName"], Description = form["Description"], CategoryID = categoryId, Price = price,
-                Stock = stock, SKU = form["SKU"], Barcode = form["Barcode"], Manufacturer = form["Manufacturer"],
-                ReorderLevel = reorderLevel < 0 ? 0 : reorderLevel, IsActive = form.Keys.Contains("IsActive"),
-                RequiresPrescription = form.Keys.Contains("RequiresPrescription"), PrescriptionNote = form["PrescriptionNote"],
+                ProductName = form["ProductName"],
+                Description = form["Description"],
+                CategoryID = categoryId,
+                Price = price,
+                Stock = stock,
+                SKU = form["SKU"],
+                Barcode = form["Barcode"],
+                Manufacturer = form["Manufacturer"],
+                ReorderLevel = reorderLevel < 0 ? 0 : reorderLevel,
+                IsActive = form.Keys.Contains("IsActive"),
+                RequiresPrescription = form.Keys.Contains("RequiresPrescription"),
+                PrescriptionNote = form["PrescriptionNote"],
                 ExpiryDate = expiryDate == default ? DateTime.Now.AddYears(2) : expiryDate,
                 File = form.Files.Count > 0 ? form.Files[0] : null
             };
@@ -358,12 +406,19 @@ namespace PharmaCare.Controllers
             if (model.Stock < 0) ModelState.AddModelError("Stock", "Stock cannot be negative");
             if (model.ReorderLevel < 0) ModelState.AddModelError("ReorderLevel", "Low stock threshold cannot be negative");
             if (model.ExpiryDate.Date <= DateTime.Now.Date) ModelState.AddModelError("ExpiryDate", "Expiry date must be in the future");
+
             var products = ProductRepository.View();
-            if (products.Any(p => p.ProductId != currentId && p.CategoryID == model.CategoryID && p.ProductName.Equals(model.ProductName?.Trim(), StringComparison.OrdinalIgnoreCase))) ModelState.AddModelError("ProductName", "A product with this name already exists in the selected category.");
+            if (products.Any(p => p.ProductId != currentId && p.CategoryID == model.CategoryID && p.ProductName.Equals(model.ProductName?.Trim(), StringComparison.OrdinalIgnoreCase)))
+                ModelState.AddModelError("ProductName", "A product with this name already exists in the selected category.");
+
             var sku = Clean(model.SKU);
-            if (sku != null && products.Any(p => p.ProductId != currentId && string.Equals(p.SKU, sku, StringComparison.OrdinalIgnoreCase))) ModelState.AddModelError("SKU", "This SKU is already assigned to another product.");
+            if (sku != null && products.Any(p => p.ProductId != currentId && string.Equals(p.SKU, sku, StringComparison.OrdinalIgnoreCase)))
+                ModelState.AddModelError("SKU", "This SKU is already assigned to another product.");
+
             var barcode = Clean(model.Barcode);
-            if (barcode != null && products.Any(p => p.ProductId != currentId && string.Equals(p.Barcode, barcode, StringComparison.OrdinalIgnoreCase))) ModelState.AddModelError("Barcode", "This barcode is already assigned to another product.");
+            if (barcode != null && products.Any(p => p.ProductId != currentId && string.Equals(p.Barcode, barcode, StringComparison.OrdinalIgnoreCase)))
+                ModelState.AddModelError("Barcode", "This barcode is already assigned to another product.");
+
             return ModelState.IsValid;
         }
 
@@ -380,7 +435,11 @@ namespace PharmaCare.Controllers
             if (string.IsNullOrWhiteSpace(imageUrl) || imageUrl.StartsWith("http") || imageUrl == "/images/product_01.png") return;
             var fileName = imageUrl.StartsWith("/Images/") ? imageUrl.Substring("/Images/".Length) : imageUrl.TrimStart('/');
             var fullPath = Path.Combine(env.WebRootPath, "Images", fileName);
-            if (System.IO.File.Exists(fullPath)) { try { System.IO.File.Delete(fullPath); } catch { } }
+            if (System.IO.File.Exists(fullPath))
+            {
+                try { System.IO.File.Delete(fullPath); }
+                catch { }
+            }
         }
 
         private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
@@ -401,9 +460,12 @@ namespace PharmaCare.Controllers
         {
             try
             {
-                foreach (var image in _context.ProductImages.Where(i => i.ProductId == id).ToList()) DeletePhysicalImage(image.ImageUrl);
+                foreach (var image in _context.ProductImages.Where(i => i.ProductId == id).ToList())
+                    DeletePhysicalImage(image.ImageUrl);
+
                 var product = ProductRepository.Find(id);
                 if (product != null) DeletePhysicalImage(product.ImageUrl);
+
                 ProductRepository.Delete(id);
                 TempData["SuccessMessage"] = "Product deleted successfully!";
                 return RedirectToAction(nameof(Index));
