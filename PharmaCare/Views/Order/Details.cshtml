@@ -1,221 +1,61 @@
 ﻿@model PharmaCare.Models.Order
-
 @{
     ViewData["Title"] = "Order Details";
-
-    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
-    /* Determine if current user has admin privileges for status updates */
-    bool isAdmin = ViewBag.UserRole == "Admin";
-
+    var userRole = ViewBag.UserRole as string ?? "Customer";
+    var isStaff = userRole == "Admin" || userRole == "Pharmacist";
+    Layout = isStaff ? "~/Views/Shared/_Adminlayout.cshtml" : "~/Views/Shared/_FrontendLayout.cshtml";
     ViewBag.IsLoggedIn = true;
-
-    /* Extract username from session with fallback */
-    var userName = Context.Session.GetString("UserName");
-    ViewBag.UserName = !string.IsNullOrEmpty(userName) ? userName : "User";
-
-    /* Show categories navigation on this page */
+    ViewBag.UserName = Context.Session.GetString("UserName") ?? "User";
+    ViewBag.AdminName = Context.Session.GetString("UserName") ?? "Admin";
     ViewBag.HideCategories = false;
+
+    var statusClass = (Model.Status ?? "").ToLower() switch
+    {
+        "pending" => "warning",
+        "processing" => "info",
+        "shipped" => "primary",
+        "delivered" => "success",
+        "cancelled" => "danger",
+        _ => "secondary"
+    };
+
+    var itemsSubtotal = Model.OrderItems?.Sum(i => i.Price * i.Quantity) ?? 0m;
+    var shipping = Model.TotalAmount > 50 ? 0m : 5.99m;
+    var tax = Model.TotalAmount - itemsSubtotal - shipping;
+    if (tax < 0) { tax = 0; }
 }
 
-<!-- Page header with breadcrumb navigation -->
-<div class="bg-light py-3">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 mb-0">
-                <strong class="text-black">Order Details</strong>
-            </div>
-        </div>
-    </div>
+@section Styles {
+<style>
+.order-head{display:flex;justify-content:space-between;align-items:flex-end;margin:28px 0 18px}.order-head h2{font-weight:700;margin:0}.order-head p{color:#6c757d;margin:5px 0 0}.order-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06)}.order-card .card-header{background:transparent;padding:17px 20px}.order-card .card-body{padding:22px}.info-block{border:1px solid #edf0f2;border-radius:10px;padding:16px;height:100%}.info-title{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6c757d;font-weight:700;margin-bottom:13px}.info-row{display:flex;justify-content:space-between;gap:15px;padding:7px 0;border-bottom:1px solid #f1f2f4}.info-row:last-child{border:0}.info-row span:first-child{color:#6c757d}.status-badge{font-size:12px;padding:6px 9px}.order-total{font-size:20px;font-weight:700}.action-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.dark-mode .order-card,.dark-mode .info-block{background:#1f1f1f}.dark-mode .info-block{border-color:#383838}.dark-mode .info-row{border-color:#333}.dark-mode .info-row span:first-child{color:#aaa}
+</style>
+}
+
+<div class="order-head">
+    <div><h2>Order #@Model.OrderNumber</h2><p>Review customer, payment, shipping and item information.</p></div>
+    <a href="@(isStaff ? Url.Action("ManageOrders","Order") : Url.Action("Index","Order"))" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> @(isStaff ? "Back to Order Management" : "Back to My Orders")</a>
 </div>
 
-<div class="site-section">
-    <div class="container">
-        <!-- Success message display for completed operations -->
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success">
-                @TempData["SuccessMessage"]
-            </div>
-        }
+@if (TempData["SuccessMessage"] != null){<div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle mr-2"></i>@TempData["SuccessMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>}
+@if (TempData["ErrorMessage"] != null){<div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle mr-2"></i>@TempData["ErrorMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>}
 
-        <!-- Error message display for failed operations -->
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
-            </div>
-        }
-
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <!-- Main order details card with comprehensive information -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <!-- Order number display -->
-                        <h4 class="m-0">Order #@Model.OrderNumber</h4>
-
-                        <!-- Admin-only status update button -->
-                        @if (isAdmin)
-                        {
-                            <button type="button" class="btn btn-danger btn-sm no-hover-effect" data-toggle="modal" data-target="#updateStatusModal">
-                                <i class="fas fa-edit"></i> Update Status
-                            </button>
-                        }
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <!-- Left column: Order and payment information -->
-                            <div class="col-md-6">
-                                <h5>Order Information</h5>
-                                <!-- Order creation date -->
-                                <p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy")</p>
-
-                                <!-- Dynamic status badge with conditional styling -->
-                                <p>
-                                    <strong>Status:</strong>
-                                    @{
-                                        /* Status badge color mapping for visual clarity */
-                                        var statusClass = Model.Status.ToLower() switch
-                                        {
-                                            "pending" => "warning",
-                                            "processing" => "info",
-                                            "shipped" => "primary",
-                                            "delivered" => "success",
-                                            "cancelled" => "danger",
-                                            _ => "secondary"
-                                        };
-                                    }
-                                    <span class="badge badge-@statusClass">@Model.Status</span>
-                                </p>
-
-                                <!-- Payment information -->
-                                <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
-                                <p><strong>Payment Status:</strong> @(Model.IsPaid ? "Paid" : "Not Paid")</p>
-
-                                <!-- Conditional payment date display -->
-                                @if (Model.PaidAt.HasValue)
-                                {
-                                    <p><strong>Paid At:</strong> @Model.PaidAt.Value.ToString("MMMM dd, yyyy")</p>
-                                }
-
-                                <!-- Conditional delivery date display -->
-                                @if (Model.DeliveredAt.HasValue)
-                                {
-                                    <p><strong>Delivered At:</strong> @Model.DeliveredAt.Value.ToString("MMMM dd, yyyy")</p>
-                                }
-                            </div>
-
-                            <!-- Right column: Customer and shipping information -->
-                            <div class="col-md-6">
-                                <h5>Customer Information</h5>
-                                <p><strong>Name:</strong> @Model.User.FirstName @Model.User.LastName</p>
-                                <p><strong>Email:</strong> @Model.User.Email</p>
-                                <p><strong>Phone:</strong> @Model.PhoneNumber</p>
-
-                                <h5 class="mt-4">Shipping Information</h5>
-                                <p><strong>Address:</strong> @Model.ShippingAddress</p>
-                                <p><strong>City:</strong> @Model.City</p>
-                            </div>
-                        </div>
-
-                        <!-- Order items section with detailed breakdown -->
-                        <h5 class="mt-4">Order Items</h5>
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dynamic order items display -->
-                                    @foreach (var item in Model.OrderItems)
-                                    {
-                                        <tr>
-                                            <td>@item.ProductName</td>
-                                            <td>@item.Quantity</td>
-                                            <td>$@item.Price.ToString("0.00")</td>
-                                            <td>$@((item.Price * item.Quantity).ToString("0.00"))</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                                <tfoot>
-                                    <!-- Order totals calculation and display with tax and shipping logic -->
-                                    <tr>
-                                        <th colspan="3" class="text-right">Subtotal:</th>
-                                        <!-- Calculate subtotal by removing tax (5%) and shipping ($5.99 if under $50) -->
-                                        <td>$@((Model.TotalAmount - (Model.TotalAmount * 0.05m) - (Model.TotalAmount > 50 ? 0 : 5.99m)).ToString("0.00"))</td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="3" class="text-right">Tax (5%):</th>
-                                        <td>$@((Model.TotalAmount * 0.05m).ToString("0.00"))</td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="3" class="text-right">Shipping:</th>
-                                        <!-- Free shipping for orders over $50, otherwise $5.99 -->
-                                        <td>$@((Model.TotalAmount > 50 ? 0 : 5.99m).ToString("0.00"))</td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="3" class="text-right">Total:</th>
-                                        <td>$@Model.TotalAmount.ToString("0.00")</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-
-                        <!-- Navigation back to orders list -->
-                        <div class="text-right mt-4">
-                            <a href="@Url.Action("Index", "Order")" class="btn btn-secondary no-hover-effect">
-                                <i class="fas fa-arrow-left"></i> Back to My Orders
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="card order-card mb-4">
+ <div class="card-header action-bar"><div><strong>Order Overview</strong><div class="small text-muted">Placed @Model.OrderDate.ToString("MMM dd, yyyy 'at' HH:mm")</div></div><div><span class="badge badge-@statusClass status-badge mr-2">@Model.Status</span>@if(isStaff && Model.Status != "Delivered" && Model.Status != "Cancelled"){<button class="btn btn-success btn-sm" data-toggle="modal" data-target="#updateStatusModal"><i class="fas fa-sync-alt mr-1"></i> Update Status</button>}</div></div>
+ <div class="card-body">
+  <div class="row">
+   <div class="col-lg-4 mb-3"><div class="info-block"><div class="info-title"><i class="fas fa-user mr-1"></i>Customer</div><div class="info-row"><span>Name</span><strong>@Model.User?.FirstName @Model.User?.LastName</strong></div><div class="info-row"><span>Email</span><span>@Model.User?.Email</span></div><div class="info-row"><span>Phone</span><span>@Model.PhoneNumber</span></div></div></div>
+   <div class="col-lg-4 mb-3"><div class="info-block"><div class="info-title"><i class="fas fa-map-marker-alt mr-1"></i>Shipping</div><div class="info-row"><span>Address</span><strong>@Model.ShippingAddress</strong></div><div class="info-row"><span>City</span><span>@Model.City</span></div><div class="info-row"><span>Items</span><span>@(Model.OrderItems?.Sum(i => i.Quantity) ?? 0)</span></div></div></div>
+   <div class="col-lg-4 mb-3"><div class="info-block"><div class="info-title"><i class="fas fa-credit-card mr-1"></i>Payment</div><div class="info-row"><span>Method</span><strong>@Model.PaymentMethod</strong></div><div class="info-row"><span>Status</span><span class="@(Model.IsPaid ? "text-success" : "text-warning") font-weight-bold">@(Model.IsPaid ? "Paid" : "Not Paid")</span></div>@if(Model.PaidAt.HasValue){<div class="info-row"><span>Paid at</span><span>@Model.PaidAt.Value.ToString("MMM dd, yyyy HH:mm")</span></div>}@if(Model.DeliveredAt.HasValue){<div class="info-row"><span>Delivered</span><span>@Model.DeliveredAt.Value.ToString("MMM dd, yyyy HH:mm")</span></div>}</div></div>
+  </div>
+ </div>
 </div>
 
-<!-- Admin-only status update modal -->
-@if (isAdmin)
-{
-    <div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updateStatusModalLabel">Update Order Status</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+<div class="card order-card mb-4"><div class="card-header"><strong>Order Items</strong></div><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Product</th><th>Unit Price</th><th>Quantity</th><th class="text-right">Line Total</th></tr></thead><tbody>
+@foreach(var item in Model.OrderItems ?? new List<PharmaCare.Models.OrderItem>()){<tr><td><strong>@item.ProductName</strong></td><td>$@item.Price.ToString("0.00")</td><td>@item.Quantity</td><td class="text-right"><strong>$@((item.Price*item.Quantity).ToString("0.00"))</strong></td></tr>}
+</tbody><tfoot><tr><td colspan="3" class="text-right text-muted">Items subtotal</td><td class="text-right">$@itemsSubtotal.ToString("0.00")</td></tr><tr><td colspan="3" class="text-right text-muted">Tax</td><td class="text-right">$@tax.ToString("0.00")</td></tr><tr><td colspan="3" class="text-right text-muted">Shipping</td><td class="text-right">$@shipping.ToString("0.00")</td></tr><tr><td colspan="3" class="text-right"><strong>Total</strong></td><td class="text-right order-total">$@Model.TotalAmount.ToString("0.00")</td></tr></tfoot></table></div></div>
 
-                <!-- Status update form with CSRF protection -->
-                <form asp-controller="Order" asp-action="UpdateStatus" method="post">
-                    @Html.AntiForgeryToken()
-                    <div class="modal-body">
-                        <!-- Hidden field to identify the order being updated -->
-                        <input type="hidden" name="orderId" value="@Model.OrderId">
-                        <div class="form-group">
-                            <label for="orderStatus">Status</label>
-                            <!-- Status selection dropdown with current status pre-selected -->
-                            <select id="orderStatus" name="status" class="form-control">
-                                <option value="Pending" asp-selected="@(Model.Status == "Pending")">Pending</option>
-                                <option value="Processing" asp-selected="@(Model.Status == "Processing")">Processing</option>
-                                <option value="Shipped" asp-selected="@(Model.Status == "Shipped")">Shipped</option>
-                                <option value="Delivered" asp-selected="@(Model.Status == "Delivered")">Delivered</option>
-                                <option value="Cancelled" asp-selected="@(Model.Status == "Cancelled")">Cancelled</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary no-hover-effect" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-danger no-hover-effect">Update Status</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="action-bar mb-4"><span class="small text-muted">Order ID: @Model.OrderId</span><a href="@(isStaff ? Url.Action("ManageOrders","Order") : Url.Action("Index","Order"))" class="btn btn-outline-secondary"><i class="fas fa-arrow-left mr-1"></i> @(isStaff ? "Back to Order Management" : "Back to My Orders")</a></div>
+
+@if(isStaff && Model.Status != "Delivered" && Model.Status != "Cancelled"){
+<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content"><form asp-controller="Order" asp-action="UpdateStatus" method="post">@Html.AntiForgeryToken()<div class="modal-header"><div><h5 class="modal-title mb-0">Update Order Status</h5><small class="text-muted">Current status: @Model.Status</small></div><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body"><input type="hidden" name="orderId" value="@Model.OrderId"/><input type="hidden" name="returnUrl" value="ManageOrders"/><div class="form-group mb-0"><label>Status</label><select name="status" class="form-control">@if(Model.Status=="Pending"){<option value="Processing">Processing</option><option value="Cancelled">Cancelled</option>}else if(Model.Status=="Processing"){<option value="Shipped">Shipped</option><option value="Cancelled">Cancelled</option>}else if(Model.Status=="Shipped"){<option value="Delivered">Delivered</option>}</select><small class="form-text text-muted">Order statuses move forward through the fulfillment workflow.</small></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button><button type="submit" class="btn btn-success"><i class="fas fa-check mr-1"></i> Update Status</button></div></form></div></div></div>
 }
