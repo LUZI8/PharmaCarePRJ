@@ -1,302 +1,97 @@
-﻿@{
+@{
     ViewData["Title"] = "PharmaCare Home";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
 }
 
-<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/HomePage.css">
+@section Styles {
+<style>
+:root{--home-accent:#0d9488;--home-accent2:#0f766e;--home-ink:#142127;--home-muted:#6f7f88;--home-line:#e5ecee;--home-card:#fff;--home-bg:#f6faf9;--home-soft:#eaf8f6}
+body.dark-mode{--home-ink:#eef5f6;--home-muted:#95a5aa;--home-line:#303b40;--home-card:#20272a;--home-bg:#151a1d;--home-soft:#183531}.home-page{background:var(--home-bg);color:var(--home-ink)}
+.pc-hero{position:relative;min-height:620px;display:flex;align-items:center;overflow:hidden;background:linear-gradient(100deg,rgba(9,37,43,.92) 0%,rgba(9,61,64,.82) 46%,rgba(9,61,64,.25) 100%),url('/assets/images/bg.jpg') center/cover no-repeat;color:#fff}.pc-hero:before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;background:rgba(64,224,208,.12);left:-220px;bottom:-260px;animation:heroFloat 11s ease-in-out infinite}.pc-hero:after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;border:1px solid rgba(255,255,255,.12);right:11%;top:-130px;animation:heroFloat 9s -3s ease-in-out infinite}.pc-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to right,#000,transparent 80%)}@@keyframes heroFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-20px)}}@@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.pc-hero .container{position:relative;z-index:2}.pc-hero-content{max-width:660px;animation:rise .75s ease both}.pc-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;margin-bottom:20px}.pc-hero h1{font-size:clamp(45px,6vw,74px);line-height:1.03;letter-spacing:-2px;font-weight:700;margin:0 0 18px}.pc-hero p{font-size:17px;line-height:1.8;color:rgba(255,255,255,.82);max-width:590px;margin:0 0 28px}.pc-hero-actions{display:flex;gap:12px;flex-wrap:wrap}.pc-hero-btn{height:52px;padding:0 20px;border-radius:13px;display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:700;transition:.25s}.pc-hero-btn.primary{background:#12a89a;color:#fff;box-shadow:0 12px 28px rgba(18,168,154,.32)}.pc-hero-btn.secondary{border:1px solid rgba(255,255,255,.34);color:#fff;background:rgba(255,255,255,.06)}.pc-hero-btn:hover{transform:translateY(-2px);color:#fff}.pc-hero-trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:34px;color:rgba(255,255,255,.8);font-size:11px}.pc-hero-trust span{display:flex;align-items:center;gap:7px}.pc-hero-trust i{color:#66e2d6}
+.pc-section{padding:78px 0}.pc-section.soft{background:var(--home-card)}.pc-section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:30px}.pc-kicker{font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--home-accent);margin-bottom:8px}.pc-section h2{font-size:34px;letter-spacing:-.8px;margin:0;color:var(--home-ink)}.pc-section-sub{font-size:13px;color:var(--home-muted);max-width:520px;line-height:1.7;margin:7px 0 0}.pc-text-link{color:var(--home-accent);font-size:12px;font-weight:700;white-space:nowrap}.pc-text-link:hover{color:var(--home-accent2)}
+.pc-benefits{margin-top:-42px;position:relative;z-index:4}.pc-benefit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.pc-benefit{background:var(--home-card);border:1px solid var(--home-line);border-radius:18px;padding:21px;box-shadow:0 18px 45px rgba(20,52,59,.08);transition:.25s}.pc-benefit:hover{transform:translateY(-5px);box-shadow:0 24px 55px rgba(20,52,59,.12)}.pc-benefit-icon{width:42px;height:42px;border-radius:13px;background:var(--home-soft);color:var(--home-accent);display:grid;place-items:center;margin-bottom:14px}.pc-benefit h3{font-size:15px;margin:0 0 6px;color:var(--home-ink)}.pc-benefit p{font-size:11px;line-height:1.65;color:var(--home-muted);margin:0}
+.pc-rx-banner{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;border-radius:24px;padding:34px 38px;background:linear-gradient(135deg,#102a30,#0d625e);color:#fff;overflow:hidden;position:relative}.pc-rx-banner:after{content:"Rx";position:absolute;right:24px;top:-55px;font-size:180px;font-weight:700;color:rgba(255,255,255,.045);line-height:1}.pc-rx-banner h3{font-size:28px;margin:0 0 10px}.pc-rx-banner p{font-size:12px;line-height:1.75;color:rgba(255,255,255,.75);margin:0;max-width:650px}.pc-rx-actions{display:flex;justify-content:flex-end;gap:10px;position:relative;z-index:2}.pc-rx-actions a{height:46px;padding:0 16px;border-radius:11px;display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700}.pc-rx-actions .rx-primary{background:#fff;color:#0d625e}.pc-rx-actions .rx-secondary{border:1px solid rgba(255,255,255,.28);color:#fff}
+.pc-products{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.pc-product{background:var(--home-card);border:1px solid var(--home-line);border-radius:20px;overflow:hidden;transition:.25s;position:relative}.pc-product:hover{transform:translateY(-6px);box-shadow:0 22px 48px rgba(16,52,59,.11)}.pc-product-media{height:230px;display:grid;place-items:center;background:linear-gradient(180deg,#fff,#f6faf9);padding:24px;position:relative}.dark-mode .pc-product-media{background:linear-gradient(180deg,#252d31,#1d2427)}.pc-product-media img{max-height:180px;max-width:100%;object-fit:contain;transition:.3s}.pc-product:hover .pc-product-media img{transform:scale(1.04)}.pc-stock{position:absolute;top:14px;left:14px;padding:6px 9px;border-radius:999px;font-size:9px;font-weight:700;background:#e8f8ee;color:#18864b}.pc-stock.low{background:#fff4dc;color:#b97906}.pc-stock.out{background:#fde9e8;color:#c64742}.pc-product-body{padding:18px}.pc-product-category{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--home-accent);font-weight:700;margin-bottom:6px}.pc-product h3{font-size:16px;line-height:1.35;margin:0 0 10px}.pc-product h3 a{color:var(--home-ink)}.pc-product-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px}.pc-price{font-weight:700;font-size:18px}.pc-cart-btn{height:38px;padding:0 13px;border:0;border-radius:10px;background:var(--home-accent);color:#fff;font-size:10px;font-weight:700;transition:.2s}.pc-cart-btn:hover{background:var(--home-accent2);transform:translateY(-1px)}.pc-cart-btn:disabled{opacity:.45;cursor:not-allowed}
+.pc-care-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.pc-care-card{border:1px solid var(--home-line);border-radius:20px;padding:28px;background:var(--home-card);position:relative;overflow:hidden}.pc-care-card .num{font-size:56px;font-weight:700;color:rgba(13,148,136,.1);position:absolute;right:18px;top:8px}.pc-care-card i{width:44px;height:44px;border-radius:13px;background:var(--home-soft);color:var(--home-accent);display:grid;place-items:center;margin-bottom:18px}.pc-care-card h3{font-size:18px;margin:0 0 8px}.pc-care-card p{font-size:11px;line-height:1.7;color:var(--home-muted);margin:0}.pc-cta{padding:0 0 80px}.pc-cta-box{border-radius:25px;background:linear-gradient(135deg,#e9f8f5,#f8fbfa);border:1px solid #dcecea;padding:34px;display:flex;align-items:center;justify-content:space-between;gap:20px}.dark-mode .pc-cta-box{background:linear-gradient(135deg,#18312f,#20292c);border-color:#31403f}.pc-cta-box h3{font-size:25px;margin:0 0 6px}.pc-cta-box p{font-size:12px;color:var(--home-muted);margin:0}.pc-cta-box a{height:46px;padding:0 17px;border-radius:11px;background:var(--home-accent);color:#fff;display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;white-space:nowrap}
+.reveal{opacity:0;transform:translateY(26px);transition:.65s ease}.reveal.show{opacity:1;transform:none}
+@@media(max-width:991px){.pc-benefit-grid{grid-template-columns:1fr 1fr}.pc-products{grid-template-columns:1fr 1fr}.pc-rx-banner{grid-template-columns:1fr}.pc-rx-actions{justify-content:flex-start}.pc-care-grid{grid-template-columns:1fr}.pc-hero{min-height:540px}.pc-section{padding:62px 0}}@@media(max-width:575px){.pc-hero{min-height:520px}.pc-hero h1{font-size:42px}.pc-hero p{font-size:14px}.pc-benefit-grid,.pc-products{grid-template-columns:1fr}.pc-benefits{margin-top:-28px}.pc-section-head{align-items:flex-start;flex-direction:column}.pc-section h2{font-size:29px}.pc-rx-banner{padding:27px 24px}.pc-rx-actions{flex-direction:column}.pc-cta-box{align-items:flex-start;flex-direction:column}}
+</style>
+}
 
-<!-- Bootstrap modal for displaying registration success message -->
-<div class="modal fade" id="registrationSuccessModal" tabindex="-1" role="dialog" aria-labelledby="registrationSuccessModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="registrationSuccessModalLabel">
-                    <i class="fas fa-check-circle mr-2"></i>Welcome to PharmaCare!
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center py-4">
-                <h4>Registration successful!</h4>
-                <p class="mb-0">You are now logged in and ready to explore our services.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Get Started</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Login success modal for returning users -->
-<div class="modal fade" id="loginSuccessModal" tabindex="-1" role="dialog" aria-labelledby="loginSuccessModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="loginSuccessModalLabel">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Welcome Back!
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center py-4">
-                <h4>Login successful!</h4>
-                <p class="mb-0">Welcome back to PharmaCare. Ready to continue shopping?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Continue</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Hero section with inline background image styling -->
-<div class="hero-section" style="background-image: url('/assets/images/bg.jpg');">
-    <div class="container">
-        <div class="hero-content">
-            <h2 class="sub-title mb-2">Effective Medicine, New Medicine Everyday</h2>
-            <h1 class="mb-3">Welcome To PharmaCare</h1>
-            <p class="lead mb-4">Your Trusted Healthcare Partner</p>
-            <div class="d-flex justify-content-center">
-                <!-- Primary and secondary call-to-action buttons -->
-                <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-danger px-4 py-2 mr-2">SHOP NOW</a>
-                <a href="@Url.Action("About", "FrontEnd")" class="btn btn-outline-light px-4 py-2">LEARN MORE</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Features section highlighting key benefits -->
-<div class="site-section bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center mb-5">
-                <h2 class="text-danger">Why Choose Us</h2>
-            </div>
-            <!-- Feature blocks with FontAwesome icons -->
-            <div class="col-md-4 text-center mb-4">
-                <div class="feature-block">
-                    <span class="icon mb-3">
-                        <i class="fas fa-shipping-fast fa-3x text-danger"></i>
-                    </span>
-                    <h3>Fast Delivery</h3>
-                    <p>Free shipping on orders over $50 with quick delivery to your doorstep.</p>
+<div class="home-page">
+    <section class="pc-hero">
+        <div class="pc-hero-grid"></div>
+        <div class="container">
+            <div class="pc-hero-content">
+                <div class="pc-eyebrow"><i class="fas fa-shield-alt"></i> Trusted pharmacy care in Amman</div>
+                <h1>Healthcare essentials, without the extra steps.</h1>
+                <p>Shop everyday pharmacy products, manage prescription reservations, and keep track of your orders from one secure place.</p>
+                <div class="pc-hero-actions">
+                    <a href="@Url.Action("Shop","FrontEnd")" class="pc-hero-btn primary"><i class="fas fa-shopping-bag"></i> Shop medicines</a>
+                    <a href="@Url.Action("About","FrontEnd")" class="pc-hero-btn secondary">How PharmaCare works <i class="fas fa-arrow-right"></i></a>
                 </div>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="feature-block">
-                    <span class="icon mb-3">
-                        <i class="fas fa-certificate fa-3x text-danger"></i>
-                    </span>
-                    <h3>Certified Products</h3>
-                    <p>All our products are authentic and sourced from trusted manufacturers.</p>
-                </div>
-            </div>
-            <div class="col-md-4 text-center mb-4">
-                <div class="feature-block">
-                    <span class="icon mb-3">
-                        <i class="fas fa-headset fa-3x text-danger"></i>
-                    </span>
-                    <h3>24/7 Support</h3>
-                    <p>Our PharmaCare pharmacists are available round the clock to answer your queries.</p>
-                </div>
+                <div class="pc-hero-trust"><span><i class="fas fa-check-circle"></i> Genuine products</span><span><i class="fas fa-lock"></i> Secure account</span><span><i class="fas fa-prescription"></i> Prescription controls</span></div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- BMI Calculator section with health metrics functionality -->
-<div class="site-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 text-center mb-5 fade-in">
-                <h2 class="text-danger">Health Metrics Calculator</h2>
-                <p class="lead">Calculate your BMI and get insights into your health status</p>
-            </div>
-            <div class="col-md-6 fade-in">
-                <div class="health-calculator shadow">
-                    <h4 class="mb-4 text-center">BMI Calculator</h4>
-                    <!-- BMI calculator form inputs -->
-                    <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" id="age" class="form-control" placeholder="Your Age">
-                    </div>
-                    <div class="form-group">
-                        <label for="height">Height (cm)</label>
-                        <input type="number" id="height" class="form-control" placeholder="Your Height">
-                    </div>
-                    <div class="form-group">
-                        <label for="weight">Weight (kg)</label>
-                        <input type="number" id="weight" class="form-control" placeholder="Your Weight">
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <select id="gender" class="form-control">
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </div>
-                    <!-- Calculate button with ID for JavaScript targeting -->
-                    <button id="calculateBtn" class="btn btn-danger btn-block mt-4">CALCULATE NOW</button>
-                    <!-- Loading indicator and results container -->
-                    <div class="loader mt-3" id="calculator-loader"></div>
-                    <div id="results" class="mt-4"></div>
+    <section class="pc-benefits">
+        <div class="container"><div class="pc-benefit-grid">
+            <div class="pc-benefit"><div class="pc-benefit-icon"><i class="fas fa-truck"></i></div><h3>Reliable delivery</h3><p>Fast local fulfillment with clear order status from checkout to delivery.</p></div>
+            <div class="pc-benefit"><div class="pc-benefit-icon"><i class="fas fa-certificate"></i></div><h3>Trusted inventory</h3><p>Products are managed with stock and expiry controls directly by the pharmacy.</p></div>
+            <div class="pc-benefit"><div class="pc-benefit-icon"><i class="fas fa-prescription-bottle-alt"></i></div><h3>Prescription ready</h3><p>Reserve eligible prescription medicine and track pickup status from your account.</p></div>
+            <div class="pc-benefit"><div class="pc-benefit-icon"><i class="fas fa-headset"></i></div><h3>Customer support</h3><p>Questions about an order or product? Contact PharmaCare from the website anytime.</p></div>
+        </div></div>
+    </section>
 
-                    <div class="results-section">
-                        <!-- Medical disclaimer for BMI results -->
-                        <div class="alert alert-warning mt-3" role="alert">
-                            <strong>Disclaimer:</strong> This BMI result is for educational purposes only and should not be considered a medical diagnosis. For a more accurate assessment of your health, please consult a qualified healthcare professional.
-                        </div>
-                    </div>
-                </div>
+    <section class="pc-section">
+        <div class="container reveal">
+            <div class="pc-rx-banner">
+                <div><div class="pc-kicker" style="color:#65ded2">Prescription service</div><h3>Reserve prescription medicine before you visit.</h3><p>Prescription-only products are clearly marked. Reserve the item online, then complete the pharmacy verification process before pickup.</p></div>
+                <div class="pc-rx-actions"><a class="rx-primary" href="@Url.Action("Shop","FrontEnd")"><i class="fas fa-search"></i> Browse medicines</a><a class="rx-secondary" href="@Url.Action("MyReservations","Prescription")"><i class="fas fa-clipboard-check"></i> My reservations</a></div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- Prescription medication notice section -->
-<div class="site-section bg-light">
-    <div class="container">
-        <div class="prescription-notice p-4 mb-4 rounded shadow-sm bg-white">
-            <div class="row align-items-center">
-                <div class="col-md-1 text-center mb-3 mb-md-0">
-                    <i class="fas fa-prescription fa-3x text-danger"></i>
-                </div>
-                <div class="col-md-11">
-                    <h4 class="mb-2">We Now Offer Prescription Medications</h4>
-                    <p class="mb-0">Browse our wide range of prescription medications. All prescription items require valid doctor's prescriptions that must be verified before pickup. Visit our store page to learn more about our prescription policy.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Featured products section -->
-<div class="site-section">
-    <div class="container">
-        <div class="row">
-            <div class="title-section text-center col-12">
-                <h2 class="text-danger text-uppercase">Our Recent Products</h2>
-                <p class="text-muted">Safe, effective medicines available without prescription</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Conditional rendering of featured products from ViewBag -->
-            @if (ViewBag.FeaturedProducts != null && ViewBag.FeaturedProducts.Count > 0)
-            {
-                foreach (var product in ViewBag.FeaturedProducts)
-                {
-                    <div class="col-sm-6 col-lg-4 text-center item mb-4">
-                        <div class="product-card">
-                            <!-- Product status tags based on stock and activity -->
-                            @if (!product.IsActive)
-                            {
-                                <span class="tag">Inactive</span>
-                            }
-                            else if (product.Stock <= 0)
-                            {
-                                <span class="tag">Out of Stock</span>
-                            }
-                            else if (product.Stock < 10)
-                            {
-                                <span class="tag">Low Stock</span>
-                            }
-
-                            <!-- Product image with link to detailed view -->
-                            <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">
-                                @if (!string.IsNullOrEmpty(product.ImageUrl))
-                                {
-                                    <!-- Inline styles for consistent image display -->
-                                    <img src="@product.ImageUrl" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
-                                }
-                                else
-                                {
-                                    <!-- Fallback image for products without images -->
-                                    <img src="~/assets/images/product_01.png" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
-                                }
+    <section class="pc-section soft">
+        <div class="container reveal">
+            <div class="pc-section-head"><div><div class="pc-kicker">Popular right now</div><h2>Recent pharmacy products</h2><p class="pc-section-sub">Quick access to recently added and frequently used everyday medicines.</p></div><a class="pc-text-link" href="@Url.Action("Shop","FrontEnd")">View all products <i class="fas fa-arrow-right"></i></a></div>
+            <div class="pc-products">
+                @if(ViewBag.FeaturedProducts != null && ViewBag.FeaturedProducts.Count > 0){
+                    foreach(var product in ViewBag.FeaturedProducts){
+                        <article class="pc-product">
+                            <a class="pc-product-media" href="@Url.Action("ShopSingle","FrontEnd",new{id=product.ProductId})">
+                                @if(product.Stock<=0){<span class="pc-stock out">Out of stock</span>}else if(product.Stock<10){<span class="pc-stock low">Low stock</span>}else{<span class="pc-stock">In stock</span>}
+                                <img src="@(string.IsNullOrEmpty(product.ImageUrl)?Url.Content("~/assets/images/product_01.png"):product.ImageUrl)" alt="@product.ProductName" />
                             </a>
-                            <!-- Product name link and price display -->
-                            <h3 class="text-dark"><a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">@product.ProductName</a></h3>
-                            <!-- Format price to 2 decimal places -->
-                            <p class="price text-dark">$@product.Price.ToString("F2")</p>
-                            <div class="medication-badges">
-                                <!-- Stock status badges with conditional styling -->
-                                @if (product.Stock > 10)
-                                {
-                                    <span class="badge badge-success"><i class="fas fa-check-circle"></i> In Stock</span>
-                                }
-                                else if (product.Stock > 0)
-                                {
-                                    <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Low Stock</span>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Out of Stock</span>
-                                }
-
-                                <!-- Category badge if available -->
-                                @if (product.Category != null)
-                                {
-                                    <span class="badge badge-info"><i class="fas fa-tag"></i> @product.Category.CategoryName</span>
-                                }
-                            </div>
-                            <!-- Add to cart button with data attributes for JavaScript -->
-                            <button class="btn btn-danger btn-sm btn-add-to-cart mt-2"
-                                    data-id="@product.ProductId"
-                                    data-name="@product.ProductName"
-                                    data-price="@product.Price"
-                            @(product.Stock <= 0 ? "disabled" : "")>
-                                @(product.Stock > 0 ? "Add to Cart" : "Out of Stock")
-                            </button>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <!-- Empty state when no products are available -->
-                <div class="col-12 text-center">
-                    <p>No products available at the moment.</p>
-                </div>
-            }
-        </div>
-        <div class="row mt-5">
-            <div class="col-12 text-center">
-                <!-- Link to view all products in shop -->
-                <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-danger px-4 py-3">View All Products</a>
+                            <div class="pc-product-body"><div class="pc-product-category">@(product.Category?.CategoryName ?? "Pharmacy")</div><h3><a href="@Url.Action("ShopSingle","FrontEnd",new{id=product.ProductId})">@product.ProductName</a></h3><div class="pc-product-bottom"><span class="pc-price">$@product.Price.ToString("F2")</span><button class="pc-cart-btn btn-add-to-cart" data-id="@product.ProductId" data-name="@product.ProductName" data-price="@product.Price" @(product.Stock<=0?"disabled":"")><i class="fas fa-shopping-bag"></i> @(product.Stock>0?"Add":"Unavailable")</button></div></div>
+                        </article>
+                    }
+                } else {<div class="pc-section-sub">No products are available right now.</div>}
             </div>
         </div>
-    </div>
+    </section>
+
+    <section class="pc-section">
+        <div class="container reveal"><div class="pc-section-head"><div><div class="pc-kicker">Designed around real pharmacy workflows</div><h2>More than a simple online catalog.</h2><p class="pc-section-sub">PharmaCare connects shopping, prescriptions, account management and order tracking in one consistent experience.</p></div></div>
+            <div class="pc-care-grid">
+                <div class="pc-care-card"><span class="num">01</span><i class="fas fa-box-open"></i><h3>Order tracking that makes sense</h3><p>See whether an order is pending, processing, shipped or delivered without calling the pharmacy for an update.</p></div>
+                <div class="pc-care-card"><span class="num">02</span><i class="fas fa-user-shield"></i><h3>Your pharmacy account in one place</h3><p>Manage profile information, review orders and access prescription reservations through your account.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pc-cta"><div class="container reveal"><div class="pc-cta-box"><div><div class="pc-kicker">Ready when you are</div><h3>Find what you need from the pharmacy.</h3><p>Browse the current inventory and check availability before placing your order.</p></div><a href="@Url.Action("Shop","FrontEnd")">Explore the store <i class="fas fa-arrow-right"></i></a></div></div></section>
 </div>
 
-<!-- Toast notification for cart actions -->
-<div id="toast-notification" class="toast-notification">
-    <div class="toast-content">
-        <i class="fas fa-check-circle toast-icon"></i>
-        <div class="toast-text">
-            <!-- Dynamic content updated by JavaScript -->
-            <strong id="toast-title">Added to Cart!</strong>
-            <p id="toast-message">Product added successfully</p>
-        </div>
-    </div>
-    <!-- Close button with onclick handler -->
-    <button class="toast-close" onclick="hideToast()">&times;</button>
-</div>
+<div id="toast-notification" class="toast-notification"><div class="toast-content"><i class="fas fa-check-circle toast-icon"></i><div class="toast-text"><strong id="toast-title">Added to Cart!</strong><p id="toast-message">Product added successfully</p></div></div><button class="toast-close" onclick="hideToast()">&times;</button></div>
 
 @section Scripts {
-    <script>
-        /* Global JavaScript object for URL endpoints used by external JS files */
-        window.homeUrls = {
-            addToCart: '@Url.Action("AddToCart", "Cart")'
-        };
-
-        /* Pass TempData and URL parameters to JavaScript for modal display */
-        @if (TempData["RegistrationSuccess"] != null)
-        {
-            <text>window.registrationSuccess = '@TempData["RegistrationSuccess"]';</text>
-        }
-    </script>
-    <script src="~/assets/js/FrontEndViewScripts/HomePage.js"></script>
-    }
+<script>
+window.homeUrls={addToCart:'@Url.Action("AddToCart","Cart")'};
+@if(TempData["RegistrationSuccess"]!=null){<text>window.registrationSuccess='@TempData["RegistrationSuccess"]';</text>}
+(function(){const els=document.querySelectorAll('.reveal');const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}}),{threshold:.12});els.forEach(el=>io.observe(el));})();
+</script>
+<script src="~/assets/js/FrontEndViewScripts/HomePage.js"></script>
+}
