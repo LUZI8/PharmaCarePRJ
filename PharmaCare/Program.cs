@@ -1,8 +1,23 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Load an untracked local overrides file last, so it wins over appsettings.json.
-// This is where local secrets such as SMTP and AI API keys live; it is git-ignored and never committed.
-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+// Load local overrides explicitly from the project content root.
+// Support both common filename casings so Windows/Linux and existing local files behave consistently.
+var localConfigUpper = Path.Combine(builder.Environment.ContentRootPath, "appsettings.Local.json");
+var localConfigLower = Path.Combine(builder.Environment.ContentRootPath, "appsettings.local.json");
+
+if (File.Exists(localConfigUpper))
+    builder.Configuration.AddJsonFile(localConfigUpper, optional: false, reloadOnChange: true);
+
+if (File.Exists(localConfigLower) && !string.Equals(localConfigLower, localConfigUpper, StringComparison.Ordinal))
+    builder.Configuration.AddJsonFile(localConfigLower, optional: false, reloadOnChange: true);
+
+// Also support OPENAI_API_KEY as a fallback. This lets the app work even if the local JSON file
+// is missing or not copied, while keeping the key out of source control.
+var environmentApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+if (string.IsNullOrWhiteSpace(builder.Configuration["AISettings:ApiKey"]) && !string.IsNullOrWhiteSpace(environmentApiKey))
+{
+    builder.Configuration["AISettings:ApiKey"] = environmentApiKey;
+}
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
@@ -23,7 +38,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-// AI: keep the provider secret in appsettings.Local.json or user-secrets, never in source control.
+// AI configuration. appsettings.Local.json / appsettings.local.json wins over appsettings.json.
 builder.Services.Configure<AISettings>(builder.Configuration.GetSection("AISettings"));
 builder.Services.AddHttpClient<IAIService, OpenAIService>();
 
