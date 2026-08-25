@@ -1,4 +1,36 @@
-﻿// Search functionality for PharmaCare
+﻿// Prevent the global cart observer from observing #cart-count.
+// The layout observer writes back to the same element it watches, which can create
+// an endless MutationObserver loop and make the storefront appear to never finish loading.
+(function () {
+    const NativeMutationObserver = window.MutationObserver;
+    if (!NativeMutationObserver || window.__pcCartObserverGuardInstalled) return;
+
+    window.__pcCartObserverGuardInstalled = true;
+
+    function PharmaCareMutationObserver(callback) {
+        const observer = new NativeMutationObserver(callback);
+        const nativeObserve = observer.observe.bind(observer);
+
+        observer.observe = function (target, options) {
+            if (target && target.id === 'cart-count') {
+                return;
+            }
+
+            return nativeObserve(target, options);
+        };
+
+        return observer;
+    }
+
+    PharmaCareMutationObserver.prototype = NativeMutationObserver.prototype;
+    window.MutationObserver = PharmaCareMutationObserver;
+
+    window.addEventListener('load', function () {
+        window.MutationObserver = NativeMutationObserver;
+    }, { once: true });
+})();
+
+// Search functionality for PharmaCare
 $(document).ready(function () {
     let searchTimeout;
     const searchInput = $('#navbar-search-input');
