@@ -28,10 +28,11 @@ public class AdminAIController : Controller
             return StatusCode(503, new { success = false, message = "AI is not configured." });
 
         var today = DateTime.Now.Date;
+        var tomorrow = today.AddDays(1);
         var expiry90 = today.AddDays(90);
 
         var lowStock = await _db.Product.AsNoTracking()
-            .Where(p => p.IsActive && p.Stock > 0 && p.Stock <= Math.Max(10, p.ReorderLevel))
+            .Where(p => p.IsActive && p.Stock > 0 && (p.Stock <= 10 || p.Stock <= p.ReorderLevel))
             .OrderBy(p => p.Stock)
             .Take(12)
             .Select(p => new { p.ProductName, p.Stock, p.ReorderLevel })
@@ -54,9 +55,10 @@ public class AdminAIController : Controller
         var pendingOrders = await _db.Orders.AsNoTracking()
             .CountAsync(o => o.Status == "Pending" || o.Status == "Processing", ct);
 
-        var ordersToday = await _db.Orders.AsNoTracking().CountAsync(o => o.OrderDate.Date == today, ct);
+        var ordersToday = await _db.Orders.AsNoTracking()
+            .CountAsync(o => o.OrderDate >= today && o.OrderDate < tomorrow, ct);
         var revenueToday = await _db.Orders.AsNoTracking()
-            .Where(o => o.Status != "Cancelled" && o.OrderDate.Date == today)
+            .Where(o => o.Status != "Cancelled" && o.OrderDate >= today && o.OrderDate < tomorrow)
             .SumAsync(o => (decimal?)o.TotalAmount, ct) ?? 0m;
 
         var pendingRx = await _db.PrescriptionReservations.AsNoTracking()
