@@ -28,17 +28,24 @@ namespace PharmaCare.Controllers
         private ProductViewModel ToViewModel(Product p)
         {
             var category = categoryRepository.Find(p.CategoryID) ?? new Category { CategoryName = "Unknown" };
-            var gallery = _context.ProductImages
+
+            // Materialize the EF query first, then run URL normalization in memory.
+            // This avoids EF Core trying to capture this controller instance inside a SQL projection.
+            var galleryEntities = _context.ProductImages
                 .Where(i => i.ProductId == p.ProductId)
                 .OrderByDescending(i => i.IsPrimary)
                 .ThenBy(i => i.DisplayOrder)
+                .ToList();
+
+            var gallery = galleryEntities
                 .Select(i => new ProductImageViewModel
                 {
                     ProductImageId = i.ProductImageId,
                     ImageUrl = NormalizeImageUrl(i.ImageUrl),
                     DisplayOrder = i.DisplayOrder,
                     IsPrimary = i.IsPrimary
-                }).ToList();
+                })
+                .ToList();
 
             return new ProductViewModel
             {
@@ -65,7 +72,7 @@ namespace PharmaCare.Controllers
             };
         }
 
-        private string NormalizeImageUrl(string? imageUrl)
+        private static string NormalizeImageUrl(string? imageUrl)
         {
             if (string.IsNullOrWhiteSpace(imageUrl)) return "/images/product_01.png";
             if (imageUrl.StartsWith("/") || imageUrl.StartsWith("http")) return imageUrl;
@@ -75,7 +82,12 @@ namespace PharmaCare.Controllers
         public ActionResult Index()
         {
             SetAdminViewBagProperties();
-            return View(ProductRepository.View().Select(ToViewModel).ToList());
+
+            // Materialize products before calling the controller mapping method.
+            // Keeps all controller-side mapping out of EF Core's expression tree.
+            var products = ProductRepository.View().ToList();
+            var models = products.Select(ToViewModel).ToList();
+            return View(models);
         }
 
         public ActionResult Details(int id)
