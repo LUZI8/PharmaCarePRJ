@@ -1,0 +1,56 @@
+@model PharmaCare.Controllers.OperationsViewModel
+@{
+    ViewData["Title"] = "Operations Center";
+}
+<style>
+.ops{padding:28px 0 60px}.ops-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:22px}.ops-head h1{font-size:30px;margin:0}.ops-muted{color:#718087;font-size:12px}.ops-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.ops-kpi,.ops-card{background:var(--card-bg,#fff);border:1px solid var(--border-color,#e3ebed);border-radius:18px}.ops-kpi{padding:20px}.ops-kpi i{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#eaf8f6;color:#0d9488;margin-bottom:14px}.ops-kpi strong{font-size:25px;display:block}.ops-kpi span{font-size:11px;color:#718087}.ops-two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.ops-card{padding:20px;overflow:hidden}.ops-card h2{font-size:16px;margin:0 0 15px}.ops-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--border-color,#edf1f2);font-size:12px}.ops-row:first-of-type{border-top:0}.ops-badge{padding:5px 8px;border-radius:999px;background:#eaf8f6;color:#0d766e;font-size:9px;font-weight:700}.ops-badge.warn{background:#fff3d9;color:#9b6500}.ops-badge.danger{background:#fde9e8;color:#b8403c}.ops-empty{padding:18px 0;color:#849198;font-size:12px}.ops-link{color:#0d9488;font-weight:700;font-size:11px}.dark-mode .ops-kpi i{background:#183531}.dark-mode .ops-muted,.dark-mode .ops-kpi span{color:#9ba9ad}
+@@media(max-width:900px){.ops-grid{grid-template-columns:1fr 1fr}.ops-two{grid-template-columns:1fr}.ops-head{align-items:flex-start;flex-direction:column}}
+@@media(max-width:520px){.ops{padding-top:18px}.ops-grid{grid-template-columns:1fr 1fr;gap:9px}.ops-kpi{padding:15px}.ops-kpi strong{font-size:21px}.ops-card{padding:16px}.ops-row{align-items:flex-start}.ops-head h1{font-size:25px}}
+</style>
+<div class="container ops">
+ <div class="ops-head"><div><div class="ops-muted">PHARMACY INTELLIGENCE</div><h1>Operations Center</h1><div class="ops-muted">One place for orders, prescriptions, inventory and customer attention.</div></div><div class="ops-muted">Updated @Model.GeneratedAt.ToString("MMM d, HH:mm")</div></div>
+ <div class="ops-grid">
+  <div class="ops-kpi"><i class="fas fa-shopping-bag"></i><strong>@Model.OrdersToday</strong><span>Orders today</span></div>
+  <div class="ops-kpi"><i class="fas fa-coins"></i><strong>$@Model.RevenueToday.ToString("0.00")</strong><span>Revenue today</span></div>
+  <div class="ops-kpi"><i class="fas fa-hourglass-half"></i><strong>@Model.PendingOrders</strong><span>Orders needing attention</span></div>
+  <div class="ops-kpi"><i class="fas fa-prescription"></i><strong>@Model.PendingPrescriptions</strong><span>Prescription pickups</span></div>
+ </div>
+ <div class="ops-two">
+  <section class="ops-card"><h2>Inventory attention</h2>
+   @foreach(var p in Model.OutOfStock){<div class="ops-row"><div><b>@p.ProductName</b><div class="ops-muted">Out of stock</div></div><span class="ops-badge danger">0 units</span></div>}
+   @foreach(var p in Model.LowStock){<div class="ops-row"><div><b>@p.ProductName</b><div class="ops-muted">Reorder level @p.ReorderLevel</div></div><span class="ops-badge warn">@p.Stock units</span></div>}
+   @if(!Model.OutOfStock.Any()&&!Model.LowStock.Any()){<div class="ops-empty">Inventory levels look healthy.</div>}
+   <a class="ops-link" href="/Product/Index">Open inventory →</a>
+  </section>
+  <section class="ops-card"><h2>Expiring within 90 days</h2>
+   @foreach(var p in Model.ExpiringSoon){<div class="ops-row"><div><b>@p.ProductName</b><div class="ops-muted">@p.Stock units in stock</div></div><span class="ops-badge warn">@p.ExpiryDate.ToString("MMM d")</span></div>}
+   @if(!Model.ExpiringSoon.Any()){<div class="ops-empty">No active products are nearing expiry.</div>}
+  </section>
+ </div>
+ <div class="ops-two">
+  <section class="ops-card"><h2>Prescription queue</h2>
+   @foreach(var r in Model.Reservations.Where(x=>x.Status=="Reserved").Take(8)){<div class="ops-row"><div><b>@r.Product?.ProductName</b><div class="ops-muted">@r.ReservationNumber · qty @r.Quantity</div></div><span class="ops-badge">Reserved</span></div>}
+   @if(!Model.Reservations.Any(x=>x.Status=="Reserved")){<div class="ops-empty">No prescriptions waiting for pickup.</div>}
+   <a class="ops-link" href="/Prescription/Manage">Manage prescriptions →</a>
+  </section>
+  <section class="ops-card"><h2>Recent orders</h2>
+   @foreach(var o in Model.RecentOrders.Take(8)){<div class="ops-row"><div><b>@o.OrderNumber</b><div class="ops-muted">@o.OrderDate.ToString("MMM d, HH:mm")</div></div><span class="ops-badge">@o.Status</span></div>}
+   @if(!Model.RecentOrders.Any()){<div class="ops-empty">No recent orders.</div>}
+   <a class="ops-link" href="/Order/Index">Manage orders →</a>
+  </section>
+ </div>
+ <div class="ops-two">
+  <section class="ops-card"><h2>Customer support pulse</h2>
+   @foreach(var m in Model.RecentFeedback.Take(7)){<div class="ops-row"><div><b>@(string.IsNullOrWhiteSpace(m.Subject)?"Customer message":m.Subject)</b><div class="ops-muted">@m.DateSubmitted.ToString("MMM d, HH:mm")</div></div><span class="ops-badge">Support</span></div>}
+   @if(!Model.RecentFeedback.Any()){<div class="ops-empty">No support messages.</div>}
+   <a class="ops-link" href="/Admin/Feedback">Open support inbox →</a>
+  </section>
+  <section class="ops-card"><h2>Recommended actions</h2>
+   @if(Model.OutOfStock.Any()){<div class="ops-row"><div><b>Restock unavailable products</b><div class="ops-muted">@Model.OutOfStock.Count products currently unavailable.</div></div><span class="ops-badge danger">High</span></div>}
+   @if(Model.LowStock.Any()){<div class="ops-row"><div><b>Prepare replenishment</b><div class="ops-muted">@Model.LowStock.Count products reached their reorder zone.</div></div><span class="ops-badge warn">Medium</span></div>}
+   @if(Model.PendingPrescriptions>0){<div class="ops-row"><div><b>Review prescription queue</b><div class="ops-muted">Confirm pickup readiness and verification workflow.</div></div><span class="ops-badge">Action</span></div>}
+   @if(Model.ExpiringSoon.Any()){<div class="ops-row"><div><b>Review near-expiry inventory</b><div class="ops-muted">Prioritize safe stock management.</div></div><span class="ops-badge warn">Review</span></div>}
+   @if(!Model.OutOfStock.Any()&&!Model.LowStock.Any()&&Model.PendingPrescriptions==0&&!Model.ExpiringSoon.Any()){<div class="ops-empty">No urgent operational actions detected.</div>}
+  </section>
+ </div>
+</div>
