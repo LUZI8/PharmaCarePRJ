@@ -1,221 +1,126 @@
 ﻿@{
-
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString() ?? "";
+    var userRole = Context.Session.GetString("UserRole") ?? "Staff";
+    var adminName = ViewBag.AdminName ?? Context.Session.GetString("UserName") ?? "Admin";
+    var roleLabel = userRole == "Admin" ? "System Administrator" : userRole == "Pharmacist" ? "Pharmacist" : "Staff";
+    var pageTitle = ViewData["Title"]?.ToString() ?? "Admin Panel";
 }
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>@ViewData["Title"] - PharmaCare Admin</title>
+    <title>@pageTitle - PharmaCare Admin</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- External font imports for consistent typography -->
-    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,700" rel="stylesheet">
     <link rel="stylesheet" href="~/fonts/icomoon/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-    <!-- Site favicon for browser tab icon -->
     <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
-
-    <!-- Core CSS framework and component stylesheets -->
     <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/assets/css/magnific-popup.css">
     <link rel="stylesheet" href="~/assets/css/jquery-ui.css">
     <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css">
     <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="~/assets/css/aos.css">
-
-    <!-- Custom admin panel specific styles -->
     <link rel="stylesheet" href="~/assets/css/style.css">
     <link rel="stylesheet" href="~/assets/css/custom.css">
     <link rel="stylesheet" href="~/assets/css/AdminViewStyles/AdminPageStyle.css">
     <link rel="stylesheet" href="~/assets/css/AdminViewStyles/AdminLayout.css">
 
-    <!-- Render additional page-specific styles if provided -->
+    <style>
+        :root{--admin-accent:#0d9488;--admin-accent-soft:#e7f7f5;--sidebar:#202933;--sidebar-muted:#94a3b8;--header-h:72px;--sidebar-w:258px}
+        body{font-family:'Rubik',sans-serif}.site-wrap{min-height:100vh;background:#f7f9fb}.top-nav{height:var(--header-h)!important;left:var(--sidebar-w)!important;padding:0 30px!important;background:#fff!important;border-bottom:1px solid #e8edf1!important;box-shadow:0 2px 12px rgba(15,23,42,.04)!important;z-index:1040!important}.top-nav-left{display:flex;align-items:center;min-width:0}.admin-page-context{display:flex;flex-direction:column;min-width:0}.admin-page-title{font-size:15px;font-weight:700;color:#1f2937;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.admin-page-subtitle{font-size:11px;color:#8994a3;margin-top:3px}.top-nav-right{display:flex;align-items:center;gap:10px}.admin-user-chip{display:flex;align-items:center;gap:10px;padding:7px 11px;border:1px solid #e7ebef;border-radius:10px;background:#fff}.admin-avatar-sm{width:34px;height:34px;border-radius:9px;background:var(--admin-accent-soft);color:var(--admin-accent);display:flex;align-items:center;justify-content:center;font-size:14px}.admin-user-copy{line-height:1.1}.admin-name{display:block;margin:0!important;font-size:13px;font-weight:700;color:#27313d!important}.admin-role{font-size:10px;color:#8994a3}.logout-btn{height:40px;padding:0 12px!important;border:1px solid #e3e7eb!important;border-radius:9px!important;color:#505a66!important;display:inline-flex!important;align-items:center;gap:7px;background:#fff!important;font-size:12px!important;font-weight:600;text-decoration:none!important}.logout-btn:hover{background:#f8fafb!important;color:#dc3545!important;border-color:#f0c8cc!important}.logout-btn i{margin:0!important}.theme-toggle-admin{width:40px;height:40px;border:1px solid #e3e7eb!important;border-radius:9px!important;margin:0!important;padding:0!important;display:flex;align-items:center;justify-content:center;background:#fff!important}.theme-icon{font-size:17px!important}
+        .admin-sidebar{width:var(--sidebar-w)!important;min-width:var(--sidebar-w)!important;height:100vh!important;padding:0!important;background:var(--sidebar)!important;overflow-y:auto!important;box-shadow:4px 0 20px rgba(15,23,42,.08);z-index:1050!important}.sidebar-brand{padding:27px 23px 22px;border-bottom:1px solid rgba(255,255,255,.07)}.brand-line{display:flex;align-items:center;gap:11px}.brand-mark{width:38px;height:38px;border-radius:11px;background:var(--admin-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 5px 14px rgba(13,148,136,.28)}.brand-copy{min-width:0}.pharmacare-logo{display:block!important;text-align:left!important;width:auto!important;color:#fff!important;font-size:17px!important;letter-spacing:.2px!important;line-height:1.1;text-decoration:none!important}.brand-caption{font-size:10px;color:#8fa0b2;margin-top:4px}.sidebar-profile{margin:16px 14px 8px;padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:11px;background:rgba(255,255,255,.035);display:flex;align-items:center;gap:10px}.sidebar-profile-avatar{width:35px;height:35px;border-radius:9px;background:rgba(13,148,136,.16);color:#4ad4c6;display:flex;align-items:center;justify-content:center}.sidebar-profile-name{font-size:12px;color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:145px}.sidebar-profile-role{font-size:10px;color:var(--sidebar-muted);margin-top:2px}.sidebar-nav{padding:9px 10px 24px}.nav-section-title{font-size:9px;font-weight:700;letter-spacing:1.1px;color:#66778a;text-transform:uppercase;padding:14px 12px 7px}.sidebar-nav .nav-item{margin:3px 0}.sidebar-nav .nav-link{min-height:43px;padding:0 12px!important;border-radius:9px;color:#c8d1db!important;display:flex;align-items:center;gap:12px;font-size:13px;font-weight:500;border-left:0!important;transition:.15s ease}.sidebar-nav .nav-link i{width:19px;text-align:center;font-size:14px;color:#8ea0b2}.sidebar-nav .nav-link:hover{background:rgba(255,255,255,.055)!important;color:#fff!important}.sidebar-nav .nav-link:hover i{color:#d8e0e8}.sidebar-nav .nav-link.active{background:rgba(13,148,136,.16)!important;color:#64dfd2!important;box-shadow:inset 3px 0 0 var(--admin-accent)}.sidebar-nav .nav-link.active i{color:#55d3c6}.view-site-link{border:1px solid rgba(255,255,255,.065)!important;margin-bottom:5px}.nav-badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:9px;color:#d7dfe7}
+        .admin-content{margin-left:var(--sidebar-w)!important;margin-top:var(--header-h)!important;padding:22px 28px!important;width:calc(100% - var(--sidebar-w))!important;max-width:none!important;min-height:calc(100vh - var(--header-h))!important;background:#f7f9fb}.admin-content>.container-fluid{max-width:none}.admin-footer{margin-left:var(--sidebar-w);padding:18px 28px;color:#8a95a2;font-size:11px;border-top:1px solid #e8edf1;background:#f7f9fb}.hamburger-menu{display:none!important;margin:0!important}.sidebar-overlay{z-index:1045!important}
+        body.dark-mode .site-wrap,body.dark-mode .admin-content,body.dark-mode .admin-footer{background:#17191c!important}.dark-mode .top-nav{background:#1d2024!important;border-color:#2d3238!important}.dark-mode .admin-page-title,.dark-mode .admin-name{color:#f1f3f5!important}.dark-mode .admin-page-subtitle,.dark-mode .admin-role{color:#929aa3!important}.dark-mode .admin-user-chip,.dark-mode .logout-btn,.dark-mode .theme-toggle-admin{background:#22262a!important;border-color:#343a40!important}.dark-mode .logout-btn{color:#d6d9dc!important}.dark-mode .admin-avatar-sm{background:#173b37;color:#54d7ca}.dark-mode .admin-footer{border-color:#2b3035}.dark-mode .admin-sidebar{background:#151b21!important}
+        @@media(max-width:991.98px){.top-nav{left:0!important;padding:0 15px!important}.hamburger-menu{display:flex!important;width:40px;height:40px;align-items:center;justify-content:center;border:1px solid #e3e7eb!important;border-radius:9px!important;margin-right:10px!important}.admin-sidebar{transform:translateX(-100%);width:270px!important;min-width:270px!important}.admin-sidebar.active{transform:translateX(0)}.admin-content{margin-left:0!important;width:100%!important;padding:18px 15px!important}.admin-footer{margin-left:0}.admin-user-copy{display:none}.admin-page-subtitle{display:none}.logout-btn span{display:none}.logout-btn{width:40px;justify-content:center;padding:0!important}.top-nav-right{gap:6px}}
+        @@media(max-width:575.98px){.admin-page-title{font-size:13px}.admin-content{padding:14px 10px!important}.admin-user-chip{padding:3px;border:0}.admin-avatar-sm{width:34px;height:34px}.theme-toggle-admin{width:36px;height:36px}.logout-btn{width:36px;height:36px}}
+    </style>
     @RenderSection("Styles", required: false)
 </head>
-
 <body>
-    <div class="site-wrap">
+<div class="site-wrap">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-        <!-- Overlay for mobile sidebar - darkens background when sidebar is open -->
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-        <!-- Top navigation bar with admin controls and user info -->
-        <div class="top-nav">
-            <div class="top-nav-left">
-                <!-- Hamburger menu button to toggle sidebar on mobile/tablet -->
-                <button class="hamburger-menu" id="hamburger-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-
-                <!-- Search trigger button (opens search overlay) -->
-                <a href="#" class="js-search-open"><i class="icon-search"></i></a>
-            </div>
-
-            <div class="top-nav-right">
-                <!-- Admin user information display with logout functionality -->
-                <div class="admin-info">
-                    <span class="admin-name">
-                        <i class="fas fa-user-shield"></i> @ViewBag.AdminName
-                    </span>
-                    <a href="@Url.Action("Logout", "Account")" class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Sign Out
-                    </a>
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-line">
+                <div class="brand-mark"><i class="fas fa-prescription-bottle-alt"></i></div>
+                <div class="brand-copy">
+                    <a class="pharmacare-logo" href="@Url.Action("Index","Admin")">PHARMACARE</a>
+                    <div class="brand-caption">Pharmacy Administration</div>
                 </div>
-
-                <!-- Theme toggle button for dark/light mode switching -->
-                <button id="theme-toggle-btn" class="btn">
-                    <span id="moon-icon" class="theme-icon">🌙</span>
-                    <span id="sun-icon" class="theme-icon" style="display: none;">☀️</span>
-                </button>
+            </div>
+        </div>
+        <div class="sidebar-profile">
+            <div class="sidebar-profile-avatar"><i class="fas fa-user-shield"></i></div>
+            <div style="min-width:0">
+                <div class="sidebar-profile-name">@adminName</div>
+                <div class="sidebar-profile-role">@roleLabel</div>
             </div>
         </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Admin sidebar navigation panel -->
-                <div class="admin-sidebar" id="admin-sidebar">
-                    <!-- Sidebar header with branding and user role display -->
-                    <div class="sidebar-header">
-                        <a class="pharmacare-logo">PHARMACARE</a>
-                        <h5 class="mb-0">@(ViewBag.AdminName ?? "Admin")</h5>
-                        <p class="small text-muted">
-                            @{
-                                // Determine and display user role based on session data
-                                var userRole = Context.Session.GetString("UserRole");
-                                if (userRole == "Admin")
-                                {
-                                    <text>System Administrator</text>
-                                }
-                                else if (userRole == "Pharmacist")
-                                {
-                                    <text>Pharmacist</text>
-                                }
-                                else
-                                {
-                                    <text>Staff</text>
-                                }
-                            }
-                        </p>
-                    </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Workspace</div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link view-site-link" href="@Url.Action("Index","FrontEnd")"><i class="fas fa-external-link-alt"></i><span>View Store</span></a></li>
+                <li class="nav-item"><a class="nav-link @(currentController=="Admin" && currentAction=="Index" ? "active" : "")" href="@Url.Action("Index","Admin")"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a></li>
+            </ul>
 
-                    <hr class="my-2">
+            <div class="nav-section-title">Catalog</div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link @(currentController=="Product" ? "active" : "")" href="@Url.Action("Index","Product")"><i class="fas fa-box-open"></i><span>Products</span></a></li>
+                <li class="nav-item"><a class="nav-link @(currentController=="Category" ? "active" : "")" href="@Url.Action("Index","Category")"><i class="fas fa-tags"></i><span>Categories</span></a></li>
+            </ul>
 
-                    <!-- Main navigation menu with active state detection -->
-                    <ul class="nav flex-column">
-                        <!-- Link to view public site -->
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "FrontEnd" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
-                               href="@Url.Action("Index", "FrontEnd")">
-                                <i class="fas fa-globe"></i> View Site
-                            </a>
-                        </li>
+            <div class="nav-section-title">Operations</div>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link @(currentController=="Order" ? "active" : "")" href="@Url.Action("ManageOrders","Order")"><i class="fas fa-shopping-bag"></i><span>Orders</span></a></li>
+                <li class="nav-item"><a class="nav-link @(currentController=="Prescription" && currentAction=="Pickups" ? "active" : "")" href="@Url.Action("Pickups","Prescription")"><i class="fas fa-prescription-bottle"></i><span>Prescription Pickups</span></a></li>
+            </ul>
 
-                        <!-- Admin dashboard main page -->
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
-                               href="@Url.Action("Index", "Admin")">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard
-                            </a>
-                        </li>
+            <div class="nav-section-title">People</div>
+            <ul class="nav flex-column">
+                @if (userRole == "Admin")
+                {
+                    <li class="nav-item"><a class="nav-link @(currentController=="Users" ? "active" : "")" href="@Url.Action("Index","Users")"><i class="fas fa-users"></i><span>Users</span></a></li>
+                }
+                <li class="nav-item"><a class="nav-link @(currentController=="Admin" && currentAction=="Feedback" ? "active" : "")" href="@Url.Action("Feedback","Admin")"><i class="fas fa-comment-dots"></i><span>Feedback</span></a></li>
+            </ul>
+        </nav>
+    </aside>
 
-                        <!-- Product management section -->
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Product" ? "active" : "")"
-                               href="@Url.Action("Index", "Product")">
-                                <i class="fas fa-box"></i> Products
-                            </a>
-                        </li>
-
-                        <!-- Category management section -->
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Category" ? "active" : "")"
-                               href="@Url.Action("Index", "Category")">
-                                <i class="fas fa-tag"></i> Categories
-                            </a>
-                        </li>
-
-                        <!-- Order management and tracking -->
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" && ViewContext.RouteData.Values["Action"].ToString() == "ManageOrders" ? "active" : "")"
-                               href="@Url.Action("ManageOrders", "Order")">
-                                <i class="fas fa-shopping-cart"></i> Orders
-                            </a>
-                        </li>
-
-                        <!-- Prescription pickup management -->
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Prescription" && ViewContext.RouteData.Values["Action"].ToString() == "Pickups" ? "active" : "")"
-                               href="@Url.Action("Pickups", "Prescription")">
-                                <i class="fas fa-prescription-bottle-alt"></i> Pickups
-                            </a>
-                        </li>
-
-                        <!-- User management - only visible to Admin role -->
-                        @if (userRole == "Admin")
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" || (ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "Users") ? "active" : "")"
-                                   href="@Url.Action("Index", "Users")">
-                                    <i class="fas fa-users"></i> Users Page
-                                </a>
-                            </li>
-                        }
-
-                        <!-- Customer feedback and contact management -->
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "Feedback" ? "active" : "")"
-                               href="@Url.Action("Feedback", "Admin")">
-                                <i class="fas fa-comments"></i> Feedback/Contact Us
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Main content area where page content is rendered -->
-                <main class="admin-content">
-                    <!-- Global search overlay (hidden by default) -->
-                    <div class="search-wrap" style="display: none;">
-                        <div class="container">
-                            <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-                            <form action="#" method="post">
-                                <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Page-specific content is rendered here -->
-                    @RenderBody()
-                </main>
+    <header class="top-nav">
+        <div class="top-nav-left">
+            <button class="hamburger-menu" id="hamburger-toggle" type="button" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
+            <div class="admin-page-context">
+                <span class="admin-page-title">@pageTitle</span>
+                <span class="admin-page-subtitle">PharmaCare administration workspace</span>
             </div>
         </div>
-
-        <!-- Admin footer with copyright information -->
-        <footer class="bg-light mt-5 py-3 border-top">
-            <div class="container">
-                <div class="text-center">
-                    <p>Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare | Admin Panel</p>
-                </div>
+        <div class="top-nav-right">
+            <div class="admin-user-chip">
+                <div class="admin-avatar-sm"><i class="fas fa-user-shield"></i></div>
+                <div class="admin-user-copy"><span class="admin-name">@adminName</span><span class="admin-role">@roleLabel</span></div>
             </div>
-        </footer>
-    </div>
+            <a href="@Url.Action("Logout","Account")" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Sign Out</span></a>
+            <button id="theme-toggle-btn" class="theme-toggle-admin" type="button" aria-label="Toggle theme"><span id="moon-icon" class="theme-icon">🌙</span><span id="sun-icon" class="theme-icon" style="display:none">☀️</span></button>
+        </div>
+    </header>
 
-    <!-- Core JavaScript libraries for functionality -->
-    <script src="/assets/js/jquery-3.3.1.min.js"></script>
-    <script src="/assets/js/jquery-ui.js"></script>
-    <script src="/assets/js/popper.min.js"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
-    <script src="/assets/js/owl.carousel.min.js"></script>
-    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
-    <script src="/assets/js/aos.js"></script>
-    <script src="/assets/js/main.js"></script>
+    <main class="admin-content">@RenderBody()</main>
+    <footer class="admin-footer"><div>© @DateTime.Now.Year PharmaCare · Administration Panel</div></footer>
+</div>
 
-    <!-- Admin layout specific JavaScript for sidebar, theme toggle, etc. -->
-    <script src="/assets/js/AdminViewScripts/AdminLayout.js"></script>
-
-    <!-- Render additional page-specific scripts if provided -->
-    @RenderSection("Scripts", required: false)
+<script src="/assets/js/jquery-3.3.1.min.js"></script>
+<script src="/assets/js/jquery-ui.js"></script>
+<script src="/assets/js/popper.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/js/owl.carousel.min.js"></script>
+<script src="/assets/js/jquery.magnific-popup.min.js"></script>
+<script src="/assets/js/aos.js"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/AdminViewScripts/AdminLayout.js"></script>
+@RenderSection("Scripts", required: false)
 </body>
 </html>
