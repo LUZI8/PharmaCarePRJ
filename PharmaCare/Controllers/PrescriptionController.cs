@@ -7,19 +7,22 @@ namespace PharmaCare.Controllers
         private readonly ICategoryRepository _categoryRepository;
         private readonly IUserRepository _userRepository;
         private readonly IExpiredReservationsService _expiredReservationsService;
+        private readonly IEmailService _emailService;
 
         public PrescriptionController(
             DataDbContext context,
             IProductRepository productRepository,
             ICategoryRepository categoryRepository,
             IUserRepository userRepository,
-            IExpiredReservationsService expiredReservationsService)
+            IExpiredReservationsService expiredReservationsService,
+            IEmailService emailService)
         {
             _context = context;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _userRepository = userRepository;
             _expiredReservationsService = expiredReservationsService;
+            _emailService = emailService;
         }
 
         private void LoadCategories()
@@ -38,27 +41,20 @@ namespace PharmaCare.Controllers
 
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
-            {
                 context.Result = RedirectToAction("Login", "Account");
-            }
         }
 
         public async Task<IActionResult> Confirm(int id, int quantity = 1)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
-            {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("ShopSingle", "FrontEnd", new { id = id }) });
-            }
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("ShopSingle", "FrontEnd", new { id }) });
 
             LoadCategories();
-
             var product = _productRepository.Find(id);
-            if (product == null)
-                return NotFound();
-
+            if (product == null) return NotFound();
             if (!product.RequiresPrescription)
-                return RedirectToAction("ShopSingle", "FrontEnd", new { id = id });
+                return RedirectToAction("ShopSingle", "FrontEnd", new { id });
 
             if (Request.Query.ContainsKey("quantity"))
             {
@@ -69,12 +65,11 @@ namespace PharmaCare.Controllers
             if (product.Stock < quantity)
             {
                 TempData["ErrorMessage"] = $"Not enough stock available. Only {product.Stock} units in stock.";
-                return RedirectToAction("ShopSingle", "FrontEnd", new { id = id });
+                return RedirectToAction("ShopSingle", "FrontEnd", new { id });
             }
 
             var user = await _userRepository.GetByIdAsync(userId.Value);
-            if (user == null)
-                return RedirectToAction("Login", "Account");
+            if (user == null) return RedirectToAction("Login", "Account");
 
             var model = new PrescriptionConfirmViewModel
             {
@@ -88,7 +83,6 @@ namespace PharmaCare.Controllers
             ViewBag.IsLoggedIn = true;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-
             return View(model);
         }
 
@@ -97,12 +91,10 @@ namespace PharmaCare.Controllers
         public async Task<IActionResult> ConfirmReservation(int productId, int quantity, string phoneNumber)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
             var product = _productRepository.Find(productId);
-            if (product == null)
-                return NotFound();
+            if (product == null) return NotFound();
 
             if (!product.RequiresPrescription)
             {
@@ -128,6 +120,7 @@ namespace PharmaCare.Controllers
                 {
                     UserId = userId.Value,
                     ProductId = productId,
+                    Product = product,
                     Quantity = quantity,
                     ReservationNumber = GenerateReservationNumber(),
                     Status = "Reserved",
@@ -143,6 +136,7 @@ namespace PharmaCare.Controllers
                 _productRepository.Update(product.ProductId, product);
                 await _context.SaveChangesAsync();
 
+                await TrySendReservationNotificationsAsync(reservation, userId.Value);
                 return RedirectToAction("ReservationComplete", new { id = reservation.ReservationId });
             }
             catch (Exception ex)
@@ -155,22 +149,18 @@ namespace PharmaCare.Controllers
         public async Task<IActionResult> ReservationComplete(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
             LoadCategories();
-
             var reservation = await _context.PrescriptionReservations
                 .Include(r => r.Product)
                 .FirstOrDefaultAsync(r => r.ReservationId == id && r.UserId == userId.Value);
 
-            if (reservation == null)
-                return NotFound();
+            if (reservation == null) return NotFound();
 
             ViewBag.IsLoggedIn = true;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-
             return View(reservation);
         }
 
@@ -184,13 +174,10 @@ namespace PharmaCare.Controllers
             var product = _productRepository.Find(productId);
             if (product == null)
                 return Json(new { success = false, message = "Product not found." });
-
             if (!product.RequiresPrescription)
                 return Json(new { success = false, message = "This product does not require a prescription." });
-
             if (quantity <= 0)
                 return Json(new { success = false, message = "Please select a valid quantity." });
-
             if (product.Stock < quantity)
                 return Json(new { success = false, message = "Not enough stock available." });
 
@@ -200,6 +187,7 @@ namespace PharmaCare.Controllers
                 {
                     UserId = userId.Value,
                     ProductId = productId,
+                    Product = product,
                     Quantity = quantity,
                     ReservationNumber = GenerateReservationNumber(),
                     Status = "Reserved",
@@ -215,6 +203,7 @@ namespace PharmaCare.Controllers
                 _productRepository.Update(product.ProductId, product);
                 await _context.SaveChangesAsync();
 
+                await TrySendReservationNotificationsAsync(reservation, userId.Value);
                 return Json(new { success = true, message = "Prescription medication reserved successfully." });
             }
             catch (Exception ex)
@@ -223,14 +212,31 @@ namespace PharmaCare.Controllers
             }
         }
 
+        private async Task TrySendReservationNotificationsAsync(PrescriptionReservation reservation, int userId)
+        {
+            try
+            {
+                var customer = await _userRepository.GetByIdAsync(userId);
+                if (customer == null || !customer.IsEmailVerified || string.IsNullOrWhiteSpace(customer.Email)) return;
+
+                var staff = (await _userRepository.GetAllAsync())
+                    .Where(u => u.IsActive && (u.Role == "Admin" || u.Role == "Pharmacist"))
+                    .ToList();
+
+                await _emailService.SendPrescriptionReservationNotificationsAsync(reservation, customer, staff);
+            }
+            catch
+            {
+                // The reservation is already committed. Email delivery must never roll it back.
+            }
+        }
+
         public async Task<IActionResult> MyReservations()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
             LoadCategories();
-
             var reservations = await _context.PrescriptionReservations
                 .Include(r => r.Product)
                 .Where(r => r.UserId == userId.Value)
@@ -240,15 +246,13 @@ namespace PharmaCare.Controllers
             ViewBag.IsLoggedIn = true;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-
             return View(reservations);
         }
 
         public async Task<IActionResult> CancelReservation(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Account");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
             var reservation = await _context.PrescriptionReservations
                 .Include(r => r.Product)
@@ -269,7 +273,6 @@ namespace PharmaCare.Controllers
 
             _context.PrescriptionReservations.Update(reservation);
             await _context.SaveChangesAsync();
-
             TempData["SuccessMessage"] = "Reservation cancelled successfully.";
             return RedirectToAction("MyReservations");
         }
@@ -281,7 +284,6 @@ namespace PharmaCare.Controllers
                 return RedirectToAction("Login", "Account");
 
             LoadCategories();
-
             var reservations = await _context.PrescriptionReservations
                 .Include(r => r.Product)
                 .Include(r => r.User)
@@ -290,7 +292,6 @@ namespace PharmaCare.Controllers
 
             ViewBag.AdminName = HttpContext.Session.GetString("UserName") ?? "Admin";
             ViewBag.UserRole = userRole;
-
             return View(reservations);
         }
 
@@ -314,9 +315,7 @@ namespace PharmaCare.Controllers
 
             var oldStatus = reservation.Status;
             reservation.Status = status;
-
-            if (status == "Completed")
-                reservation.CompletedDate = DateTime.Now;
+            if (status == "Completed") reservation.CompletedDate = DateTime.Now;
 
             if (oldStatus == "Reserved" && status == "Cancelled" && reservation.Product != null)
             {
@@ -358,7 +357,6 @@ namespace PharmaCare.Controllers
             }
 
             reservation.Status = "Cancelled";
-
             if (reservation.Product != null)
             {
                 reservation.Product.Stock += reservation.Quantity;
@@ -367,7 +365,6 @@ namespace PharmaCare.Controllers
 
             _context.PrescriptionReservations.Update(reservation);
             await _context.SaveChangesAsync();
-
             TempData["SuccessMessage"] = "Reservation cancelled successfully and stock returned to inventory.";
             return RedirectToAction("Pickups");
         }
@@ -389,7 +386,6 @@ namespace PharmaCare.Controllers
 
             ViewBag.AdminName = HttpContext.Session.GetString("UserName") ?? "Admin";
             ViewBag.UserRole = userRole;
-
             return View(reservations);
         }
     }
