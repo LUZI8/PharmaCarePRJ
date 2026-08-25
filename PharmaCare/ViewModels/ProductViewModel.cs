@@ -1,4 +1,4 @@
-﻿namespace PharmaCare.ViewModels
+namespace PharmaCare.ViewModels
 {
     public class ProductViewModel
     {
@@ -38,12 +38,31 @@
 
         public string? ImageUrl { get; set; }
         public IFormFile? File { get; set; }
+        public List<IFormFile> GalleryFiles { get; set; } = new();
+        public List<ProductImageViewModel> ExistingImages { get; set; } = new();
+        public List<int> RemoveImageIds { get; set; } = new();
+        public int? PrimaryImageId { get; set; }
 
-        /* Storefront gallery abstraction. It currently uses the primary image and is ready
-           to accept additional images later without changing the product-page markup. */
-        public IEnumerable<string> GalleryImages => string.IsNullOrWhiteSpace(ImageUrl)
-            ? Enumerable.Empty<string>()
-            : new[] { ImageUrl };
+        public IEnumerable<string> GalleryImages
+        {
+            get
+            {
+                if (ExistingImages != null && ExistingImages.Count > 0)
+                {
+                    return ExistingImages
+                        .OrderByDescending(i => i.IsPrimary)
+                        .ThenBy(i => i.DisplayOrder)
+                        .Select(i => i.ImageUrl)
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                }
+
+                return string.IsNullOrWhiteSpace(ImageUrl)
+                    ? Enumerable.Empty<string>()
+                    : new[] { ImageUrl };
+            }
+        }
 
         public bool IsActive { get; set; }
         public bool RequiresPrescription { get; set; } = false;
@@ -97,6 +116,14 @@
         public bool IsExpiringSoon => !IsExpired && (ExpiryDate.Date - DateTime.Now.Date).Days <= 30;
         public bool IsLowStock => Stock > 0 && Stock <= ReorderLevel;
         public bool IsOutOfStock => Stock <= 0;
+    }
+
+    public class ProductImageViewModel
+    {
+        public int ProductImageId { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
+        public int DisplayOrder { get; set; }
+        public bool IsPrimary { get; set; }
     }
 
     public class FutureDateAttribute : ValidationAttribute
