@@ -29,8 +29,6 @@ namespace PharmaCare.Controllers
         {
             var category = categoryRepository.Find(p.CategoryID) ?? new Category { CategoryName = "Unknown" };
 
-            // Materialize the EF query first, then run URL normalization in memory.
-            // This avoids EF Core trying to capture this controller instance inside a SQL projection.
             var galleryEntities = _context.ProductImages
                 .Where(i => i.ProductId == p.ProductId)
                 .OrderByDescending(i => i.IsPrimary)
@@ -82,9 +80,6 @@ namespace PharmaCare.Controllers
         public ActionResult Index()
         {
             SetAdminViewBagProperties();
-
-            // Materialize products before calling the controller mapping method.
-            // Keeps all controller-side mapping out of EF Core's expression tree.
             var products = ProductRepository.View().ToList();
             var models = products.Select(ToViewModel).ToList();
             return View(models);
@@ -122,12 +117,31 @@ namespace PharmaCare.Controllers
 
             try
             {
-                var imageName = SaveImage(model.File, null);
-                if (imageName == "Error")
+                var selectedFiles = form.Files
+                    .GetFiles("galleryFiles")
+                    .Where(f => f != null && f.Length > 0)
+                    .Take(5)
+                    .ToList();
+
+                if (!selectedFiles.Any() && model.File != null)
                 {
-                    ModelState.AddModelError("File", "Error occurred while saving image. Please try again.");
-                    return View(model);
+                    selectedFiles.Add(model.File);
                 }
+
+                var savedImages = new List<string>();
+                foreach (var file in selectedFiles)
+                {
+                    var saved = SaveImage(file, null);
+                    if (saved == "Error")
+                    {
+                        foreach (var image in savedImages) DeletePhysicalImage(image);
+                        ModelState.AddModelError("", "One or more product images could not be saved. Please try again.");
+                        return View(model);
+                    }
+                    if (!string.IsNullOrWhiteSpace(saved)) savedImages.Add(saved);
+                }
+
+                var primaryImage = savedImages.FirstOrDefault() ?? "/images/product_01.png";
 
                 var product = new Product
                 {
@@ -140,7 +154,7 @@ namespace PharmaCare.Controllers
                     Barcode = Clean(model.Barcode),
                     Manufacturer = Clean(model.Manufacturer),
                     ReorderLevel = model.ReorderLevel,
-                    ImageUrl = imageName,
+                    ImageUrl = primaryImage,
                     IsActive = model.IsActive,
                     RequiresPrescription = model.RequiresPrescription,
                     PrescriptionNote = model.RequiresPrescription ? Clean(model.PrescriptionNote) : null,
@@ -150,7 +164,25 @@ namespace PharmaCare.Controllers
                 };
 
                 ProductRepository.Add(product);
-                TempData["SuccessMessage"] = "Product created successfully. You can now add gallery images.";
+
+                for (var i = 0; i < savedImages.Count; i++)
+                {
+                    _context.ProductImages.Add(new ProductImage
+                    {
+                        ProductId = product.ProductId,
+                        ImageUrl = savedImages[i],
+                        DisplayOrder = i,
+                        IsPrimary = i == 0,
+                        CreatedAt = DateTime.UtcNow
+                    });
+                }
+
+                if (savedImages.Any()) _context.SaveChanges();
+
+                TempData["SuccessMessage"] = savedImages.Count > 1
+                    ? $"Product created successfully with {savedImages.Count} gallery images."
+                    : "Product created successfully. You can add more gallery images anytime.";
+
                 return RedirectToAction(nameof(ManageImages), new { id = product.ProductId });
             }
             catch (Exception ex)
