@@ -9,11 +9,7 @@
         images.Add(Url.Content("~/assets/images/no-image.png"));
     }
 
-    var daysRemaining = (Model.ExpiryDate.Date - DateTime.Now.Date).Days;
     var relatedSource = ViewBag.RelatedProducts as IEnumerable<ProductViewModel> ?? Enumerable.Empty<ProductViewModel>();
-
-    // Keep OTC recommendations OTC and prescription recommendations prescription-only.
-    // This prevents a normal product page from unexpectedly promoting Rx-only medicine.
     var related = relatedSource
         .Where(x => x.ProductId != Model.ProductId)
         .Where(x => x.RequiresPrescription == Model.RequiresPrescription)
@@ -23,17 +19,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/ShopSingle.css" asp-append-version="true" />
-    <style>
-        /* Critical layout fallback so product images can never expand to their natural size
-           even if the browser still has an old stylesheet cached. */
-        .product-hero-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:44px}
-        .gallery-stage{height:500px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-        .gallery-stage>img{width:88%;height:88%;max-width:100%;max-height:100%;object-fit:contain}
-        .gallery-thumb img,.related-image img{max-width:100%;max-height:100%;object-fit:contain}
-        .related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-        @@media(max-width:991px){.product-hero-card{grid-template-columns:1fr;gap:24px}.gallery-stage{height:430px}}
-        @@media(max-width:575px){.gallery-stage{height:330px}.related-grid{grid-template-columns:1fr}}
-    </style>
 }
 
 <main class="product-page">
@@ -55,10 +40,6 @@
                     {
                         <span class="gallery-badge rx"><i class="fas fa-prescription"></i> Prescription</span>
                     }
-                    @if (Model.IsExpiringSoon && !Model.IsExpired)
-                    {
-                        <span class="gallery-badge expiry"><i class="far fa-clock"></i> Expiring soon</span>
-                    }
                     <button type="button" class="gallery-zoom" aria-label="Open image preview"><i class="fas fa-search-plus"></i></button>
                     <img id="mainProductImage" src="@images[0]" alt="@Model.ProductName" />
                 </div>
@@ -72,7 +53,7 @@
                     }
                     @if (images.Count < 4)
                     {
-                        <div class="gallery-more-hint"><i class="far fa-images"></i><span>More product<br />photos can be added</span></div>
+                        <div class="gallery-more-hint"><i class="far fa-images"></i><span>More product photos can be added</span></div>
                     }
                 </div>
             </div>
@@ -82,38 +63,19 @@
                     <span>@(Model.Category?.CategoryName ?? "Pharmacy product")</span>
                     @if (!string.IsNullOrWhiteSpace(Model.Manufacturer))
                     {
-                        <span>• @Model.Manufacturer</span>
+                        <span class="eyebrow-dot">•</span><span>@Model.Manufacturer</span>
                     }
                 </div>
 
                 <h1>@Model.ProductName</h1>
+                <strong class="product-price">$@Model.Price.ToString("0.00")</strong>
 
-                <div class="product-price-row">
-                    <strong class="product-price">$@Model.Price.ToString("0.00")</strong>
-                    @if (!string.IsNullOrWhiteSpace(Model.SKU))
-                    {
-                        <span class="product-sku">SKU: @Model.SKU</span>
-                    }
-                </div>
-
-                <div class="status-strip @(Model.IsExpired ? "danger" : Model.IsExpiringSoon ? "warning" : "success")">
-                    <span class="status-icon"><i class="fas @(Model.IsExpired ? "fa-times" : Model.IsExpiringSoon ? "fa-clock" : "fa-check")"></i></span>
+                <div class="availability-card @(Model.Stock > 0 && !Model.IsExpired ? "available" : "unavailable")">
+                    <span class="availability-icon"><i class="fas @(Model.Stock > 0 && !Model.IsExpired ? "fa-check" : "fa-times")"></i></span>
                     <div>
-                        <strong>@(Model.IsExpired ? "Expired product" : Model.IsExpiringSoon ? "Expiry approaching" : "Fresh inventory")</strong>
-                        <small>@(Model.IsExpired ? $"Expired {Model.ExpiryDate:MMM dd, yyyy}" : $"Expires {Model.ExpiryDate:MMM dd, yyyy}")</small>
+                        <strong>@(Model.Stock > 0 && !Model.IsExpired ? "Available now" : "Currently unavailable")</strong>
+                        <small>@(Model.Stock > 0 && !Model.IsExpired ? "Ready to order from PharmaCare" : "This item cannot be ordered right now")</small>
                     </div>
-                </div>
-
-                <div class="availability-row">
-                    @if (Model.Stock > 0 && !Model.IsExpired)
-                    {
-                        <span class="availability in-stock"><i class="fas fa-check-circle"></i> In stock</span>
-                        <span class="availability-copy">@Model.Stock unit@(Model.Stock == 1 ? "" : "s") available</span>
-                    }
-                    else
-                    {
-                        <span class="availability out-stock"><i class="fas fa-times-circle"></i> @(Model.IsExpired ? "Unavailable" : "Out of stock")</span>
-                    }
                 </div>
 
                 @if (Model.RequiresPrescription)
@@ -146,80 +108,59 @@
                     </div>
 
                     <div class="primary-action-wrap">
-                        @if (Model.IsExpired)
+                        @if (Model.IsExpired || Model.Stock <= 0)
                         {
                             <button class="product-primary-btn disabled" disabled><i class="fas fa-ban"></i> Product unavailable</button>
                         }
                         else if (Model.RequiresPrescription)
                         {
-                            @if (Model.Stock > 0)
-                            {
-                                <a href="@Url.Action("Confirm","Prescription",new{id=Model.ProductId})" id="reserve-pickup-btn" class="product-primary-btn reserve"><i class="fas fa-bookmark"></i><span>Reserve for pickup<small>Prescription checked at collection</small></span></a>
-                            }
-                            else
-                            {
-                                <button class="product-primary-btn disabled" disabled><i class="fas fa-ban"></i> Out of stock</button>
-                            }
-                        }
-                        else if (Model.Stock > 0)
-                        {
-                            <button id="add-to-cart-btn" class="product-primary-btn" data-product-id="@Model.ProductId"><i class="fas fa-shopping-bag"></i><span>Add to cart<small>Secure checkout</small></span></button>
+                            <a href="@Url.Action("Confirm","Prescription",new{id=Model.ProductId})" id="reserve-pickup-btn" class="product-primary-btn reserve">
+                                <i class="fas fa-bookmark"></i><span>Reserve for pickup<small>Prescription checked at collection</small></span>
+                            </a>
                         }
                         else
                         {
-                            <button class="product-primary-btn disabled" disabled><i class="fas fa-ban"></i> Out of stock</button>
+                            <button id="add-to-cart-btn" class="product-primary-btn" data-product-id="@Model.ProductId">
+                                <i class="fas fa-shopping-bag"></i><span>Add to cart<small>Secure checkout</small></span>
+                            </button>
                         }
                     </div>
                 </div>
 
                 <div class="purchase-trust-grid">
-                    <div><i class="fas fa-shield-alt"></i><span><strong>Pharmacy managed</strong><small>Stock & expiry controlled</small></span></div>
-                    <div><i class="fas fa-box"></i><span><strong>Careful fulfillment</strong><small>Order status tracked</small></span></div>
+                    <div><i class="fas fa-shield-alt"></i><span><strong>Pharmacy managed</strong><small>Quality-controlled inventory</small></span></div>
+                    <div><i class="fas fa-box"></i><span><strong>Careful fulfillment</strong><small>Track your order status</small></span></div>
                     <div><i class="fas fa-headset"></i><span><strong>Need help?</strong><small>Contact our pharmacy team</small></span></div>
                 </div>
             </div>
         </section>
 
-        <section class="product-information-card">
-            <div class="product-tabs" role="tablist">
-                <button class="product-tab active" data-tab="overview" type="button">Overview</button>
-                <button class="product-tab" data-tab="details" type="button">Product details</button>
-                <button class="product-tab" data-tab="expiry" type="button">Expiry & safety</button>
+        <section class="product-description-card">
+            <div class="description-heading">
+                <span class="section-kicker">Product information</span>
+                <h2>Description</h2>
+                <p>Everything you need to know about this product.</p>
             </div>
 
-            <div class="product-tab-panel active" data-panel="overview">
-                <div class="info-grid">
-                    <div class="description-panel">
-                        <span class="section-kicker">About this product</span>
-                        <h2>Product overview</h2>
-                        <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "Product information is being prepared by the pharmacy team." : Model.Description)</p>
+            <div class="description-content">
+                <div class="description-copy">@(string.IsNullOrWhiteSpace(Model.Description) ? "Product information is being prepared by the pharmacy team." : Model.Description)</div>
+            </div>
+
+            <div class="customer-facts">
+                <div class="customer-fact">
+                    <span class="fact-icon"><i class="fas fa-tags"></i></span>
+                    <div><small>Category</small><strong>@(Model.Category?.CategoryName ?? "Pharmacy")</strong></div>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Manufacturer))
+                {
+                    <div class="customer-fact">
+                        <span class="fact-icon"><i class="fas fa-industry"></i></span>
+                        <div><small>Manufacturer</small><strong>@Model.Manufacturer</strong></div>
                     </div>
-                    <aside class="quick-facts">
-                        <h3>Quick facts</h3>
-                        <div><span>Category</span><strong>@(Model.Category?.CategoryName ?? "N/A")</strong></div>
-                        <div><span>Stock</span><strong>@Model.Stock units</strong></div>
-                        <div><span>Prescription</span><strong>@(Model.RequiresPrescription ? "Required" : "Not required")</strong></div>
-                        <div><span>Expiry</span><strong>@Model.ExpiryDate.ToString("MMM dd, yyyy")</strong></div>
-                    </aside>
-                </div>
-            </div>
-
-            <div class="product-tab-panel" data-panel="details">
-                <div class="detail-spec-grid">
-                    <div><span>Product ID</span><strong>#@Model.ProductId</strong></div>
-                    <div><span>Price</span><strong>$@Model.Price.ToString("0.00")</strong></div>
-                    <div><span>Category</span><strong>@(Model.Category?.CategoryName ?? "N/A")</strong></div>
-                    <div><span>Manufacturer</span><strong>@(string.IsNullOrWhiteSpace(Model.Manufacturer) ? "Not specified" : Model.Manufacturer)</strong></div>
-                    <div><span>SKU</span><strong>@(string.IsNullOrWhiteSpace(Model.SKU) ? "Not specified" : Model.SKU)</strong></div>
-                    <div><span>Barcode</span><strong>@(string.IsNullOrWhiteSpace(Model.Barcode) ? "Not specified" : Model.Barcode)</strong></div>
-                </div>
-            </div>
-
-            <div class="product-tab-panel" data-panel="expiry">
-                <div class="expiry-layout">
-                    <div class="expiry-stat"><i class="far fa-calendar-alt"></i><span>Expiry date<strong>@Model.ExpiryDate.ToString("MMM dd, yyyy")</strong></span></div>
-                    <div class="expiry-stat"><i class="far fa-clock"></i><span>Time remaining<strong class="@(daysRemaining < 0 ? "danger-text" : daysRemaining <= 30 ? "warning-text" : "success-text")">@(daysRemaining < 0 ? $"Expired {Math.Abs(daysRemaining)} days ago" : $"{daysRemaining} days")</strong></span></div>
-                    <div class="safety-note"><i class="fas fa-info-circle"></i><p><strong>Medicine safety:</strong> Do not use pharmaceutical products after their expiry date. If packaging is damaged or product condition looks unusual, contact the pharmacy before use.</p></div>
+                }
+                <div class="customer-fact">
+                    <span class="fact-icon"><i class="fas fa-prescription-bottle-alt"></i></span>
+                    <div><small>Prescription</small><strong>@(Model.RequiresPrescription ? "Required" : "Not required")</strong></div>
                 </div>
             </div>
         </section>
@@ -237,7 +178,7 @@
                         <a class="related-card" href="@Url.Action("ShopSingle","FrontEnd",new{id=item.ProductId})">
                             <div class="related-image"><img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? Url.Content("~/assets/images/no-image.png") : item.ImageUrl)" alt="@item.ProductName" loading="lazy" /></div>
                             <div class="related-body">
-                                <span>@(item.RequiresPrescription ? "Prescription" : (item.Category?.CategoryName ?? "Pharmacy"))</span>
+                                <span>@(item.Category?.CategoryName ?? "Pharmacy")</span>
                                 <h3>@item.ProductName</h3>
                                 <strong>$@item.Price.ToString("0.00")</strong>
                             </div>
