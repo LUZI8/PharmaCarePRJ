@@ -56,6 +56,16 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
+// Refresh the visible demo catalog once in development. The seeder is idempotent and keeps
+// products referenced by historical orders/reservations archived instead of breaking history.
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<DataDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DemoCatalogSeeder");
+    await DemoCatalogSeeder.SeedAsync(db, logger);
+}
+
 // Development vs Production error handling
 if (!app.Environment.IsDevelopment())
 {
