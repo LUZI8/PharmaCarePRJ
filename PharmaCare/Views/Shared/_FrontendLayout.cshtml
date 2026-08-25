@@ -1,344 +1,101 @@
-﻿@{
+@{
     var pageTitle = ViewData["Title"] ?? "PharmaCare";
+    var action = ViewContext.RouteData.Values["Action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
 }
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>@pageTitle</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Website favicon displayed in browser tab -->
     <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
-
-    <!-- External font imports for consistent typography across site -->
-    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,600,700" rel="stylesheet">
     <link rel="stylesheet" href="~/assets/fonts/icomoon/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-    <!-- Core CSS framework and UI component libraries -->
     <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/assets/css/magnific-popup.css">
     <link rel="stylesheet" href="~/assets/css/jquery-ui.css">
     <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css">
     <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="~/assets/css/aos.css">
-
-    <!-- Custom frontend-specific styling -->
     <link rel="stylesheet" href="~/assets/css/style.css">
     <link rel="stylesheet" href="~/assets/css/custom.css">
     <link rel="stylesheet" href="~/assets/css/search.css">
     <link rel="stylesheet" href="~/assets/css/mobilemenu.css">
     <link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/FrontEndLayout.css">
-
-    <!-- Render additional page-specific styles if provided -->
-    @RenderSection("Styles", required: false)
+    <style>
+        :root{--pc:#0d9488;--pc2:#0f766e;--pc-dark:#0f1720;--pc-muted:#6b7b86;--pc-line:#e7edef;--pc-surface:#fff;--pc-bg:#f7faf9}
+        body{font-family:'Rubik',sans-serif;background:var(--pc-bg);color:#172129}.site-wrap{overflow:hidden}
+        .pc-header{position:sticky;top:0;z-index:1050;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(15,23,32,.07);box-shadow:0 6px 28px rgba(16,45,52,.05)}
+        body.dark-mode .pc-header{background:rgba(24,29,32,.94);border-bottom-color:#333b3f}.pc-nav{height:78px;display:flex;align-items:center;gap:28px}.pc-brand{display:flex;align-items:center;gap:11px;color:#172129!important;font-weight:700;font-size:22px;letter-spacing:.3px}.pc-brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--pc),var(--pc2));color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(13,148,136,.22)}
+        body.dark-mode .pc-brand{color:#fff!important}.pc-menu{display:flex;align-items:center;gap:7px;margin:0;padding:0;list-style:none}.pc-menu>li{position:relative}.pc-menu>li>a{display:flex;align-items:center;gap:5px;padding:10px 12px;border-radius:10px;color:#42515a;font-size:13px;font-weight:600;letter-spacing:.2px;transition:.2s}.pc-menu>li>a:hover,.pc-menu>li.active>a{color:var(--pc);background:#edf9f7}.pc-menu .dropdown{position:absolute;top:46px;left:0;min-width:220px;background:#fff;border:1px solid var(--pc-line);border-radius:14px;padding:8px;box-shadow:0 20px 50px rgba(17,44,51,.14);opacity:0;visibility:hidden;transform:translateY(8px);transition:.2s}.pc-menu .has-children:hover .dropdown{opacity:1;visibility:visible;transform:translateY(0)}.pc-menu .dropdown a{display:block;padding:10px 12px;border-radius:9px;color:#42515a;font-size:12px}.pc-menu .dropdown a:hover{background:#edf9f7;color:var(--pc)}
+        body.dark-mode .pc-menu>li>a{color:#d7e0e3}body.dark-mode .pc-menu>li>a:hover,body.dark-mode .pc-menu>li.active>a{background:#173833;color:#7ee0d5}body.dark-mode .pc-menu .dropdown{background:#232a2e;border-color:#364046}body.dark-mode .pc-menu .dropdown a{color:#e6edef}
+        .pc-actions{margin-left:auto;display:flex;align-items:center;gap:10px}.pc-search{position:relative;width:230px}.pc-search input{width:100%;height:42px;border:1px solid var(--pc-line);border-radius:13px;padding:0 44px 0 14px;background:#f8fbfa;font-size:12px;outline:none}.pc-search button{position:absolute;right:5px;top:5px;width:32px;height:32px;border:0;border-radius:10px;background:var(--pc);color:#fff}.pc-icon-btn{width:42px;height:42px;border:1px solid var(--pc-line);border-radius:12px;background:#fff;color:#2e3b42;display:grid;place-items:center;position:relative;transition:.2s}.pc-icon-btn:hover{border-color:var(--pc);color:var(--pc);transform:translateY(-1px)}.pc-cart-count{position:absolute;right:-4px;top:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--pc);color:#fff;font-size:9px;display:grid;place-items:center;font-weight:700}
+        .pc-user{position:relative}.pc-user-trigger{height:42px;border:1px solid var(--pc-line);border-radius:12px;background:#fff;padding:0 12px;display:flex;align-items:center;gap:9px;color:#2e3b42;font-size:12px;white-space:nowrap}.pc-avatar{width:27px;height:27px;border-radius:9px;background:#edf9f7;color:var(--pc);display:grid;place-items:center}.pc-user-menu{position:absolute;right:0;top:50px;width:220px;background:#fff;border:1px solid var(--pc-line);border-radius:14px;padding:8px;box-shadow:0 20px 50px rgba(17,44,51,.14);opacity:0;visibility:hidden;transform:translateY(7px);transition:.2s}.pc-user:hover .pc-user-menu{opacity:1;visibility:visible;transform:translateY(0)}.pc-user-menu a{display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:9px;color:#42515a;font-size:12px}.pc-user-menu a:hover{background:#edf9f7;color:var(--pc)}
+        body.dark-mode{background:#151a1d;color:#edf3f4}body.dark-mode .pc-search input,body.dark-mode .pc-icon-btn,body.dark-mode .pc-user-trigger,body.dark-mode .pc-user-menu{background:#232a2e;border-color:#364046;color:#eef3f4}body.dark-mode .pc-user-menu a{color:#e6edef}body.dark-mode .pc-user-menu a:hover{background:#173833;color:#7ee0d5}
+        .pc-footer{background:#0e2226;color:#d8e3e5;margin-top:0;position:relative;overflow:hidden}.pc-footer:before{content:"";position:absolute;width:330px;height:330px;border-radius:50%;background:rgba(45,212,191,.07);right:-130px;top:-150px}.pc-footer-inner{position:relative;padding:62px 0 30px}.pc-footer-grid{display:grid;grid-template-columns:1.35fr .8fr .9fr 1fr;gap:42px}.pc-footer-brand{color:#fff;font-weight:700;font-size:22px;margin-bottom:14px;display:flex;align-items:center;gap:10px}.pc-footer p{font-size:12px;line-height:1.8;color:#9fb0b5;margin:0}.pc-footer h4{font-size:12px;text-transform:uppercase;letter-spacing:1.1px;color:#fff;margin:5px 0 16px}.pc-footer ul{list-style:none;padding:0;margin:0}.pc-footer li{margin:10px 0;color:#aebcc0;font-size:12px}.pc-footer a{color:#aebcc0}.pc-footer a:hover{color:#5ee0d2}.pc-contact li{display:flex;gap:10px;align-items:flex-start}.pc-contact i{color:#43cdbf;margin-top:3px;width:15px}.pc-footer-bottom{margin-top:42px;padding-top:20px;border-top:1px solid rgba(255,255,255,.09);display:flex;justify-content:space-between;gap:20px;color:#7f9298;font-size:10px}.pc-trust{display:flex;gap:14px;flex-wrap:wrap}.pc-trust span{display:inline-flex;align-items:center;gap:6px}
+        #back-to-top{background:var(--pc)!important;color:#fff!important;border:0!important;box-shadow:0 10px 24px rgba(13,148,136,.3)}
+        @@media(max-width:1199px){.pc-search{display:none}.pc-menu{gap:0}.pc-menu>li>a{padding:10px 8px}}@@media(max-width:991px){.pc-nav{height:68px}.pc-menu{display:none}.pc-user-trigger .pc-user-name{display:none}.pc-footer-grid{grid-template-columns:1fr 1fr}.pc-mobile-toggle{display:grid!important}}@@media(max-width:575px){.pc-brand span:last-child{font-size:17px}.pc-actions{gap:6px}.pc-icon-btn,.pc-user-trigger{height:38px}.pc-icon-btn{width:38px}.pc-user-trigger{padding:0 7px}.pc-footer-grid{grid-template-columns:1fr}.pc-footer-inner{padding-top:45px}.pc-footer-bottom{flex-direction:column}.pc-footer{margin-top:0}}
+    </style>
+    @RenderSection("Styles", required:false)
 </head>
-
 <body>
-    <!-- Toast notification for user feedback (cart additions, etc.) -->
-    <div class="toast-notification" id="toast-notification" aria-live="polite">
-        <i class="fas fa-check-circle"></i>
-        <span id="toast-message">Item added to cart!</span>
-    </div>
-
-    <div class="site-wrap">
-        <!-- Main navigation bar with responsive design -->
-        <div class="site-navbar py-2">
-            <div class="container">
-                <div class="d-flex align-items-center justify-content-between">
-                    <!-- Company logo/brand link -->
-                    <div class="logo">
-                        <div class="site-logo">
-                            <a href="@Url.Action("Index", "FrontEnd")" class="js-logo-clone">PHARMACARE</a>
+<div class="toast-notification" id="toast-notification" aria-live="polite"><i class="fas fa-check-circle"></i><span id="toast-message">Item added to cart!</span></div>
+<div class="site-wrap">
+    <header class="pc-header">
+        <div class="container">
+            <div class="pc-nav">
+                <a class="pc-brand" href="@Url.Action("Index","FrontEnd")"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span><span>PHARMACARE</span></a>
+                <nav class="d-none d-lg-block">
+                    <ul class="pc-menu">
+                        <li class="@((action=="Index"&&controller=="FrontEnd")?"active":"")"><a href="@Url.Action("Index","FrontEnd")">Home</a></li>
+                        <li class="@((action=="Shop"||action=="ShopSingle")?"active":"")"><a href="@Url.Action("Shop","FrontEnd")">Store</a></li>
+                        <li class="has-children"><a href="#">Categories <i class="fas fa-chevron-down" style="font-size:8px"></i></a><ul class="dropdown">@if(ViewBag.Categories!=null){foreach(var category in ViewBag.Categories){<li><a href="@Url.Action("Shop","FrontEnd",new{category=category.CategoryID})">@category.CategoryName</a></li>}}</ul></li>
+                        <li class="@(action=="About"?"active":"")"><a href="@Url.Action("About","FrontEnd")">About</a></li>
+                        <li class="@(action=="Contact"?"active":"")"><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="pc-actions">
+                    <div class="pc-search d-none d-lg-block"><input type="text" id="navbar-search-input" placeholder="Search medicines..."><button id="navbar-search-btn"><span class="icon-search"></span></button><div id="navbar-search-results" class="navbar-search-results"></div></div>
+                    <a class="pc-icon-btn" href="@Url.Action("Cart","FrontEnd")" aria-label="Cart"><span class="icon-shopping-bag"></span><span class="pc-cart-count" id="cart-count">0</span></a>
+                    <div class="pc-user">
+                        <button class="pc-user-trigger" type="button"><span class="pc-avatar"><i class="fas fa-user"></i></span><span class="pc-user-name">@(ViewBag.IsLoggedIn==true?"Hi, "+(ViewBag.UserName?.ToString().Split(' ')[0]):"Account")</span><i class="fas fa-chevron-down" style="font-size:8px"></i></button>
+                        <div class="pc-user-menu">
+                            @if(ViewBag.IsLoggedIn==true){
+                                @if(ViewBag.UserRole=="Admin"||ViewBag.UserRole=="Pharmacist"){<a href="@Url.Action("Index","Admin")"><i class="fas fa-columns"></i> Dashboard</a>}
+                                <a href="@Url.Action("Profile","Account")"><i class="fas fa-id-card"></i> My Account</a><a href="@Url.Action("Index","Order")"><i class="fas fa-box"></i> My Orders</a><a href="@Url.Action("MyReservations","Prescription")"><i class="fas fa-prescription"></i> Reservations</a><a href="@Url.Action("Logout","Account")"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                            } else {<a href="@Url.Action("Login","Account")"><i class="fas fa-sign-in-alt"></i> Sign In</a><a href="@Url.Action("Register","Account")"><i class="fas fa-user-plus"></i> Create Account</a>}
                         </div>
                     </div>
-
-                    <!-- Main navigation menu (hidden on mobile, shown on desktop) -->
-                    <div class="main-nav d-none d-lg-block">
-                        <nav class="site-navigation" role="navigation">
-                            <ul class="site-menu d-flex">
-                                <!-- Home page link with active state detection -->
-                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "FrontEnd") ? "active" : "")">
-                                    <a href="@Url.Action("Index", "FrontEnd")">HOME</a>
-                                </li>
-
-                                <!-- Store/shop page link with active state detection -->
-                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "Shop" || ViewContext.RouteData.Values["Action"]?.ToString() == "ShopSingle") ? "active" : "")">
-                                    <a href="@Url.Action("Shop", "FrontEnd")">STORE</a>
-                                </li>
-
-                                <!-- Categories dropdown menu with dynamic category list -->
-                                <li class="has-children">
-                                    <a href="#">CATEGORIES</a>
-                                    <ul class="dropdown">
-                                        @if (ViewBag.Categories != null)
-                                        {
-                                            <!-- Generate category links from ViewBag data -->
-                                            foreach (var category in ViewBag.Categories)
-                                            {
-                                                <li><a href="@Url.Action("Shop", "FrontEnd", new { category = category.CategoryID })">@category.CategoryName</a></li>
-                                            }
-                                        }
-                                    </ul>
-                                </li>
-
-                                <!-- About page link with active state detection -->
-                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "About") ? "active" : "")">
-                                    <a href="@Url.Action("About", "FrontEnd")">ABOUT</a>
-                                </li>
-
-                                <!-- Contact page link with active state detection -->
-                                <li class="@((ViewContext.RouteData.Values["Action"]?.ToString() == "Contact") ? "active" : "")">
-                                    <a href="@Url.Action("Contact", "FrontEnd")">CONTACT</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-
-                    <!-- Right side icons: Search, Cart, User account, Theme toggle -->
-                    <div class="icons d-flex align-items-center">
-                        <!-- Search functionality (desktop only) -->
-                        <div class="navbar-search-container d-none d-lg-block">
-                            <div class="navbar-search-wrapper">
-                                <input type="text" id="navbar-search-input" class="navbar-search-input" placeholder="Search">
-                                <button id="navbar-search-btn" class="navbar-search-btn">
-                                    <span class="icon-search"></span>
-                                </button>
-                            </div>
-                            <!-- Search results dropdown container -->
-                            <div id="navbar-search-results" class="navbar-search-results"></div>
-                        </div>
-
-                        <!-- Shopping cart icon with item count badge -->
-                        <a href="@Url.Action("Cart", "FrontEnd")" class="icons-btn d-inline-block bag position-relative ml-3">
-                            <span class="icon-shopping-bag"></span>
-                            <!-- Cart count starts at 0 but will be updated by JavaScript -->
-                            <span class="number" id="cart-count">0</span>
-                        </a>
-
-                        <!-- User account dropdown with login/logout options -->
-                        <div class="user-icon position-relative d-flex align-items-center ml-3">
-                            <a href="#" class="icons-btn d-inline-block">
-                                <span class="icon-user"></span>
-                            </a>
-
-                            <!-- Display user greeting if logged in -->
-                            @if (ViewBag.IsLoggedIn == true)
-                            {
-                                <span class="user-greeting d-none d-md-inline-block">Hi, @(ViewBag.UserName?.ToString().Split(' ')[0])</span>
-                            }
-
-                            <!-- User dropdown menu with conditional content based on login status -->
-                            <div class="user-dropdown">
-                                @if (ViewBag.IsLoggedIn == true)
-                                {
-                                    <!-- Admin dashboard link for admin users -->
-                                    @if (ViewBag.UserRole == "Admin")
-                                    {
-                                        <a href="@Url.Action("Index", "Admin")">Admin Dashboard</a>
-                                    }
-
-                                    <!-- Pharmacist dashboard link for pharmacist users -->
-                                    @if (ViewBag.UserRole == "Pharmacist")
-                                    {
-                                        <a href="@Url.Action("Index", "Admin")">Pharmacist Dashboard</a>
-                                    }
-
-                                    <!-- User account management links -->
-                                    <a href="@Url.Action("Profile", "Account")">My Account</a>
-                                    <a href="@Url.Action("Index", "Order")">My Orders</a>
-                                    <a href="@Url.Action("MyReservations", "Prescription")">My Reservations</a>
-                                    <a href="@Url.Action("Logout", "Account")">Logout</a>
-                                }
-                                else
-                                {
-                                    <!-- Authentication links for non-logged-in users -->
-                                    <a href="@Url.Action("Login", "Account")">Sign In</a>
-                                    <a href="@Url.Action("Register", "Account")">Sign Up</a>
-                                }
-                            </div>
-                        </div>
-
-                        <!-- Theme toggle button for dark/light mode switching -->
-                        <button id="theme-toggle-btn" class="btn ml-3">
-                            <span class="moon-icon">🌙</span>
-                            <span class="sun-icon" style="display: none;">☀️</span>
-                        </button>
-
-                        <!-- Mobile menu toggle button (visible only on mobile devices) -->
-                        <a href="#" class="site-menu-toggle js-menu-toggle d-inline-block d-lg-none ml-3">
-                            <span class="icon-menu"></span>
-                        </a>
-                    </div>
+                    <button id="theme-toggle-btn" class="pc-icon-btn" type="button" aria-label="Toggle theme"><span class="moon-icon">🌙</span><span class="sun-icon" style="display:none">☀️</span></button>
+                    <a href="#" class="pc-icon-btn pc-mobile-toggle js-menu-toggle d-lg-none" aria-label="Menu"><span class="icon-menu"></span></a>
                 </div>
             </div>
         </div>
+    </header>
 
-        <!-- Mobile navigation menu (hidden by default, shown when mobile toggle is clicked) -->
-        <div class="site-mobile-menu">
-            <div class="site-mobile-menu-header">
-                <div class="site-mobile-menu-close mt-3">
-                    <span class="icon-close2 js-menu-toggle"></span>
-                </div>
+    <div class="site-mobile-menu"><div class="site-mobile-menu-header"><div class="site-mobile-menu-close mt-3"><span class="icon-close2 js-menu-toggle"></span></div></div><div class="site-mobile-menu-body"></div></div>
+
+    @RenderBody()
+
+    <a href="#" id="back-to-top" class="btn rounded-circle p-3" style="position:fixed;bottom:20px;right:20px;display:none"><i class="fas fa-arrow-up"></i></a>
+
+    <footer class="pc-footer">
+        <div class="container pc-footer-inner">
+            <div class="pc-footer-grid">
+                <div><div class="pc-footer-brand"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span> PHARMACARE</div><p>Trusted pharmacy care, convenient ordering and secure prescription services for customers across Amman.</p></div>
+                <div><h4>Explore</h4><ul><li><a href="@Url.Action("Index","FrontEnd")">Home</a></li><li><a href="@Url.Action("Shop","FrontEnd")">Store</a></li><li><a href="@Url.Action("About","FrontEnd")">About us</a></li><li><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li></ul></div>
+                <div><h4>Account</h4><ul><li><a href="@Url.Action("Profile","Account")">My account</a></li><li><a href="@Url.Action("Index","Order")">My orders</a></li><li><a href="@Url.Action("MyReservations","Prescription")">Prescription pickups</a></li><li><a href="@Url.Action("Cart","FrontEnd")">Shopping cart</a></li></ul></div>
+                <div><h4>Contact</h4><ul class="pc-contact"><li><i class="fas fa-map-marker-alt"></i><span>Almadina Almonaora St, Amman, Jordan</span></li><li><i class="fas fa-phone"></i><span>+962 7 9999 8888</span></li><li><i class="fas fa-envelope"></i><span>pharmacare@info.com</span></li></ul></div>
             </div>
-            <!-- Mobile menu content is dynamically populated -->
-            <div class="site-mobile-menu-body"></div>
+            <div class="pc-footer-bottom"><span>© @DateTime.Now.Year PharmaCare. All rights reserved.</span><div class="pc-trust"><span><i class="fas fa-lock"></i> Secure checkout</span><span><i class="fas fa-shield-alt"></i> Trusted pharmacy</span><span><i class="fas fa-prescription"></i> Prescription control</span></div></div>
         </div>
-
-        <!-- Main page content is rendered here -->
-        @RenderBody()
-
-        <!-- Back to top button (appears when user scrolls down) -->
-        <a href="#" id="back-to-top" class="btn rounded-circle p-3" style="position: fixed; bottom: 20px; right: 20px; display: none; background-color: #0d9488">
-            <i class="fas fa-arrow-up"></i>
-        </a>
-
-        <!-- Site footer with company information and links -->
-        <footer class="site-footer bg-light">
-            <div class="container">
-                <div class="row pt-5 mt-5">
-                    <!-- About us section -->
-                    <div class="col-md-4 mb-5">
-                        <h3>About Us</h3>
-                        <p>
-                            At PharmaCare, we're committed to providing trusted healthcare solutions to our community. With years of experience in our physical pharmacy, we've now expanded online to bring you the same quality care, convenience, and reliability.
-                        </p>
-                    </div>
-
-                    <!-- Quick navigation links -->
-                    <div class="col-md-4 mb-5">
-                        <h3>Quick Links</h3>
-                        <ul class="list-unstyled footer-link">
-                            <li><a href="@Url.Action("Index", "FrontEnd")">Home</a></li>
-                            <li><a href="@Url.Action("Shop", "FrontEnd")">Store</a></li>
-                            <li><a href="@Url.Action("Contact", "FrontEnd")">Get In Touch</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Contact information -->
-                    <div class="col-md-4 mb-5">
-                        <h3>Contact Info</h3>
-                        <ul class="list-unstyled footer-link">
-                            <li class="d-flex">
-                                <span class="mr-3"><i class="fas fa-map-marker-alt"></i></span>
-                                <span>Almadina Almonaora St, Amman, Jordan</span>
-                            </li>
-                            <li class="d-flex">
-                                <span class="mr-3"><i class="fas fa-phone"></i></span>
-                                <span>+962 7 9999 8888</span>
-                            </li>
-                            <li class="d-flex">
-                                <span class="mr-3"><i class="fas fa-envelope"></i></span>
-                                <span>pharmacare@info.com</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Copyright notice -->
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <p>
-                            Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Core JavaScript libraries for site functionality -->
-    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
-    <script src="~/assets/js/jquery-ui.js"></script>
-    <script src="~/assets/js/popper.min.js"></script>
-    <script src="~/assets/js/bootstrap.min.js"></script>
-    <script src="~/assets/js/owl.carousel.min.js"></script>
-    <script src="~/assets/js/jquery.magnific-popup.min.js"></script>
-    <script src="~/assets/js/aos.js"></script>
-
-    <!-- Frontend-specific JavaScript for theme toggle and main functionality -->
-    <script src="~/assets/js/theme-toggle.js"></script>
-    <script src="~/assets/js/main.js"></script>
-    <script src="~/assets/js/Frontendviewscripts/search.js"></script>
-
-    <!-- Cart Count Loader Script - LOADS CART COUNT ON EVERY PAGE -->
-    <script>
-        // Global variable to track if cart count has been loaded to prevent duplicate calls
-        window.cartCountLoaded = false;
-
-        // Function to load and update cart count
-        function loadCartCount() {
-            // Prevent multiple simultaneous calls
-            if (window.cartCountLoaded) {
-                return;
-            }
-
-            window.cartCountLoaded = true;
-
-            $.ajax({
-                url: '@Url.Action("GetCartCount", "Cart")',
-                type: 'GET',
-                cache: false,
-                success: function(response) {
-                    if (response.success) {
-                        $('#cart-count').text(response.count);
-                        console.log('Cart count loaded:', response.count);
-                    } else {
-                        console.error('Failed to load cart count:', response.message);
-                        $('#cart-count').text('0');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading cart count:', error);
-                    $('#cart-count').text('0');
-                },
-                complete: function() {
-                    // Reset flag after request completes (success or error)
-                    window.cartCountLoaded = false;
-                }
-            });
-        }
-
-        // Load cart count when document is ready
-        $(document).ready(function() {
-            console.log('Document ready, loading cart count...');
-            loadCartCount();
-        });
-
-        // Also load cart count when page becomes visible (handles back/forward navigation)
-        $(window).on('focus pageshow', function(e) {
-            // Check if page was loaded from cache (back/forward buttons)
-            if (e.originalEvent && e.originalEvent.persisted) {
-                console.log('Page loaded from cache, reloading cart count...');
-                loadCartCount();
-            }
-        });
-
-    
-        window.updateCartCount = function(newCount) {
-            $('#cart-count').text(newCount);
-        };
-        
-    
-        window.cartUrls = {
-            updateCart: '@Url.Action("UpdateCart", "Cart")',
-            removeFromCart: '@Url.Action("RemoveFromCart", "Cart")',
-            clearCart: '@Url.Action("ClearCart", "Cart")',
-            getCartCount: '@Url.Action("GetCartCount", "Cart")' 
-        };
-
-        window.cartCountUrl = '@Url.Action("GetCartCount", "Cart")';
-
-        console.log('Cart URLs configured:', window.cartUrls);
-
-    </script>
-
-    <!-- Render additional page-specific scripts if provided -->
-    @RenderSection("Scripts", required: false)
-
-</body>
-
-</html>
+    </footer>
+</div>
+<script src="~/assets/js/jquery-3.3.1.min.js"></script><script src="~/assets/js/jquery-ui.js"></script><script src="~/assets/js/popper.min.js"></script><script src="~/assets/js/bootstrap.min.js"></script><script src="~/assets/js/owl.carousel.min.js"></script><script src="~/assets/js/jquery.magnific-popup.min.js"></script><script src="~/assets/js/aos.js"></script><script src="~/assets/js/theme-toggle.js"></script><script src="~/assets/js/main.js"></script><script src="~/assets/js/Frontendviewscripts/search.js"></script>
+<script>
+window.cartCountLoaded=false;function loadCartCount(){if(window.cartCountLoaded)return;window.cartCountLoaded=true;$.ajax({url:'@Url.Action("GetCartCount","Cart")',type:'GET',cache:false,success:function(r){$('#cart-count').text(r.success?r.count:0)},error:function(){$('#cart-count').text('0')},complete:function(){window.cartCountLoaded=false}})}$(document).ready(loadCartCount);$(window).on('focus pageshow',function(e){if(e.originalEvent&&e.originalEvent.persisted)loadCartCount()});window.updateCartCount=function(n){$('#cart-count').text(n)};window.cartUrls={updateCart:'@Url.Action("UpdateCart","Cart")',removeFromCart:'@Url.Action("RemoveFromCart","Cart")',clearCart:'@Url.Action("ClearCart","Cart")',getCartCount:'@Url.Action("GetCartCount","Cart")'};window.cartCountUrl='@Url.Action("GetCartCount","Cart")';
+</script>
+@RenderSection("Scripts", required:false)
+</body></html>
