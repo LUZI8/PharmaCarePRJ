@@ -1,9 +1,17 @@
 @model ProductViewModel
+@inject PharmaCare.Data.DataDbContext Db
 @{
     ViewData["Title"] = Model.ProductName + " | PharmaCare";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
 
-    var images = Model.GalleryImages.ToList();
+    var dbImages = Db.ProductImages
+        .Where(i => i.ProductId == Model.ProductId)
+        .OrderByDescending(i => i.IsPrimary)
+        .ThenBy(i => i.DisplayOrder)
+        .Select(i => i.ImageUrl)
+        .ToList();
+
+    var images = dbImages.Any() ? dbImages : Model.GalleryImages.ToList();
     if (!images.Any())
     {
         images.Add(Url.Content("~/assets/images/no-image.png"));
@@ -50,10 +58,6 @@
                         <button type="button" class="gallery-thumb @(i == 0 ? "active" : "")" data-image="@images[i]" aria-label="View product image @(i + 1)">
                             <img src="@images[i]" alt="@Model.ProductName image @(i + 1)" />
                         </button>
-                    }
-                    @if (images.Count < 4)
-                    {
-                        <div class="gallery-more-hint"><i class="far fa-images"></i><span>More product photos can be added</span></div>
                     }
                 </div>
             </div>
@@ -141,27 +145,16 @@
                 <h2>Description</h2>
                 <p>Everything you need to know about this product.</p>
             </div>
-
             <div class="description-content">
                 <div class="description-copy">@(string.IsNullOrWhiteSpace(Model.Description) ? "Product information is being prepared by the pharmacy team." : Model.Description)</div>
             </div>
-
             <div class="customer-facts">
-                <div class="customer-fact">
-                    <span class="fact-icon"><i class="fas fa-tags"></i></span>
-                    <div><small>Category</small><strong>@(Model.Category?.CategoryName ?? "Pharmacy")</strong></div>
-                </div>
+                <div class="customer-fact"><span class="fact-icon"><i class="fas fa-tags"></i></span><div><small>Category</small><strong>@(Model.Category?.CategoryName ?? "Pharmacy")</strong></div></div>
                 @if (!string.IsNullOrWhiteSpace(Model.Manufacturer))
                 {
-                    <div class="customer-fact">
-                        <span class="fact-icon"><i class="fas fa-industry"></i></span>
-                        <div><small>Manufacturer</small><strong>@Model.Manufacturer</strong></div>
-                    </div>
+                    <div class="customer-fact"><span class="fact-icon"><i class="fas fa-industry"></i></span><div><small>Manufacturer</small><strong>@Model.Manufacturer</strong></div></div>
                 }
-                <div class="customer-fact">
-                    <span class="fact-icon"><i class="fas fa-prescription-bottle-alt"></i></span>
-                    <div><small>Prescription</small><strong>@(Model.RequiresPrescription ? "Required" : "Not required")</strong></div>
-                </div>
+                <div class="customer-fact"><span class="fact-icon"><i class="fas fa-prescription-bottle-alt"></i></span><div><small>Prescription</small><strong>@(Model.RequiresPrescription ? "Required" : "Not required")</strong></div></div>
             </div>
         </section>
 
@@ -177,11 +170,7 @@
                     {
                         <a class="related-card" href="@Url.Action("ShopSingle","FrontEnd",new{id=item.ProductId})">
                             <div class="related-image"><img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? Url.Content("~/assets/images/no-image.png") : item.ImageUrl)" alt="@item.ProductName" loading="lazy" /></div>
-                            <div class="related-body">
-                                <span>@(item.Category?.CategoryName ?? "Pharmacy")</span>
-                                <h3>@item.ProductName</h3>
-                                <strong>$@item.Price.ToString("0.00")</strong>
-                            </div>
+                            <div class="related-body"><span>@(item.Category?.CategoryName ?? "Pharmacy")</span><h3>@item.ProductName</h3><strong>$@item.Price.ToString("0.00")</strong></div>
                         </a>
                     }
                 </div>
