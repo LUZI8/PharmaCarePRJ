@@ -1,324 +1,138 @@
 ﻿@model IEnumerable<PharmaCare.ViewModels.ProductViewModel>
 @{
-    ViewData["Title"] = "PharmaCare Shop";
+    ViewData["Title"] = "Shop | PharmaCare";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
     int pageSize = 9;
     int pageNumber = ViewBag.PageNumber ?? 1;
     int totalItems = ViewBag.TotalItems ?? 0;
-    /* Calculate total pages using ceiling division for pagination */
     int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    int firstItem = totalItems == 0 ? 0 : ((pageNumber - 1) * pageSize) + 1;
+    int lastItem = Math.Min(pageNumber * pageSize, totalItems);
 }
-<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/Shop.css">
 
-<div class="site-section">
-    <div class="container">
-        <!-- Product information notice -->
-        <div class="prescription-notice bg-light p-4 mb-4 rounded">
-            <div class="row align-items-center">
-                <div class="col-md-1 text-center mb-3 mb-md-0">
-                    <i class="fas fa-prescription fa-3x text-danger"></i>
-                </div>
-                <div class="col-md-11">
-                    <h4 class="mb-2">Our Products</h4>
-                    <p class="mb-0">Browse our wide range of products. All items are carefully selected to ensure quality and value. Expiry dates are clearly marked for your safety.</p>
-                </div>
+@section Styles {
+<style>
+    .shop-page{background:linear-gradient(180deg,#f5fbfa 0,#f8fbfb 42%,#fff 100%);min-height:100vh;padding-bottom:74px}
+    .shop-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#0d5f62 0%,#0d9488 55%,#48b7bd 100%);color:#fff;padding:70px 0 58px}
+    .shop-hero:before,.shop-hero:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.16)}
+    .shop-hero:before{width:360px;height:360px;right:-90px;top:-180px}.shop-hero:after{width:190px;height:190px;left:-70px;bottom:-100px}
+    .shop-kicker{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+    .shop-hero h1{font-size:46px;line-height:1.05;font-weight:700;max-width:680px;margin:18px 0 14px}.shop-hero p{max-width:700px;font-size:15px;line-height:1.8;color:rgba(255,255,255,.88);margin:0}
+    .shop-trust{display:flex;gap:18px;flex-wrap:wrap;margin-top:24px;font-size:12px;color:#e8fffb}.shop-trust span{display:flex;align-items:center;gap:7px}
+    .shop-shell{margin-top:-30px;position:relative;z-index:2}.shop-toolbar{background:#fff;border:1px solid #e3ecea;border-radius:20px;box-shadow:0 16px 45px rgba(22,66,70,.10);padding:22px;margin-bottom:28px}
+    .filter-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.filter-head h2{font-size:17px;margin:0;font-weight:700}.filter-head p{font-size:11px;color:#7a8b91;margin:4px 0 0}.result-pill{background:#eef9f7;color:#0f766e;padding:8px 12px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+    .filter-grid{display:grid;grid-template-columns:minmax(240px,2.1fr) minmax(120px,.8fr) minmax(120px,.8fr) minmax(180px,1fr);gap:12px}.filter-field{position:relative}.filter-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#7a898f;margin-bottom:7px}.filter-field .form-control{height:46px;border-radius:12px;border:1px solid #dce6e5;background:#fbfdfd;font-size:13px;padding:0 13px}.filter-field .form-control:focus{border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.10)}
+    .shop-filter-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-top:18px;padding-top:18px;border-top:1px solid #edf1f1}.sort-wrap{flex:1}.sort-wrap label,.type-wrap label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#7a898f;margin-bottom:8px}.btn-group.shop-sort{display:flex;flex-wrap:wrap;gap:8px;width:auto!important}.shop-sort .btn{border:1px solid #dce6e5!important;background:#fff!important;color:#52626a!important;border-radius:10px!important;font-size:11px!important;font-weight:600;padding:8px 11px}.shop-sort .btn:hover,.shop-sort .btn.active{background:#e8f8f5!important;border-color:#0d9488!important;color:#0f766e!important;box-shadow:none!important}.type-actions{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.shop-chip{height:38px;border-radius:10px;border:1px solid #dce6e5;background:#fff;color:#53636a;font-size:11px;font-weight:700;padding:0 12px}.shop-chip.active{background:#e9f8fb;color:#168ba1;border-color:#7ccbd8}.shop-action{height:38px;border:0;border-radius:10px;font-size:11px;font-weight:700;padding:0 15px}.shop-action.search{background:#0d9488;color:#fff}.shop-action.search:hover{background:#0f766e}.shop-action.clear{background:#f1f4f4;color:#53636a}.shop-action.clear:hover{background:#e5ebeb}
+    .catalog-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}.catalog-head h2{font-size:24px;margin:0;font-weight:700}.catalog-head p{margin:5px 0 0;color:#788991;font-size:12px}.catalog-count{font-size:11px;color:#75858b}
+    .product-container{margin-left:-10px;margin-right:-10px}.product-container .item{padding:10px!important;margin-bottom:0!important;display:flex!important}.product-card{position:relative;width:100%;background:#fff;border:1px solid #e5ecec;border-radius:18px;padding:14px;display:flex;flex-direction:column;min-height:100%;box-shadow:0 10px 28px rgba(34,67,71,.06);transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease;overflow:hidden}.product-card:hover{transform:translateY(-5px);box-shadow:0 18px 38px rgba(31,77,80,.12);border-color:#cfe6e3}.product-tag{position:absolute;top:12px;left:12px;z-index:2;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:700;letter-spacing:.3px;color:#fff}.product-tag.rx{background:#1aa5b7}.product-tag.expired{background:#dc3545}.product-tag.soon{background:#e5a500;color:#fff;left:auto;right:12px}.product-image{height:240px;border-radius:14px;background:#f5f8f9;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden}.product-image img{width:100%;height:100%;object-fit:contain;transition:transform .28s ease}.product-card:hover .product-image img{transform:scale(1.035)}.product-body{padding:16px 4px 2px;display:flex;flex-direction:column;flex:1}.product-name{font-size:16px;font-weight:700;line-height:1.35;min-height:43px;margin:0}.product-name a{color:#1d2933}.product-name a:hover{color:#0d9488}.product-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0}.price{margin:0!important;font-size:22px!important;font-weight:700;color:#0d9488!important}.stock-text{font-size:10px;color:#89979b}.medication-badges{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 15px;min-height:24px}.medication-badges .badge{padding:6px 8px;border-radius:999px;font-size:9px;font-weight:600}.product-cta{margin-top:auto}.product-cta .btn{width:100%;min-height:42px;border-radius:12px;border:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:7px}.btn-add-to-cart{background:#0d9488!important;color:#fff!important;box-shadow:0 8px 18px rgba(13,148,136,.18)}.btn-add-to-cart:hover{background:#0f766e!important}.product-cta .btn-info{background:#16a5b8!important;color:#fff!important}.product-cta .btn-secondary{background:#e9edef!important;color:#708086!important}
+    .empty-shop{background:#fff;border:1px dashed #cfdcda;border-radius:18px;padding:60px 20px;text-align:center}.empty-shop i{font-size:38px;color:#0d9488;margin-bottom:15px}.empty-shop h3{font-size:20px}.empty-shop p{color:#7c8b90;font-size:12px}
+    .shop-pagination{display:flex;justify-content:center;margin:38px 0 0}.site-block-27 ul{display:flex!important;gap:8px;justify-content:center;align-items:center;margin:0!important;padding:0!important}.site-block-27 li{margin:0!important}.site-block-27 li a,.site-block-27 li span{width:40px!important;height:40px!important;border-radius:12px!important;border:1px solid #dfe8e7!important;background:#fff!important;color:#54636a!important;display:grid!important;place-items:center!important;font-size:12px!important;line-height:1!important;box-shadow:none!important}.site-block-27 li.active span{background:#0d9488!important;border-color:#0d9488!important;color:#fff!important}.site-block-27 li a:hover{border-color:#0d9488!important;color:#0d9488!important}.site-block-27 li.disabled span{opacity:.45}.pagination-summary{text-align:center;color:#7d8d92;font-size:11px;margin-top:12px}
+    .toast-notification{z-index:1200}
+    body.dark-mode .shop-page{background:linear-gradient(180deg,#172023 0,#151a1d 100%)}body.dark-mode .shop-toolbar,body.dark-mode .product-card,body.dark-mode .empty-shop{background:#20282c;border-color:#313d42}body.dark-mode .filter-head h2,body.dark-mode .catalog-head h2,body.dark-mode .product-name a{color:#edf3f4}body.dark-mode .filter-head p,body.dark-mode .catalog-head p,body.dark-mode .catalog-count,body.dark-mode .stock-text{color:#91a3a9}body.dark-mode .filter-field .form-control{background:#252f33;border-color:#39464b;color:#eef4f4}body.dark-mode .shop-filter-bottom{border-color:#323d41}body.dark-mode .shop-sort .btn,body.dark-mode .shop-chip{background:#252e32!important;border-color:#3b484d!important;color:#dce7e9!important}body.dark-mode .shop-sort .btn.active{background:#173d38!important;color:#7be2d6!important;border-color:#2c8d83!important}body.dark-mode .product-image{background:#2a3337}body.dark-mode .site-block-27 li a,body.dark-mode .site-block-27 li span{background:#232c30!important;border-color:#39464b!important;color:#d8e3e5!important}
+    @@media(max-width:991px){.shop-hero{padding:56px 0 48px}.shop-hero h1{font-size:38px}.filter-grid{grid-template-columns:1fr 1fr}.filter-grid .filter-field:first-child{grid-column:1/-1}.shop-filter-bottom{flex-direction:column;align-items:stretch}.type-actions{justify-content:space-between}.product-image{height:210px}}
+    @@media(max-width:767px){.shop-page{padding-bottom:46px}.shop-hero{padding:44px 0 50px}.shop-hero h1{font-size:32px;max-width:520px}.shop-hero p{font-size:13px}.shop-trust{gap:10px}.shop-shell{margin-top:-22px}.shop-toolbar{border-radius:16px;padding:16px}.filter-head{align-items:flex-start}.filter-grid{grid-template-columns:1fr 1fr;gap:10px}.filter-grid .filter-field:first-child,.filter-grid .filter-field:last-child{grid-column:1/-1}.shop-filter-bottom{margin-top:14px;padding-top:14px}.btn-group.shop-sort{display:grid;grid-template-columns:1fr 1fr}.shop-sort .btn:first-child{grid-column:1/-1}.type-actions{display:grid;grid-template-columns:1fr 1fr}.type-wrap{grid-column:1/-1}.catalog-head{align-items:flex-start;flex-direction:column;gap:4px}.product-container{margin-left:-6px;margin-right:-6px}.product-container .item{padding:6px!important}.product-image{height:180px}.product-card{padding:10px;border-radius:16px}.product-body{padding:12px 2px 2px}.product-name{font-size:14px;min-height:38px}.price{font-size:19px!important}.medication-badges .badge{font-size:8px;padding:5px 6px}.shop-pagination{margin-top:28px}}
+    @@media(max-width:575px){.shop-hero h1{font-size:28px}.shop-kicker{font-size:9px}.shop-trust{display:grid;grid-template-columns:1fr 1fr;font-size:10px}.filter-grid{grid-template-columns:1fr}.filter-grid .filter-field:first-child,.filter-grid .filter-field:last-child{grid-column:auto}.type-actions{grid-template-columns:1fr}.type-wrap{grid-column:auto}.btn-group.shop-sort{grid-template-columns:1fr 1fr}.product-container .item{width:100%;flex:0 0 100%;max-width:100%}.product-image{height:220px}.product-name{font-size:15px;min-height:auto}.catalog-head h2{font-size:21px}.site-block-27 li a,.site-block-27 li span{width:36px!important;height:36px!important}.shop-toolbar{margin-bottom:22px}}
+</style>
+}
+
+<div class="shop-page">
+    <section class="shop-hero">
+        <div class="container">
+            <span class="shop-kicker"><i class="fas fa-shield-alt"></i> Trusted pharmacy storefront</span>
+            <h1>Find the right pharmacy essentials, faster.</h1>
+            <p>Browse everyday medicines and prescription items with clear stock, category and expiry information before you order.</p>
+            <div class="shop-trust">
+                <span><i class="fas fa-check-circle"></i> Pharmacy-managed inventory</span>
+                <span><i class="fas fa-prescription"></i> Prescription reservations</span>
+                <span><i class="fas fa-box-open"></i> Live stock status</span>
             </div>
         </div>
+    </section>
 
-        <!-- Filter form with hidden inputs for maintaining state -->
-        <form id="shopFilterForm" method="get" action="@Url.Action("Shop", "FrontEnd")">
-            <!-- Hidden inputs to preserve current filter/sort state -->
+    <div class="container shop-shell">
+        <form id="shopFilterForm" method="get" action="@Url.Action("Shop", "FrontEnd")" class="shop-toolbar">
             <input type="hidden" name="sort" id="sortInput" value="@ViewBag.SortOption">
             <input type="hidden" name="page" id="pageInput" value="@ViewBag.PageNumber">
             <input type="hidden" name="prescriptionOnly" id="prescriptionInput" value="@(ViewBag.PrescriptionOnly ? "true" : "false")">
 
+            <div class="filter-head">
+                <div><h2>Search & filter</h2><p>Narrow the catalog by medicine, category, price or prescription status.</p></div>
+                <span class="result-pill">@totalItems result@(totalItems == 1 ? "" : "s")</span>
+            </div>
+
             <div class="filter-section">
-                <div class="row mb-4">
-                    <div class="col-lg-12">
-                        <h3 class="mb-3 h6 text-uppercase text-black">Search Products</h3>
-                    </div>
-                    <div class="col-md-6">
-                        <!-- Search input with current value preservation -->
-                        <input type="text" name="search" class="form-control" placeholder="Search products..." value="@ViewBag.SearchTerm">
-                    </div>
-                    <div class="col-md-2">
-                        <!-- Price range inputs with validation -->
-                        <input type="number" name="minPrice" class="form-control" placeholder="Min $" value="@ViewBag.MinPrice" min="1" step="1" oninput="if(this.value<1 && this.value!='') this.value=1;">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="number" name="maxPrice" class="form-control" placeholder="Max $" value="@ViewBag.MaxPrice" min="1" step="1" oninput="if(this.value<1 && this.value!='') this.value=1;">
-                    </div>
-                    <div class="col-md-2">
-                        <select name="category" class="form-control">
-                            <option value="">All Categories</option>
-                            <!-- Dynamically populate categories from ViewBag -->
-                            @if (ViewBag.Categories != null)
-                            {
-                                foreach (var category in ViewBag.Categories)
-                                {
-                                    /* Conditional selected attribute based on current selection */
-                                    if (ViewBag.SelectedCategory != null && ViewBag.SelectedCategory == category.CategoryID)
-                                    {
-                                        <option value="@category.CategoryID" selected>@category.CategoryName</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@category.CategoryID">@category.CategoryName</option>
-                                    }
-                                }
-                            }
-                        </select>
-                    </div>
+                <div class="filter-grid">
+                    <div class="filter-field"><label>Search products</label><input type="text" name="search" class="form-control" placeholder="Medicine name..." value="@ViewBag.SearchTerm"></div>
+                    <div class="filter-field"><label>Minimum price</label><input type="number" name="minPrice" class="form-control" placeholder="$ Min" value="@ViewBag.MinPrice" min="1" step="1"></div>
+                    <div class="filter-field"><label>Maximum price</label><input type="number" name="maxPrice" class="form-control" placeholder="$ Max" value="@ViewBag.MaxPrice" min="1" step="1"></div>
+                    <div class="filter-field"><label>Category</label><select name="category" class="form-control"><option value="">All categories</option>@if(ViewBag.Categories != null){foreach(var category in ViewBag.Categories){if(ViewBag.SelectedCategory != null && ViewBag.SelectedCategory == category.CategoryID){<option value="@category.CategoryID" selected>@category.CategoryName</option>}else{<option value="@category.CategoryID">@category.CategoryName</option>}}}</select></div>
                 </div>
 
-                <!-- Sorting options with active state indication -->
-                <div class="row mb-4">
-                    <div class="col-lg-12">
-                        <h3 class="mb-3 h6 text-uppercase text-black">Sort By:</h3>
-                        <div class="btn-group w-100">
-                            <!-- Sort buttons with conditional active classes -->
-                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "relevance" ? "active" : "")" data-sort="relevance">RELEVANCE</button>
-                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "name-asc" ? "active" : "")" data-sort="name-asc">A TO Z</button>
-                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "name-desc" ? "active" : "")" data-sort="name-desc">Z TO A</button>
-                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "price-asc" ? "active" : "")" data-sort="price-asc">$ LOW TO HIGH</button>
-                            <button type="button" class="btn btn-outline-danger @(ViewBag.SortOption == "price-desc" ? "active" : "")" data-sort="price-desc">$ HIGH TO LOW</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Prescription filter toggle -->
-                <div class="row mb-4 prescription-filter">
-                    <div class="col-lg-12">
-                        <h3 class="mb-3 h6 text-uppercase text-black">Product Type:</h3>
-                        <!-- Toggle button with conditional active state -->
-                        <button type="button" id="prescriptionFilterBtn" class="btn btn-outline-danger @(ViewBag.PrescriptionOnly ? "active" : "")">
-                            <i class="fas fa-prescription"></i> Prescription Only
-                        </button>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-lg-12">
-                        <!-- Form action buttons -->
-                        <button type="button" class="btn btn-outline-danger clear">CLEAR</button>
-                        <button type="submit" class="btn btn-danger search">SEARCH</button>
-                    </div>
+                <div class="shop-filter-bottom">
+                    <div class="sort-wrap"><label>Sort by</label><div class="btn-group shop-sort"><button type="button" class="btn @(ViewBag.SortOption == "relevance" ? "active" : "")" data-sort="relevance">Relevance</button><button type="button" class="btn @(ViewBag.SortOption == "name-asc" ? "active" : "")" data-sort="name-asc">A to Z</button><button type="button" class="btn @(ViewBag.SortOption == "name-desc" ? "active" : "")" data-sort="name-desc">Z to A</button><button type="button" class="btn @(ViewBag.SortOption == "price-asc" ? "active" : "")" data-sort="price-asc">Price: Low</button><button type="button" class="btn @(ViewBag.SortOption == "price-desc" ? "active" : "")" data-sort="price-desc">Price: High</button></div></div>
+                    <div class="type-actions"><div class="type-wrap"><label>Product type</label><button type="button" id="prescriptionFilterBtn" class="shop-chip @(ViewBag.PrescriptionOnly ? "active" : "")"><i class="fas fa-prescription"></i> Prescription only</button></div><button type="button" class="shop-action clear">Clear</button><button type="submit" class="shop-action search"><i class="fas fa-search mr-1"></i> Search</button></div>
                 </div>
             </div>
         </form>
 
-        <!-- Product grid display -->
+        <div class="catalog-head">
+            <div><h2>Pharmacy catalog</h2><p>Availability and prescription status are shown on every product.</p></div>
+            <div class="catalog-count">Showing @firstItem-@lastItem of @totalItems</div>
+        </div>
+
         <div class="row product-container">
             @if (Model != null && Model.Any())
             {
                 foreach (var product in Model)
                 {
-                    var stockClass = product.Stock > 0 ? "in-stock" : "out-of-stock";
-                    <!-- Product card with data attributes for filtering -->
-                    <div class="col-sm-6 col-lg-4 text-center item mb-4 p-3"
-                         data-name="@product.ProductName"
-                         data-price="@product.Price.ToString("F2")"
-                         data-category="@product.CategoryID"
-                         style="display: block;">
-                        <div class="product-card">
-                            <!-- Prescription indicator badge -->
-                            @if (product.RequiresPrescription)
-                            {
-                                <span class="tag" style="background-color: #17a2b8;">Prescription</span>
-                            }
-
-                            <!-- NEW: Expiry indicator badge for customer awareness -->
-                            @if (product.IsExpired)
-                            {
-                                <span class="tag" style="background-color: #dc3545; top: 40px;">Expired</span>
-                            }
-                            else if (product.IsExpiringSoon)
-                            {
-                                <span class="tag" style="background-color: #ffc107; top: 40px;">Expiring Soon</span>
-                            }
-
-                            <!-- Product image with fallback -->
-                            <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">
-                                @if (!string.IsNullOrEmpty(product.ImageUrl))
-                                {
-                                    <!-- Inline styles for consistent image sizing -->
-                                    <img src="@product.ImageUrl" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
-                                }
-                                else
-                                {
-                                    <img src="~/assets/images/product_01.png" alt="@product.ProductName" class="img-fluid mb-3" style="height: 200px; object-fit: contain;">
-                                }
+                    <div class="col-sm-6 col-lg-4 item" data-name="@product.ProductName" data-price="@product.Price.ToString("F2")" data-category="@product.CategoryID">
+                        <article class="product-card">
+                            @if(product.RequiresPrescription){<span class="product-tag rx"><i class="fas fa-prescription"></i> Prescription</span>}
+                            @if(product.IsExpired){<span class="product-tag expired">Expired</span>}else if(product.IsExpiringSoon){<span class="product-tag soon">Expiring soon</span>}
+                            <a class="product-image" href="@Url.Action("ShopSingle","FrontEnd",new{id=product.ProductId})">
+                                <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? Url.Content("~/assets/images/product_01.png") : product.ImageUrl)" alt="@product.ProductName">
                             </a>
-
-                            <!-- Product details -->
-                            <h3 class="text-dark">
-                                <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })">@product.ProductName</a>
-                            </h3>
-                            <!-- Format price to 2 decimal places -->
-                            <p class="price">$@product.Price.ToString("F2")</p>
-
-                            <div class="medication-badges">
-                                <!-- Stock status badges with conditional logic -->
-                                @if (product.Stock > 10)
-                                {
-                                    <span class="badge badge-success"><i class="fas fa-check-circle"></i> In Stock</span>
-                                }
-                                else if (product.Stock > 0)
-                                {
-                                    <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Low Stock</span>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Out of Stock</span>
-                                }
-
-                                <!-- Category badge if available -->
-                                @if (product.Category != null)
-                                {
-                                    <span class="badge badge-info"><i class="fas fa-tag"></i> @product.Category.CategoryName</span>
-                                }
-
-                                @if (product.RequiresPrescription)
-                                {
-                                    <span class="badge badge-primary"><i class="fas fa-prescription"></i> Prescription</span>
-                                }
-
-                                <!-- NEW: Expiry status badge for customer information -->
-                                @if (!product.IsExpired)
-                                {
-                                    <span class="badge @product.ExpiryBadgeClass">
-                                        <i class="fas fa-calendar-check"></i>
-                                        @if (product.IsExpiringSoon)
-                                        {
-                                            @("Expires " + product.ExpiryDate.ToString("MMM yyyy"))
-                                        }
-                                        else
-                                        {
-                                            @("Fresh")
-                                        }
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-danger">
-                                        <i class="fas fa-calendar-times"></i> Expired
-                                    </span>
-                                }
+                            <div class="product-body">
+                                <h3 class="product-name"><a href="@Url.Action("ShopSingle","FrontEnd",new{id=product.ProductId})">@product.ProductName</a></h3>
+                                <div class="product-meta"><p class="price">$@product.Price.ToString("F2")</p><span class="stock-text">@product.Stock unit@(product.Stock == 1 ? "" : "s")</span></div>
+                                <div class="medication-badges">
+                                    @if(product.Stock > 10){<span class="badge badge-success"><i class="fas fa-check-circle"></i> In stock</span>}else if(product.Stock > 0){<span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Low stock</span>}else{<span class="badge badge-danger"><i class="fas fa-times-circle"></i> Out of stock</span>}
+                                    @if(product.Category != null){<span class="badge badge-info"><i class="fas fa-tag"></i> @product.Category.CategoryName</span>}
+                                    @if(!product.IsExpired){<span class="badge @product.ExpiryBadgeClass"><i class="fas fa-calendar-check"></i> @(product.IsExpiringSoon ? "Expires " + product.ExpiryDate.ToString("MMM yyyy") : "Fresh")</span>}
+                                </div>
+                                <div class="product-cta">
+                                    @if(product.IsExpired){<button class="btn btn-secondary" disabled><i class="fas fa-ban"></i> Not available</button>}
+                                    else if(product.RequiresPrescription && product.Stock > 0){<a href="@Url.Action("ShopSingle","FrontEnd",new{id=product.ProductId})" class="btn btn-info"><i class="fas fa-prescription"></i> Reserve</a>}
+                                    else{<button class="btn btn-add-to-cart" data-id="@product.ProductId" data-name="@product.ProductName" data-price="@product.Price" @(product.Stock <= 0 ? "disabled" : "")><i class="fas fa-shopping-bag"></i> @(product.Stock > 0 ? "Add to cart" : "Out of stock")</button>}
+                                </div>
                             </div>
-
-                            <!-- Different action buttons for prescription vs regular products -->
-                            @if (product.IsExpired)
-                            {
-                                <!-- Disabled button for expired products -->
-                                <button class="btn btn-secondary btn-sm mt-2" disabled>
-                                    <i class="fas fa-times"></i> Expired - Not Available
-                                </button>
-                            }
-                            else if (product.RequiresPrescription && product.Stock > 0)
-                            {
-                                <a href="@Url.Action("ShopSingle", "FrontEnd", new { id = product.ProductId })"
-                                   class="btn btn-info btn-sm mt-2">
-                                    <i class="fas fa-prescription"></i> Reserve
-                                </a>
-                            }
-                            else
-                            {
-                                <!-- Add to cart button with data attributes for JavaScript -->
-                                <button class="btn btn-danger btn-sm btn-add-to-cart mt-2"
-                                        data-id="@product.ProductId"
-                                        data-name="@product.ProductName"
-                                        data-price="@product.Price"
-                                @(product.Stock <= 0 ? "disabled" : "")>
-                                    @(product.Stock > 0 ? "Add to Cart" : "Out of Stock")
-                                </button>
-                            }
-                        </div>
+                        </article>
                     </div>
                 }
             }
             else
             {
-                <!-- Empty state for no products -->
-                <div class="col-12 text-center py-5">
-                    <h3>No products available at the moment</h3>
-                    <p>Please check back later for new products.</p>
-                </div>
+                <div class="col-12"><div class="empty-shop"><i class="fas fa-search"></i><h3>No products match your filters</h3><p>Try clearing a filter or searching for another medicine.</p><button type="button" class="shop-action clear">Clear filters</button></div></div>
             }
         </div>
 
-        <!-- Pagination controls (only show if multiple pages exist) -->
-        @if (totalPages > 1)
+        @if(totalPages > 1)
         {
-            <div class="row mt-5">
-                <div class="col-md-12 text-center">
-                    <div class="site-block-27">
-                        <ul>
-                            <!-- Previous page link with disabled state -->
-                            <li class="@(pageNumber == 1 ? "disabled" : "")">
-                                @if (pageNumber == 1)
-                                {
-                                    <span>&lt;</span>
-                                }
-                                else
-                                {
-                                    <!-- Previous page link preserving all current filter parameters -->
-                                    <a href="@Url.Action("Shop", "FrontEnd", new { page = pageNumber - 1, search = ViewBag.SearchTerm, category = ViewBag.SelectedCategory, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, sort = ViewBag.SortOption, prescriptionOnly = ViewBag.PrescriptionOnly })">&lt;</a>
-                                }
-                            </li>
-                            <!-- Page number links with current page highlighting -->
-                            @for (int i = Math.Max(1, pageNumber - 2); i <= Math.Min(totalPages, pageNumber + 2); i++)
-                            {
-                                <li class="@(i == pageNumber ? "active" : "")">
-                                    @if (i == pageNumber)
-                                    {
-                                        <span>@i</span>
-                                    }
-                                    else
-                                    {
-                                        <!-- Page link preserving all filter parameters -->
-                                        <a href="@Url.Action("Shop", "FrontEnd", new { page = i, search = ViewBag.SearchTerm, category = ViewBag.SelectedCategory, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, sort = ViewBag.SortOption, prescriptionOnly = ViewBag.PrescriptionOnly })">@i</a>
-                                    }
-                                </li>
-                            }
-                            <!-- Next page link with disabled state -->
-                            <li class="@(pageNumber == totalPages ? "disabled" : "")">
-                                @if (pageNumber == totalPages)
-                                {
-                                    <span>&gt;</span>
-                                }
-                                else
-                                {
-                                    <a href="@Url.Action("Shop", "FrontEnd", new { page = pageNumber + 1, search = ViewBag.SearchTerm, category = ViewBag.SelectedCategory, minPrice = ViewBag.MinPrice, maxPrice = ViewBag.MaxPrice, sort = ViewBag.SortOption, prescriptionOnly = ViewBag.PrescriptionOnly })">&gt;</a>
-                                }
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <div class="shop-pagination"><div class="site-block-27"><ul>
+                <li class="@(pageNumber == 1 ? "disabled" : "")">@if(pageNumber == 1){<span><i class="fas fa-chevron-left"></i></span>}else{<a aria-label="Previous page" href="@Url.Action("Shop","FrontEnd",new{page=pageNumber-1,search=ViewBag.SearchTerm,category=ViewBag.SelectedCategory,minPrice=ViewBag.MinPrice,maxPrice=ViewBag.MaxPrice,sort=ViewBag.SortOption,prescriptionOnly=ViewBag.PrescriptionOnly})"><i class="fas fa-chevron-left"></i></a>}</li>
+                @for(int i=Math.Max(1,pageNumber-2);i<=Math.Min(totalPages,pageNumber+2);i++){<li class="@(i==pageNumber?"active":"")">@if(i==pageNumber){<span>@i</span>}else{<a href="@Url.Action("Shop","FrontEnd",new{page=i,search=ViewBag.SearchTerm,category=ViewBag.SelectedCategory,minPrice=ViewBag.MinPrice,maxPrice=ViewBag.MaxPrice,sort=ViewBag.SortOption,prescriptionOnly=ViewBag.PrescriptionOnly})">@i</a>}</li>}
+                <li class="@(pageNumber == totalPages ? "disabled" : "")">@if(pageNumber == totalPages){<span><i class="fas fa-chevron-right"></i></span>}else{<a aria-label="Next page" href="@Url.Action("Shop","FrontEnd",new{page=pageNumber+1,search=ViewBag.SearchTerm,category=ViewBag.SelectedCategory,minPrice=ViewBag.MinPrice,maxPrice=ViewBag.MaxPrice,sort=ViewBag.SortOption,prescriptionOnly=ViewBag.PrescriptionOnly})"><i class="fas fa-chevron-right"></i></a>}</li>
+            </ul><div class="pagination-summary">Page @pageNumber of @totalPages</div></div></div>
         }
     </div>
 </div>
 
-<!-- Toast notification for cart actions -->
-<div id="toast-notification" class="toast-notification">
-    <div class="toast-content">
-        <i class="fas fa-check-circle toast-icon"></i>
-        <div class="toast-text">
-            <!-- Dynamic content updated by JavaScript -->
-            <strong id="toast-title">Added to Cart!</strong>
-            <p id="toast-message">Product added successfully</p>
-        </div>
-    </div>
-    <!-- Close button with onclick handler -->
-    <button class="toast-close" onclick="hideToast()">&times;</button>
-</div>
+<div id="toast-notification" class="toast-notification"><div class="toast-content"><i class="fas fa-check-circle toast-icon"></i><div class="toast-text"><strong id="toast-title">Added to Cart!</strong><p id="toast-message">Product added successfully</p></div></div><button class="toast-close" onclick="hideToast()">&times;</button></div>
 
 @section Scripts {
-    <script>
-        /* Global JavaScript object for URL endpoints used by external JS files */
-        window.shopUrls = {
-            addToCart: '@Url.Action("AddToCart", "Cart")'
-        };
-    </script>
-    <script src="~/assets/js/FrontEndViewScripts/Shop.js"></script>
+<script>window.shopUrls={addToCart:'@Url.Action("AddToCart","Cart")'};</script>
+<script src="~/assets/js/FrontEndViewScripts/Shop.js"></script>
+<script>
+    document.querySelectorAll('.product-card').forEach(function(card,index){card.style.opacity='0';card.style.transform='translateY(16px)';setTimeout(function(){card.style.transition='opacity .4s ease, transform .4s ease, box-shadow .24s ease, border-color .24s ease';card.style.opacity='1';card.style.transform='translateY(0)'},70*index)});
+</script>
 }
