@@ -17,6 +17,7 @@ public class AdminAIController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> OperationsBrief(CancellationToken ct)
     {
         var role = HttpContext.Session.GetString("UserRole");
