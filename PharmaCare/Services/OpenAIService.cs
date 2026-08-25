@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -39,9 +40,7 @@ Data and trust rules:
             _httpClient = httpClient;
             _settings = options.Value;
             _logger = logger;
-
-            var timeoutSeconds = Math.Clamp(_settings.TimeoutSeconds, 5, 90);
-            _httpClient.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+            _httpClient.Timeout = TimeSpan.FromSeconds(Math.Clamp(_settings.TimeoutSeconds, 5, 90));
         }
 
         public bool IsConfigured =>
@@ -52,31 +51,16 @@ Data and trust rules:
         public async Task<AIResult> AskAsync(AIRequest request, CancellationToken cancellationToken = default)
         {
             if (!IsConfigured)
-            {
-                return new AIResult
-                {
-                    Success = false,
-                    Error = "AI_NOT_CONFIGURED",
-                    Message = "PharmaCare AI is not configured yet."
-                };
-            }
+                return Fail("AI_NOT_CONFIGURED", "PharmaCare AI is not configured yet.");
 
             if (string.IsNullOrWhiteSpace(request.Message))
-            {
-                return new AIResult
-                {
-                    Success = false,
-                    Error = "EMPTY_MESSAGE",
-                    Message = "Please enter a question."
-                };
-            }
+                return Fail("EMPTY_MESSAGE", "Please enter a question.");
 
-            var prompt = BuildPrompt(request);
             var payload = new
             {
                 model = _settings.Model,
                 instructions = Instructions,
-                input = prompt,
+                input = BuildPrompt(request),
                 max_output_tokens = Math.Clamp(_settings.MaxOutputTokens, 128, 2000)
             };
 
@@ -88,21 +72,22 @@ Data and trust rules:
 
             try
             {
-                using var response = await _httpClient.SendAsync(message, cancellationToken);
+                using var response = await _httpClient.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning(
-                        "OpenAI request failed with status {StatusCode}. Response: {Response}",
+                    _logger.LogWarning("OpenAI request failed with status {StatusCode}. Response: {Response}",
                         (int)response.StatusCode,
                         responseText.Length > 1200 ? responseText[..1200] : responseText);
 
-                    return new AIResult
+                    return response.StatusCode switch
                     {
-                        Success = false,
-                        Error = "AI_PROVIDER_ERROR",
-                        Message = "The AI assistant is temporarily unavailable. Please try again shortly."
+                        HttpStatusCode.Unauthorized => Fail("AI_AUTH_ERROR", "The AI service is temporarily unavailable. Please contact the site administrator."),
+                        HttpStatusCode.TooManyRequests => Fail("AI_RATE_OR_QUOTA", "The AI service is temporarily at capacity. Please try again later."),
+                        HttpStatusCode.BadRequest => Fail("AI_REQUEST_ERROR", "The AI service could not process this request. Please try again."),
+                        _ when (int)response.StatusCode >= 500 => Fail("AI_PROVIDER_UNAVAILABLE", "The AI provider is temporarily unavailable. Please try again shortly."),
+                        _ => Fail("AI_PROVIDER_ERROR", "The AI assistant is temporarily unavailable. Please try again shortly.")
                     };
                 }
 
@@ -110,41 +95,34 @@ Data and trust rules:
                 if (string.IsNullOrWhiteSpace(outputText))
                 {
                     _logger.LogWarning("OpenAI returned a successful response without output text.");
-                    return new AIResult
-                    {
-                        Success = false,
-                        Error = "EMPTY_AI_RESPONSE",
-                        Message = "I couldn't generate a response just now. Please try again."
-                    };
+                    return Fail("EMPTY_AI_RESPONSE", "I couldn't generate a response just now. Please try again.");
                 }
 
-                return new AIResult
-                {
-                    Success = true,
-                    Message = outputText.Trim()
-                };
+                return new AIResult { Success = true, Message = outputText.Trim() };
             }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
                 _logger.LogWarning("OpenAI request timed out.");
-                return new AIResult
-                {
-                    Success = false,
-                    Error = "AI_TIMEOUT",
-                    Message = "The AI assistant took too long to respond. Please try again."
-                };
+                return Fail("AI_TIMEOUT", "The AI assistant took too long to respond. Please try again.");
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Network error while calling OpenAI.");
+                return Fail("AI_NETWORK_ERROR", "The AI service could not be reached. Please try again later.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error while calling OpenAI.");
-                return new AIResult
-                {
-                    Success = false,
-                    Error = "AI_ERROR",
-                    Message = "The AI assistant is temporarily unavailable. Please try again later."
-                };
+                return Fail("AI_ERROR", "The AI assistant is temporarily unavailable. Please try again later.");
             }
         }
+
+        private static AIResult Fail(string error, string message) => new()
+        {
+            Success = false,
+            Error = error,
+            Message = message
+        };
 
         private static string BuildPrompt(AIRequest request)
         {
@@ -165,9 +143,7 @@ Data and trust rules:
                 builder.AppendLine("RECENT CONVERSATION:");
                 foreach (var item in request.History.TakeLast(8))
                 {
-                    var role = string.Equals(item.Role, "assistant", StringComparison.OrdinalIgnoreCase)
-                        ? "Assistant"
-                        : "Customer";
+                    var role = string.Equals(item.Role, "assistant", StringComparison.OrdinalIgnoreCase) ? "Assistant" : "Customer";
                     builder.Append(role).Append(": ").AppendLine(item.Content);
                 }
             }
