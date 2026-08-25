@@ -12,7 +12,7 @@
 
 @section Styles {
 <style>
-.pickups-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:28px 0 18px}.pickups-head h2{font-weight:700;margin:0}.pickups-head p{color:#6c757d;margin:5px 0 0}.metric-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);height:100%}.metric-card .card-body{padding:17px 18px}.metric-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:#6c757d}.metric-value{font-size:24px;font-weight:700;margin-top:3px}.pickups-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);overflow:hidden}.pickups-card .card-header{background:transparent;padding:16px 18px}.filter-bar{display:flex;gap:9px;flex-wrap:wrap}.filter-bar .form-control{min-width:170px}.pickup-img{width:48px;height:48px;object-fit:contain;border:1px solid #e8ecef;border-radius:8px;background:#fff}.reservation-no{font-weight:700}.subtle{font-size:12px;color:#7a838b}.status-chip{font-size:11px;padding:5px 8px;border-radius:8px}.pickup-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.pickup-actions form{margin:0}.pickup-action-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;height:34px;padding:0 11px;border-radius:8px;font-size:12px;font-weight:700}.expired-row{background:rgba(220,53,69,.05)}.empty-state{padding:50px 20px;text-align:center;color:#6c757d}.table thead th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#59616a;border-top:0}.table td,.table th{vertical-align:middle}.dark-mode .metric-card,.dark-mode .pickups-card{background:#1f1f1f}.dark-mode .table thead th{color:#c9c9c9}.dark-mode .pickup-img{border-color:#444}.dark-mode .form-control{background:#262626;color:#eee;border-color:#444}@@media(max-width:768px){.pickups-head{align-items:flex-start;flex-direction:column}.filter-bar>*{width:100%!important}.pickup-actions{justify-content:flex-start}}
+.pickups-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:28px 0 18px}.pickups-head h2{font-weight:700;margin:0}.pickups-head p{color:#6c757d;margin:5px 0 0}.metric-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);height:100%}.metric-card .card-body{padding:17px 18px}.metric-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:#6c757d}.metric-value{font-size:24px;font-weight:700;margin-top:3px}.pickups-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);overflow:hidden}.pickups-card .card-header{background:transparent;padding:16px 18px}.filter-bar{display:flex;gap:9px;flex-wrap:wrap}.filter-bar .form-control{min-width:170px}.pickup-img{width:48px;height:48px;object-fit:contain;border:1px solid #e8ecef;border-radius:8px;background:#fff}.reservation-no{font-weight:700}.subtle{font-size:12px;color:#7a838b}.status-chip{font-size:11px;padding:5px 8px;border-radius:8px}.pickup-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.pickup-actions form{margin:0}.pickup-action-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;height:34px;padding:0 11px;border-radius:8px;font-size:12px;font-weight:700}.expired-row{background:rgba(220,53,69,.05)}.empty-state{padding:50px 20px;text-align:center;color:#6c757d}.table thead th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#59616a;border-top:0}.table td,.table th{vertical-align:middle}.modal-content{border:0;border-radius:14px;overflow:hidden}.cancel-summary{border:1px solid #eceff1;border-radius:10px;padding:14px;background:#fafbfc}.cancel-summary-row{display:flex;justify-content:space-between;gap:18px;padding:6px 0}.cancel-summary-row span:first-child{color:#7a838b}.cancel-warning{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border-radius:10px;background:rgba(220,53,69,.08);color:#a71d2a}.dark-mode .metric-card,.dark-mode .pickups-card,.dark-mode .modal-content{background:#1f1f1f}.dark-mode .table thead th{color:#c9c9c9}.dark-mode .pickup-img{border-color:#444}.dark-mode .form-control{background:#262626;color:#eee;border-color:#444}.dark-mode .cancel-summary{background:#242424;border-color:#3a3a3a}.dark-mode .cancel-summary-row span:first-child{color:#aaa}@@media(max-width:768px){.pickups-head{align-items:flex-start;flex-direction:column}.filter-bar>*{width:100%!important}.pickup-actions{justify-content:flex-start}}
 </style>
 }
 
@@ -99,13 +99,17 @@
                                         <i class="fas fa-check-circle"></i> Complete
                                     </button>
                                 </form>
-                                <form asp-action="CancelReservationAdmin" asp-controller="Prescription" method="post" onsubmit="return confirm('Cancel this reservation and return the stock to inventory?');">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@item.ReservationId" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm pickup-action-btn" title="Cancel reservation">
-                                        <i class="fas fa-times-circle"></i> Cancel
-                                    </button>
-                                </form>
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm pickup-action-btn cancel-pickup-btn"
+                                        data-toggle="modal"
+                                        data-target="#cancelPickupModal"
+                                        data-id="@item.ReservationId"
+                                        data-reservation="@item.ReservationNumber"
+                                        data-customer="@($"{item.User?.FirstName} {item.User?.LastName}")"
+                                        data-product="@item.Product?.ProductName"
+                                        data-quantity="@item.Quantity">
+                                    <i class="fas fa-times-circle"></i> Cancel
+                                </button>
                             </div>
                         }
                         else
@@ -126,12 +130,54 @@
     <div id="noMatches" class="empty-state" style="display:none"><i class="fas fa-search fa-2x mb-3"></i><div>No pickups match these filters.</div></div>
 </div>
 
+<div class="modal fade" id="cancelPickupModal" tabindex="-1" role="dialog" aria-labelledby="cancelPickupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form asp-action="CancelReservationAdmin" asp-controller="Prescription" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title mb-1" id="cancelPickupModalLabel">Cancel Prescription Reservation</h5>
+                        <div class="subtle">Review the reservation before cancelling it.</div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="cancelReservationId" name="id" />
+                    <div class="cancel-summary mb-3">
+                        <div class="cancel-summary-row"><span>Reservation</span><strong id="cancelReservationNumber">-</strong></div>
+                        <div class="cancel-summary-row"><span>Customer</span><strong id="cancelCustomer">-</strong></div>
+                        <div class="cancel-summary-row"><span>Medicine</span><strong id="cancelProduct">-</strong></div>
+                        <div class="cancel-summary-row"><span>Quantity</span><strong id="cancelQuantity">-</strong></div>
+                    </div>
+                    <div class="cancel-warning">
+                        <i class="fas fa-exclamation-triangle mt-1"></i>
+                        <div><strong>This will cancel the reservation.</strong><div class="small mt-1">The reserved quantity will be returned to inventory automatically.</div></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Keep Reservation</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-times-circle mr-1"></i> Confirm Cancellation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
 <script>
 (function(){
     const rows=[...document.querySelectorAll('.pickup-row')], search=document.getElementById('searchInput'), status=document.getElementById('statusFilter'), empty=document.getElementById('noMatches');
     function apply(){const q=search.value.toLowerCase().trim();let shown=0;rows.forEach(r=>{const ok=(!q||r.dataset.search.includes(q))&&(status.value==='all'||r.dataset.status===status.value);r.style.display=ok?'':'none';if(ok)shown++;});empty.style.display=(rows.length&&shown===0)?'block':'none';}
     search.addEventListener('input',apply);status.addEventListener('change',apply);
+
+    document.querySelectorAll('.cancel-pickup-btn').forEach(btn=>btn.addEventListener('click',function(){
+        document.getElementById('cancelReservationId').value=this.dataset.id;
+        document.getElementById('cancelReservationNumber').textContent=this.dataset.reservation || '-';
+        document.getElementById('cancelCustomer').textContent=this.dataset.customer || '-';
+        document.getElementById('cancelProduct').textContent=this.dataset.product || '-';
+        document.getElementById('cancelQuantity').textContent=this.dataset.quantity || '-';
+    }));
 })();
 </script>
 }
