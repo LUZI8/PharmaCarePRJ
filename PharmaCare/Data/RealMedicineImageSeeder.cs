@@ -1,17 +1,15 @@
 using Microsoft.EntityFrameworkCore;
+using PharmaCare.Models;
 
 namespace PharmaCare.Data;
 
 /// <summary>
 /// Replaces demo placeholder artwork with real medicine/package photography for products where
-/// a verified product-specific image source is available. Images are remote HTTPS assets used
-/// only by the development/demo catalog. Existing admin-uploaded images are left alone after the
-/// real-photo marker has been applied once.
+/// a verified product-specific image source is available. Admin-uploaded/custom galleries are
+/// preserved because only products still using the demo placehold.co artwork are refreshed.
 /// </summary>
 public static class RealMedicineImageSeeder
 {
-    private const string MarkerSku = "PC-REALIMG-001";
-
     private static readonly Dictionary<string, string[]> Images = new(StringComparer.OrdinalIgnoreCase)
     {
         ["Panadol Advance 500mg"] = new[]
@@ -108,16 +106,16 @@ public static class RealMedicineImageSeeder
 
     public static async Task SeedAsync(DataDbContext db, ILogger logger)
     {
-        // Use a synthetic marker in the Products table so this only refreshes once per dev database.
-        if (await db.Product.AnyAsync(p => p.SKU == MarkerSku))
-            return;
-
         var products = await db.Product.Include(p => p.Images).ToListAsync();
         var updated = 0;
 
         foreach (var product in products)
         {
             if (!Images.TryGetValue(product.ProductName, out var gallery))
+                continue;
+
+            // Never overwrite images the admin has already uploaded/changed manually.
+            if (!string.IsNullOrWhiteSpace(product.ImageUrl) && !product.ImageUrl.Contains("placehold.co", StringComparison.OrdinalIgnoreCase))
                 continue;
 
             if (product.Images.Count > 0)
@@ -138,15 +136,13 @@ public static class RealMedicineImageSeeder
                 });
             }
 
+            product.UpdatedAt = DateTime.UtcNow;
             updated++;
         }
 
-        // Store the marker on a harmless inactive product only when no existing catalog item can carry it.
-        var markerHost = products.FirstOrDefault(p => p.SKU != null && p.SKU.StartsWith("PC-DEMO-"));
-        if (markerHost != null)
-            markerHost.SKU = MarkerSku;
+        if (updated > 0)
+            await db.SaveChangesAsync();
 
-        await db.SaveChangesAsync();
         logger.LogInformation("Applied real product photography to {Count} catalog products.", updated);
     }
 
