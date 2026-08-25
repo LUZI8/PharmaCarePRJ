@@ -45,9 +45,56 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
+// Per-IP traffic protection. Authentication and AI endpoints receive tighter limits than normal browsing.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.GlobalLimiter = System.Threading.RateLimiting.PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var path = (context.Request.Path.Value ?? string.Empty).ToLowerInvariant();
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        if (path.StartsWith("/account/login") || path.StartsWith("/account/forgotpassword") ||
+            path.StartsWith("/account/verifyemail") || path.StartsWith("/account/resendverificationcode"))
+        {
+            return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+                "auth:" + ip,
+                _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 12,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueLimit = 0,
+                    AutoReplenishment = true
+                });
+        }
+
+        if (path.StartsWith("/ai/") || path.StartsWith("/adminai/"))
+        {
+            return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+                "ai:" + ip,
+                _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 30,
+                    Window = TimeSpan.FromMinutes(5),
+                    QueueLimit = 0,
+                    AutoReplenishment = true
+                });
+        }
+
+        return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+            "site:" + ip,
+            _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 240,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+    });
+});
+
 var app = builder.Build();
 
-// Development-only catalog setup.
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
@@ -58,7 +105,6 @@ if (app.Environment.IsDevelopment())
     await RealMedicineImageSeeder.SeedAsync(db, loggerFactory.CreateLogger("RealMedicineImageSeeder"));
 }
 
-// Correct environment-specific error handling: detailed errors only in development.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -70,7 +116,6 @@ else
     app.UseHttpsRedirection();
 }
 
-// Baseline browser hardening without blocking the existing external CDN/image integrations.
 app.Use(async (context, next) =>
 {
     context.Response.OnStarting(() =>
@@ -90,16 +135,15 @@ app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = ctx =>
     {
-        // Cache versioned/static assets in the browser while Razor/JSON responses stay dynamic.
         ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=604800";
     }
 });
 
 app.UseRouting();
+app.UseRateLimiter();
 app.UseSession();
 app.UseAuthorization();
 
-// Lightweight request tracing in development only.
 if (app.Environment.IsDevelopment())
 {
     app.Use(async (context, next) =>
