@@ -1,203 +1,57 @@
 ﻿@model PharmaCare.Models.User
-
 @{
     ViewData["Title"] = "User Details";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var roleClass = Model.Role == "Admin" ? "danger" : Model.Role == "Pharmacist" ? "warning" : "info";
+    var initials = $"{(string.IsNullOrWhiteSpace(Model.FirstName) ? "U" : Model.FirstName.Substring(0,1))}{(string.IsNullOrWhiteSpace(Model.LastName) ? "" : Model.LastName.Substring(0,1))}".ToUpper();
 }
 
-<!-- Import user details specific styling -->
-<link href="~/assets/css/UsersViewStyles/Details.css" />
+@section Styles {
+<style>
+.user-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:28px 0 18px}.user-head h2{font-weight:750;margin:0}.user-head p{margin:5px 0 0;color:#6c757d}.details-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);overflow:hidden}.details-card .card-header{background:transparent;padding:17px 18px}.details-card .card-body{padding:20px}.profile-hero{display:flex;align-items:center;gap:16px}.avatar-lg{width:74px;height:74px;border-radius:18px;background:#edf8f7;color:#0d9488;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:750}.profile-name{font-size:21px;font-weight:750}.subtle{font-size:12px;color:#7a838b}.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.info-box{border:1px solid #e9ecef;border-radius:10px;padding:14px}.info-label{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#7a838b;font-weight:700}.info-value{margin-top:5px;font-weight:650;overflow-wrap:anywhere}.quick-actions{display:grid;gap:9px}.quick-actions .btn{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;min-height:40px;font-weight:700}.dark-mode .details-card,.dark-mode .info-box{background:#1f1f1f}.dark-mode .info-box{border-color:#383838}.dark-mode .avatar-lg{background:#173634;color:#33c6b8}@@media(max-width:767px){.user-head{align-items:flex-start;flex-direction:column}.info-grid{grid-template-columns:1fr}}
+</style>
+}
 
-<!-- Page header with title and action controls -->
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2 page-title">User Details</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2">
-            <!-- Navigation back to user list -->
-            <a href="@Url.Action("Index", "Users")" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Back to List
-            </a>
-            <!-- Quick edit action button with custom styling -->
-            <a href="@Url.Action("Edit", "Users", new { id = Model?.UserId })" class="btn btn-sm btn-primary" style="background-color: #0d9488 !important; border-color: #0d9488 !important; color: white !important;">
-                <i class="fas fa-edit"></i> Edit
-            </a>
-        </div>
-    </div>
+<div class="user-head">
+    <div><h2>User Details</h2><p>Review account information, permissions and access status.</p></div>
+    <div class="d-flex" style="gap:8px"><a href="@Url.Action("Index","Users")" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Users</a><a href="@Url.Action("Edit","Users",new{id=Model.UserId})" class="btn btn-primary btn-sm"><i class="fas fa-edit mr-1"></i> Edit User</a></div>
 </div>
 
-<!-- Main content layout with user details and status sidebar -->
+@if (TempData["SuccessMessage"] != null){<div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle mr-2"></i>@TempData["SuccessMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>}
+@if (TempData["ErrorMessage"] != null){<div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle mr-2"></i>@TempData["ErrorMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>}
+
 <div class="row">
-    <div class="col-lg-8">
-        <div class="details-card card">
-            <!-- Card header with user name and status badges -->
-            <div class="card-header">
-                <h5 class="m-0 font-weight-bold">@Model.FirstName @Model.LastName</h5>
-                <div>
-                    <!-- Account status badge with conditional styling -->
-                    @if (Model.IsActive)
-                    {
-                        <span class="badge badge-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge badge-secondary">Inactive</span>
-                    }
-                    <!-- User role badge for permission level identification -->
-                    <span class="badge badge-info">@Model.Role</span>
-                </div>
-            </div>
+    <div class="col-lg-8 mb-4">
+        <div class="card details-card h-100">
+            <div class="card-header"><div class="profile-hero"><div class="avatar-lg">@initials</div><div><div class="profile-name">@Model.FirstName @Model.LastName</div><div class="mt-2"><span class="badge badge-@roleClass mr-1">@Model.Role</span><span class="badge badge-@(Model.IsActive?"success":"secondary")">@(Model.IsActive?"Active":"Inactive")</span></div><div class="subtle mt-2">User ID #@Model.UserId</div></div></div></div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 text-center">
-                        <!-- User avatar placeholder with consistent styling -->
-                        <div class="user-avatar mx-auto">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <!-- User identification display -->
-                        <h5>@Model.FirstName @Model.LastName</h5>
-                        <p class="text-muted">@Model.Role</p>
-                    </div>
-
-                    <div class="col-md-8">
-                        <!-- Comprehensive user information in structured format -->
-                        <dl class="row user-info">
-                            <dt class="col-sm-4">User ID</dt>
-                            <dd class="col-sm-8">@Model.UserId</dd>
-
-                            <dt class="col-sm-4">Email</dt>
-                            <dd class="col-sm-8">@Model.Email</dd>
-
-                            <dt class="col-sm-4">Phone</dt>
-                            <dd class="col-sm-8">@Model.PhoneNumber</dd>
-
-                            <dt class="col-sm-4">Address</dt>
-                            <dd class="col-sm-8">@Model.Address, @Model.City</dd>
-
-                            <!-- Account status with text styling -->
-                            <dt class="col-sm-4">Status</dt>
-                            <dd class="col-sm-8">
-                                @if (Model.IsActive)
-                                {
-                                    <span class="text-success">Active</span>
-                                }
-                                else
-                                {
-                                    <span class="text-secondary">Inactive</span>
-                                }
-                            </dd>
-
-                            <!-- Account creation timestamp -->
-                            <dt class="col-sm-4">Joined</dt>
-                            <dd class="col-sm-8">
-                                @Model.DateCreated.ToString("MMM dd, yyyy")
-                            </dd>
-                        </dl>
-                    </div>
-                </div>
-
-                <!-- Action buttons for user management operations -->
-                <div class="mt-4 d-flex">
-                    <!-- Edit user information button -->
-                    <a href="@Url.Action("Edit", "Users", new { id = Model.UserId })" class="btn btn-primary mr-2" style="background-color: #0d9488 !important; border-color: #0d9488 !important; color: white !important;">
-                        <i class="fas fa-edit"></i> Edit User
-                    </a>
-                    <!-- Delete user button -->
-                    <a href="@Url.Action("Delete", "Users", new { id = Model.UserId })" class="btn btn-outline-danger mr-2">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </a>
-                    <!-- Back to list navigation -->
-                    <a href="@Url.Action("Index", "Users")" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to List
-                    </a>
+                <div class="info-grid">
+                    <div class="info-box"><div class="info-label"><i class="fas fa-envelope mr-1"></i>Email</div><div class="info-value">@Model.Email</div></div>
+                    <div class="info-box"><div class="info-label"><i class="fas fa-phone mr-1"></i>Phone</div><div class="info-value">@Model.PhoneNumber</div></div>
+                    <div class="info-box"><div class="info-label"><i class="fas fa-map-marker-alt mr-1"></i>Address</div><div class="info-value">@Model.Address</div></div>
+                    <div class="info-box"><div class="info-label"><i class="fas fa-city mr-1"></i>City</div><div class="info-value">@Model.City</div></div>
+                    <div class="info-box"><div class="info-label"><i class="far fa-calendar-alt mr-1"></i>Joined</div><div class="info-value">@Model.DateCreated.ToString("MMM dd, yyyy")</div></div>
+                    <div class="info-box"><div class="info-label"><i class="fas fa-shield-alt mr-1"></i>Account Access</div><div class="info-value @(Model.IsActive?"text-success":"text-muted")">@(Model.IsActive?"Enabled":"Disabled")</div></div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Status and quick actions sidebar -->
-    <div class="col-lg-4">
-        <div class="details-card card user-status-card">
-            <div class="card-header">
-                <h5 class="m-0 font-weight-bold">User Status</h5>
-            </div>
-            <div class="card-body p-3">
-                <!-- Visual account status indicator with progress bar -->
-                <div class="mb-3">
-                    <h6>Account Status</h6>
-                    <div class="progress" style="height: 20px;">
-                        @{
-                            /* Determine progress bar styling based on account status */
-                            var progressClass = Model.IsActive ? "bg-success" : "bg-secondary";
-                            var progressWidth = Model.IsActive ? "100" : "0";
-                        }
-                        <div class="progress-bar @progressClass" role="progressbar" style="width: @progressWidth%;" aria-valuenow="@(Model.IsActive ? 100 : 0)" aria-valuemin="0" aria-valuemax="100">@(Model.IsActive ? "Active" : "Inactive")</div>
-                    </div>
-                </div>
-
-                <!-- Quick action buttons for common user management tasks -->
-                <div class="mb-3">
-                    <h6>Quick Actions</h6>
-
-                    <!-- Conditional activate/deactivate button based on current status -->
-                    @if (!Model.IsActive)
-                    {
-                        <a href="@Url.Action("ToggleStatus", "Users", new { id = Model.UserId })"
-                           class="btn btn-outline-success btn-block mb-2 toggle-status-btn"
-                           data-user-id="@Model.UserId">
-                            <i class="fas fa-toggle-on mr-2"></i> Activate User
-                        </a>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("ToggleStatus", "Users", new { id = Model.UserId })"
-                           class="btn btn-outline-secondary btn-block mb-2 toggle-status-btn"
-                           data-user-id="@Model.UserId">
-                            <i class="fas fa-toggle-off mr-2"></i> Deactivate User
-                        </a>
-                    }
-
-                    <!-- Password reset functionality -->
-                    <a href="@Url.Action("ResetPassword", "Users", new { id = Model.UserId })" class="btn btn-outline-warning btn-block mb-2">
-                        <i class="fas fa-key mr-2"></i> Reset Password
-                    </a>
-                </div>
-
-                <!-- Mock last login display (placeholder data) -->
-                <div class="mt-4">
-                    <h6>Last Login</h6>
-                    <p class="text-muted">@(DateTime.Now.AddDays(-3).ToString("MMM dd, yyyy HH:mm"))</p>
-                </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card details-card">
+            <div class="card-header"><strong>Account Actions</strong><div class="subtle">Administrative controls for this account</div></div>
+            <div class="card-body quick-actions">
+                <a href="@Url.Action("Edit","Users",new{id=Model.UserId})" class="btn btn-primary"><i class="fas fa-user-edit"></i> Edit Account</a>
+                <a href="@Url.Action("ResetPassword","Users",new{id=Model.UserId})" class="btn btn-outline-warning"><i class="fas fa-key"></i> Reset Password</a>
+                <a href="@Url.Action("ToggleStatus","Users",new{id=Model.UserId})" class="btn @(Model.IsActive?"btn-outline-secondary":"btn-outline-success") toggle-status-btn" data-user-id="@Model.UserId"><i class="fas @(Model.IsActive?"fa-user-slash":"fa-user-check")"></i> @(Model.IsActive?"Deactivate User":"Activate User")</a>
+                <a href="@Url.Action("Delete","Users",new{id=Model.UserId})" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i> Delete User</a>
+                <a href="@Url.Action("Index","Users")" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Users</a>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            // AJAX functionality for toggling user status without page reload
-            $('.toggle-status-btn').on('click', function(e) {
-                e.preventDefault();
-                var userId = $(this).data('user-id');
-                var btn = $(this);
-
-                /* Send AJAX request to toggle user active status */
-                $.ajax({
-                    url: '@Url.Action("ToggleStatus", "Users")/' + userId,
-                    type: 'POST',
-                    success: function(response) {
-                        if (response.success) {
-                            // Reload page to reflect updated status across all UI elements
-                            location.reload();
-                        } else {
-                            alert('Failed to toggle user status.');
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred while toggling user status.');
-                    }
-                });
-            });
-        });
-    </script>
+<script>
+$(function(){ $('.toggle-status-btn').on('click',function(e){e.preventDefault();const id=$(this).data('user-id');$.ajax({url:'@Url.Action("ToggleStatus","Users")/'+id,type:'POST',success:function(r){if(r&&r.success){location.reload();}else{alert('Unable to update account status.');}},error:function(){alert('Unable to update account status.');}});}); });
+</script>
 }
