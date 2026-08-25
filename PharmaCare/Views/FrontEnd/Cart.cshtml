@@ -2,335 +2,193 @@
 @{
     ViewData["Title"] = "Shopping Cart";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    var hasItems = Model?.Items != null && Model.Items.Any();
+    var itemCount = Model?.Items?.Sum(x => x.Quantity) ?? 0;
 }
 
-<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/Cart.css">
+@section Styles {
+<style>
+.cart-page{--cart-accent:#0f9d8f;--cart-accent-dark:#08776d;--cart-ink:#17212b;--cart-muted:#71808d;--cart-line:#e3eaee;--cart-soft:#f4f8f8;--cart-card:#fff;--cart-danger:#dc3545;position:relative;overflow:hidden;background:linear-gradient(180deg,#f6fbfb 0,#fff 300px);padding:42px 0 72px;color:var(--cart-ink)}
+.cart-page:before{content:"";position:absolute;top:-180px;right:-160px;width:430px;height:430px;border-radius:50%;background:radial-gradient(circle,rgba(15,157,143,.12),rgba(15,157,143,0) 68%);pointer-events:none}
+.cart-shell{max-width:1240px;margin:0 auto;padding:0 22px;position:relative;z-index:1}
+.cart-breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--cart-muted);margin-bottom:20px}.cart-breadcrumb a{color:var(--cart-muted);text-decoration:none}.cart-breadcrumb a:hover{color:var(--cart-accent)}
+.cart-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px;animation:cartFadeUp .45s ease both}.cart-kicker{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid rgba(15,157,143,.2);border-radius:999px;background:#eaf8f6;color:var(--cart-accent-dark);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.55px;margin-bottom:12px}.cart-title{font-size:42px;line-height:1.08;font-weight:850;margin:0 0 10px;letter-spacing:-1.2px}.cart-subtitle{margin:0;color:var(--cart-muted);font-size:15px;max-width:650px}.cart-count-pill{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--cart-line);box-shadow:0 8px 24px rgba(15,23,42,.06);border-radius:14px;padding:12px 15px;white-space:nowrap}.cart-count-pill i{width:34px;height:34px;border-radius:10px;background:#eaf8f6;color:var(--cart-accent);display:grid;place-items:center}.cart-count-pill strong{display:block;font-size:15px}.cart-count-pill span{display:block;font-size:11px;color:var(--cart-muted)}
+.cart-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(320px,.72fr);gap:22px;align-items:start}.cart-card{background:var(--cart-card);border:1px solid var(--cart-line);border-radius:20px;box-shadow:0 14px 38px rgba(15,23,42,.065);overflow:hidden;animation:cartFadeUp .5s .05s ease both}.cart-card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px 20px;border-bottom:1px solid var(--cart-line)}.cart-card-head h2{font-size:17px;font-weight:800;margin:0}.cart-card-head p{font-size:12px;color:var(--cart-muted);margin:3px 0 0}.cart-clear{border:0;background:transparent;color:#a74a53;font-size:12px;font-weight:750;padding:8px 10px;border-radius:9px;transition:.2s}.cart-clear:hover{background:#fff1f2;color:var(--cart-danger)}
+.cart-items{padding:4px 20px 8px}.cart-item{display:grid;grid-template-columns:88px minmax(0,1fr) 140px 115px 42px;gap:18px;align-items:center;padding:18px 0;border-bottom:1px solid #edf1f3;transition:.2s}.cart-item:last-child{border-bottom:0}.cart-item:hover{transform:translateX(3px)}.cart-thumb{width:88px;height:88px;border-radius:14px;background:#f6f9fa;border:1px solid #edf1f3;display:grid;place-items:center;overflow:hidden}.cart-thumb img{width:100%;height:100%;object-fit:contain;padding:7px}.cart-product-name{font-size:16px;font-weight:800;color:var(--cart-ink);text-decoration:none;display:inline-block;margin-bottom:6px}.cart-product-name:hover{color:var(--cart-accent)}.cart-unit{font-size:13px;color:var(--cart-muted)}.cart-price-mobile{display:none;font-weight:800;color:var(--cart-accent-dark);margin-top:7px}.qty-label,.line-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.55px;color:#94a0aa;font-weight:800;margin-bottom:7px}.qty-control{display:grid;grid-template-columns:38px 54px 38px;border:1px solid #d9e2e7;border-radius:11px;overflow:hidden;background:#fff;width:max-content}.qty-control button{height:38px;border:0;background:#fff;color:var(--cart-accent-dark);font-weight:900;font-size:17px;transition:.18s}.qty-control button:hover{background:#eaf8f6}.qty-control input{height:38px;width:54px;border:0;border-left:1px solid #e4eaee;border-right:1px solid #e4eaee;text-align:center;font-weight:800;color:var(--cart-ink);outline:0;background:#fff}.line-total strong{font-size:17px}.remove-item{width:38px;height:38px;border:1px solid #f0cfd3;border-radius:10px;background:#fff;color:#c93d4a;display:grid;place-items:center;transition:.18s;text-decoration:none}.remove-item:hover{background:#fff0f2;color:#b42331;transform:scale(1.05)}
+.cart-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 20px 20px}.continue-btn{display:inline-flex;align-items:center;gap:8px;color:var(--cart-accent-dark);font-weight:800;text-decoration:none;padding:11px 13px;border-radius:10px}.continue-btn:hover{background:#eaf8f6;color:var(--cart-accent-dark);text-decoration:none}
+.summary-card{position:sticky;top:96px;background:#0b3d3b;color:#fff;border-radius:20px;padding:22px;box-shadow:0 18px 42px rgba(5,63,60,.18);animation:cartFadeUp .55s .08s ease both;overflow:hidden}.summary-card:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-90px;top:-100px;background:rgba(45,212,191,.12)}.summary-title{position:relative;font-size:19px;font-weight:850;margin:0 0 5px}.summary-copy{position:relative;font-size:12px;color:#b9d4d2;margin-bottom:20px}.summary-row{position:relative;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:10px 0;color:#d8e7e6;font-size:13px}.summary-row strong{color:#fff;font-size:14px}.summary-row.shipping{border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:17px}.summary-row.total{padding:18px 0 16px;font-size:16px}.summary-row.total strong{font-size:27px;color:#5eead4}.free-shipping{color:#5eead4!important;font-weight:800}.checkout-btn{position:relative;width:100%;border:0;border-radius:12px;background:#19b7a8;color:#fff;min-height:52px;font-weight:850;font-size:14px;display:flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;box-shadow:0 9px 22px rgba(25,183,168,.24);transition:.2s}.checkout-btn:hover{background:#23c9b9;color:#fff;text-decoration:none;transform:translateY(-2px)}.summary-trust{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.summary-trust span{font-size:10px;color:#bdd3d1;display:flex;align-items:center;gap:6px}.summary-trust i{color:#5eead4}
+.cart-perks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}.perk{display:flex;align-items:center;gap:11px;padding:14px 15px;background:#fff;border:1px solid var(--cart-line);border-radius:15px;box-shadow:0 6px 20px rgba(15,23,42,.04)}.perk-icon{width:39px;height:39px;border-radius:11px;background:#eaf8f6;color:var(--cart-accent);display:grid;place-items:center;flex:none}.perk strong{display:block;font-size:12px}.perk span{display:block;font-size:10px;color:var(--cart-muted);margin-top:2px}
+.empty-cart{background:#fff;border:1px solid var(--cart-line);border-radius:22px;padding:64px 24px;text-align:center;box-shadow:0 14px 38px rgba(15,23,42,.06);animation:cartFadeUp .45s ease both}.empty-icon{width:82px;height:82px;border-radius:24px;background:#eaf8f6;color:var(--cart-accent);display:grid;place-items:center;margin:0 auto 20px;font-size:30px}.empty-cart h2{font-weight:850;font-size:26px}.empty-cart p{color:var(--cart-muted);max-width:480px;margin:8px auto 22px}.empty-shop-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;background:var(--cart-accent);color:#fff;border-radius:11px;font-weight:800;text-decoration:none}.empty-shop-btn:hover{background:var(--cart-accent-dark);color:#fff;text-decoration:none}
+.cart-toast{position:fixed;right:24px;bottom:24px;z-index:9999;background:#132b2a;color:#fff;border-radius:12px;padding:12px 15px;box-shadow:0 12px 34px rgba(0,0,0,.2);font-size:12px;font-weight:700;transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s}.cart-toast.show{transform:translateY(0);opacity:1}
+.clear-confirm{display:none;padding:12px 20px 18px;background:#fff8f8;border-top:1px solid #f7d9dc}.clear-confirm.show{display:flex;align-items:center;justify-content:space-between;gap:12px}.clear-confirm span{font-size:12px;color:#8b3a43}.clear-confirm-actions{display:flex;gap:7px}.clear-confirm-actions button{border-radius:9px;font-weight:750;font-size:11px;padding:7px 11px}
+.cart-item.is-updating{opacity:.58;pointer-events:none}.cart-item.is-removing{transform:translateX(18px);opacity:0}
+@keyframes cartFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.dark-mode .cart-page{--cart-ink:#eef4f4;--cart-muted:#9ba8ad;--cart-line:#2c3b3c;--cart-soft:#172425;--cart-card:#172122;background:linear-gradient(180deg,#101819,#121718 320px)}.dark-mode .cart-count-pill,.dark-mode .perk,.dark-mode .empty-cart{background:#172122}.dark-mode .cart-thumb{background:#121a1b;border-color:#2a3839}.dark-mode .qty-control,.dark-mode .qty-control button,.dark-mode .qty-control input{background:#141d1e;color:#eaf4f3;border-color:#344445}.dark-mode .cart-clear:hover,.dark-mode .remove-item:hover{background:#321c20}.dark-mode .remove-item{background:#172122}.dark-mode .clear-confirm{background:#25191b;border-color:#4c2d31}
+@@media(max-width:991px){.cart-layout{grid-template-columns:1fr}.summary-card{position:static}.cart-perks{grid-template-columns:1fr 1fr 1fr}.cart-item{grid-template-columns:78px minmax(0,1fr) 130px 105px 40px}.cart-thumb{width:78px;height:78px}}
+@@media(max-width:767px){.cart-page{padding:26px 0 48px}.cart-shell{padding:0 15px}.cart-hero{align-items:flex-start;flex-direction:column}.cart-title{font-size:32px}.cart-count-pill{width:100%}.cart-items{padding:0 15px}.cart-item{grid-template-columns:72px minmax(0,1fr) 36px;gap:12px;padding:16px 0}.cart-thumb{width:72px;height:72px}.cart-product-info{min-width:0}.cart-product-name{font-size:14px;line-height:1.35}.cart-unit{font-size:11px}.cart-price-mobile{display:block}.cart-quantity{grid-column:2/3}.line-total{display:none}.remove-wrap{grid-column:3;grid-row:1/3;align-self:center}.qty-label{display:none}.qty-control{grid-template-columns:34px 46px 34px}.qty-control button,.qty-control input{height:34px}.qty-control input{width:46px}.cart-actions{padding:12px 15px 16px}.cart-clear{font-size:11px}.summary-card{border-radius:17px}.cart-perks{grid-template-columns:1fr}.clear-confirm.show{align-items:flex-start;flex-direction:column}.clear-confirm-actions{width:100%}.clear-confirm-actions button{flex:1}}
+@@media(max-width:420px){.cart-title{font-size:29px}.cart-subtitle{font-size:13px}.cart-card-head{padding:15px}.cart-card-head p{display:none}.cart-item{grid-template-columns:62px minmax(0,1fr) 34px}.cart-thumb{width:62px;height:62px}.continue-btn{font-size:12px;padding-left:0}.summary-trust{grid-template-columns:1fr}.cart-breadcrumb{display:none}}
+</style>
+}
 
-<div class="site-section">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <h2 class="h3 mb-3 text-black">Your Cart</h2>
+<section class="cart-page">
+    <div class="cart-shell">
+        <div class="cart-breadcrumb"><a href="@Url.Action("Index","FrontEnd")">Home</a><i class="fas fa-chevron-right" style="font-size:8px"></i><span>Shopping cart</span></div>
 
-                <!-- Conditional rendering based on cart contents -->
-                @if (Model != null && Model.Items != null && Model.Items.Any())
-                {
-                    <div class="site-blocks-table">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th class="product-thumbnail">Image</th>
-                                    <th class="product-name">Product</th>
-                                    <th class="product-price">Price</th>
-                                    <th class="product-quantity">Quantity</th>
-                                    <th class="product-total">Total</th>
-                                    <th class="product-remove">Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Loop through cart items to display each product -->
-                                @foreach (var item in Model.Items)
-                                {
-                                    <!-- Each row has data-product-id for JavaScript targeting -->
-                                    <tr data-product-id="@item.ProductId">
-                                        <td class="product-thumbnail">
-                                            <!-- Conditional image display with fallback -->
-                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                            {
-                                                <img src="@item.ImageUrl" alt="@item.ProductName" class="img-fluid rounded" style="max-width: 80px;">
-                                            }
-                                            else
-                                            {
-                                                <img src="~/assets/images/no-image.png" alt="@item.ProductName" class="img-fluid rounded" style="max-width: 80px;">
-                                            }
-                                        </td>
-                                        <td class="product-name">
-                                            <h6 class="text-black">@item.ProductName</h6>
-                                        </td>
-                                        <td class="product-price">
-                                            <!-- Format price to 2 decimal places -->
-                                            <span class="text-black">$@item.Price.ToString("0.00")</span>
-                                        </td>
-                                        <td>
-                                            <!-- Quantity controls with plus/minus buttons -->
-                                            <div class="input-group mb-3" style="max-width: 120px;">
-                                                <div class="input-group-prepend">
-                                                    <!-- Minus button with product ID for JavaScript handling -->
-                                                    <button class="btn btn-outline-primary js-btn-minus" type="button" data-product-id="@item.ProductId">&minus;</button>
-                                                </div>
-                                                <input type="text" class="form-control text-center quantity-input" value="@item.Quantity"
-                                                       aria-label="Quantity" aria-describedby="button-addon1">
-                                                <div class="input-group-append">
-                                                    <!-- Plus button with product ID for JavaScript handling -->
-                                                    <button class="btn btn-outline-primary js-btn-plus" type="button" data-product-id="@item.ProductId">&plus;</button>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="product-total">
-                                            <!-- Calculate and display line total (price × quantity) -->
-                                            <span class="text-black">$@((item.Price * item.Quantity).ToString("0.00"))</span>
-                                        </td>
-                                        <td>
-                                            <!-- Remove item button with product ID -->
-                                            <a href="#" class="btn btn-danger btn-sm remove-item" data-product-id="@item.ProductId">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <!-- Empty cart state with call-to-action -->
-                    <div class="text-center py-5">
-                        <div class="mb-4">
-                            <i class="fas fa-shopping-cart fa-4x text-muted"></i>
-                        </div>
-                        <h3 class="h4 mb-4">Your cart is empty</h3>
-                        <p class="text-muted mb-4">Looks like you haven't added any items to your cart yet.</p>
-                        <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-primary">Continue Shopping</a>
-                    </div>
-                }
+        <header class="cart-hero">
+            <div>
+                <div class="cart-kicker"><i class="fas fa-shopping-bag"></i> Your order</div>
+                <h1 class="cart-title">Review your cart.</h1>
+                <p class="cart-subtitle">Check quantities and order totals before moving to secure checkout.</p>
             </div>
-        </div>
+            @if(hasItems)
+            {
+                <div class="cart-count-pill"><i class="fas fa-shopping-cart"></i><div><strong id="cartPageCount">@itemCount item@(itemCount == 1 ? "" : "s")</strong><span>Ready to checkout</span></div></div>
+            }
+        </header>
 
-        <!-- Cart actions and summary section (only shown when cart has items) -->
-        @if (Model != null && Model.Items != null && Model.Items.Any())
+        @if(hasItems)
         {
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="row mb-5">
-                        <div class="col-md-6">
-                            <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-outline-primary btn-md btn-block">Continue Shopping</a>
+            <div class="cart-layout">
+                <div>
+                    <section class="cart-card">
+                        <div class="cart-card-head">
+                            <div><h2>Cart items</h2><p>Quantity changes update your totals automatically.</p></div>
+                            <button type="button" class="cart-clear js-show-clear"><i class="far fa-trash-alt mr-1"></i> Clear cart</button>
                         </div>
-                        <div class="col-md-6">
-                            <!-- Clear cart button with JavaScript class selector -->
-                            <button class="btn btn-outline-danger btn-md btn-block clear-cart">Clear Cart</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 pl-5">
-                    <!-- Cart totals summary section -->
-                    <div class="row justify-content-end">
-                        <div class="col-md-7">
-                            <div class="row">
-                                <div class="col-md-12 text-right border-bottom mb-4">
-                                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <span class="text-black">Subtotal</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <!-- Subtotal with ID for JavaScript updates -->
-                                    <strong class="text-black" id="subtotal">$@(Model.SubTotal.ToString("0.00"))</strong>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <span class="text-black">Tax</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <!-- Tax amount with ID for JavaScript updates -->
-                                    <strong class="text-black" id="tax">$@(Model.Tax.ToString("0.00"))</strong>
-                                </div>
-                            </div>
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <span class="text-black">Shipping</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <!-- Shipping cost with ID for JavaScript updates -->
-                                    <strong class="text-black" id="shipping">
-                                        @if (Model.ShippingCost == 0)
-                                        {
-                                            <span class="text-success">FREE</span>
-                                        }
-                                        else
-                                        {
-                                            <span>$@(Model.ShippingCost.ToString("0.00"))</span>
-                                        }
-                                    </strong>
-                                </div>
-                            </div>
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <span class="text-black">Total</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <!-- Grand total with ID for JavaScript updates -->
-                                    <strong class="text-black h4" id="total">$@(Model.Total.ToString("0.00"))</strong>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <!-- Checkout button linking to order controller -->
-                                    <a href="@Url.Action("Checkout", "Order")" class="btn btn-primary btn-lg btn-block">
-                                        Proceed To Checkout
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="clear-confirm" id="clearConfirm">
+                            <span><i class="fas fa-exclamation-circle mr-1"></i> Remove every item from your cart?</span>
+                            <div class="clear-confirm-actions"><button type="button" class="btn btn-light js-cancel-clear">Keep items</button><button type="button" class="btn btn-danger clear-cart">Clear cart</button></div>
                         </div>
+
+                        <div class="cart-items" id="cartItems">
+                            @foreach(var item in Model.Items)
+                            {
+                                <article class="cart-item" data-product-id="@item.ProductId">
+                                    <a class="cart-thumb" href="@Url.Action("ShopSingle","FrontEnd",new{id=item.ProductId})">
+                                        <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? Url.Content("~/assets/images/no-image.png") : item.ImageUrl)" alt="@item.ProductName" />
+                                    </a>
+                                    <div class="cart-product-info">
+                                        <a class="cart-product-name" href="@Url.Action("ShopSingle","FrontEnd",new{id=item.ProductId})">@item.ProductName</a>
+                                        <div class="cart-unit">$@item.Price.ToString("0.00") each</div>
+                                        <div class="cart-price-mobile product-total"><strong>$@((item.Price * item.Quantity).ToString("0.00"))</strong></div>
+                                    </div>
+                                    <div class="cart-quantity">
+                                        <span class="qty-label">Quantity</span>
+                                        <div class="qty-control">
+                                            <button class="js-btn-minus" type="button" data-product-id="@item.ProductId" aria-label="Decrease quantity">−</button>
+                                            <input type="text" class="quantity-input" value="@item.Quantity" inputmode="numeric" aria-label="Quantity" />
+                                            <button class="js-btn-plus" type="button" data-product-id="@item.ProductId" aria-label="Increase quantity">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="line-total product-total"><span class="line-label">Line total</span><strong>$@((item.Price * item.Quantity).ToString("0.00"))</strong></div>
+                                    <div class="remove-wrap"><a href="#" class="remove-item" data-product-id="@item.ProductId" aria-label="Remove @item.ProductName"><i class="fas fa-trash-alt"></i></a></div>
+                                </article>
+                            }
+                        </div>
+
+                        <div class="cart-actions"><a href="@Url.Action("Shop","FrontEnd")" class="continue-btn"><i class="fas fa-arrow-left"></i> Continue shopping</a><span class="text-muted small"><i class="fas fa-sync-alt mr-1"></i> Totals update instantly</span></div>
+                    </section>
+
+                    <div class="cart-perks">
+                        <div class="perk"><span class="perk-icon"><i class="fas fa-lock"></i></span><div><strong>Secure checkout</strong><span>Your account and order data stay protected.</span></div></div>
+                        <div class="perk"><span class="perk-icon"><i class="fas fa-box"></i></span><div><strong>Pharmacy managed</strong><span>Stock and expiry are controlled by PharmaCare.</span></div></div>
+                        <div class="perk"><span class="perk-icon"><i class="fas fa-headset"></i></span><div><strong>Need help?</strong><span>Contact our pharmacy team before ordering.</span></div></div>
                     </div>
                 </div>
+
+                <aside class="summary-card">
+                    <h2 class="summary-title">Order summary</h2>
+                    <div class="summary-copy">Final review before checkout</div>
+                    <div class="summary-row"><span>Subtotal</span><strong id="subtotal">$@Model.SubTotal.ToString("0.00")</strong></div>
+                    <div class="summary-row"><span>Tax</span><strong id="tax">$@Model.Tax.ToString("0.00")</strong></div>
+                    <div class="summary-row shipping"><span>Shipping</span><strong id="shipping">@if(Model.ShippingCost == 0){<span class="free-shipping">FREE</span>}else{<span>$@Model.ShippingCost.ToString("0.00")</span>}</strong></div>
+                    <div class="summary-row total"><span>Total</span><strong id="total">$@Model.Total.ToString("0.00")</strong></div>
+                    <a href="@Url.Action("Checkout","Order")" class="checkout-btn"><i class="fas fa-lock"></i> Continue to checkout <i class="fas fa-arrow-right"></i></a>
+                    <div class="summary-trust"><span><i class="fas fa-shield-alt"></i> Secure checkout</span><span><i class="fas fa-check-circle"></i> Live stock verified</span></div>
+                </aside>
+            </div>
+        }
+        else
+        {
+            <div class="empty-cart">
+                <div class="empty-icon"><i class="fas fa-shopping-basket"></i></div>
+                <h2>Your cart is ready for something good.</h2>
+                <p>Browse pharmacy essentials and add the products you need. Your cart will keep everything together here.</p>
+                <a href="@Url.Action("Shop","FrontEnd")" class="empty-shop-btn">Browse products <i class="fas fa-arrow-right"></i></a>
             </div>
         }
     </div>
-</div>
+</section>
+<div class="cart-toast" id="cartToast"></div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            console.log('Cart page initialized');
+<script>
+(function($){
+    const cartUrl='@Url.Action("Cart","FrontEnd")';
+    const shopUrl='@Url.Action("Shop","FrontEnd")';
+    const $toast=$('#cartToast');
+    let toastTimer;
 
-            // Handle quantity increase
-            $(document).on('click', '.js-btn-plus', function() {
-                var productId = $(this).data('product-id');
-                var $quantityInput = $(this).closest('.input-group').find('.quantity-input');
-                var currentQuantity = parseInt($quantityInput.val()) || 0;
-                var newQuantity = currentQuantity + 1;
+    function toast(message){clearTimeout(toastTimer);$toast.text(message).addClass('show');toastTimer=setTimeout(()=>$toast.removeClass('show'),1800);}
+    function setBusy($row,busy){$row.toggleClass('is-updating',busy);}
+    function updateHeaderCount(count){
+        $('#cartPageCount').text(count+' item'+(count===1?'':'s'));
+        const badge=document.querySelector('.cart-count, .site-cart-count, [data-cart-count]');
+        if(badge) badge.textContent=count;
+    }
+    function updateCartTotals(response){
+        $('#subtotal').text('$'+response.subtotal);
+        $('#tax').text('$'+response.tax);
+        $('#shipping').html(parseFloat(response.shipping)===0?'<span class="free-shipping">FREE</span>':'<span>$'+response.shipping+'</span>');
+        $('#total').text('$'+response.total);
+        updateHeaderCount(parseInt(response.cartCount)||0);
+    }
+    function updateCartQuantity(productId,quantity,$input){
+        quantity=Math.max(1,parseInt(quantity)||1);
+        const $row=$input.closest('.cart-item');
+        setBusy($row,true);
+        $.ajax({url:'@Url.Action("UpdateCart","Cart")',type:'POST',data:{productId,quantity}})
+        .done(function(response){
+            if(!response.success){toast(response.message||'Could not update quantity.');return;}
+            if((parseInt(response.cartCount)||0)<=0){window.location.href=cartUrl;return;}
+            $input.val(quantity);
+            const price=parseFloat($row.find('.cart-unit').text().replace(/[^0-9.]/g,''))||0;
+            const line='$'+(price*quantity).toFixed(2);
+            $row.find('.product-total strong').text(line);
+            updateCartTotals(response);
+            toast('Cart updated');
+        })
+        .fail(()=>toast('Could not update your cart. Please try again.'))
+        .always(()=>setBusy($row,false));
+    }
+    function removeFromCart(productId,$row){
+        setBusy($row,true);
+        $.ajax({url:'@Url.Action("RemoveFromCart","Cart")',type:'POST',data:{productId}})
+        .done(function(response){
+            if(!response.success){setBusy($row,false);toast(response.message||'Could not remove item.');return;}
+            $row.addClass('is-removing');
+            setTimeout(function(){
+                $row.remove();
+                if((parseInt(response.cartCount)||0)<=0){window.location.href=cartUrl;return;}
+                updateCartTotals(response);toast('Item removed');
+            },220);
+        })
+        .fail(function(){setBusy($row,false);toast('Could not remove item. Please try again.');});
+    }
 
-                updateCartQuantity(productId, newQuantity, $quantityInput);
-            });
-
-            // Handle quantity decrease
-            $(document).on('click', '.js-btn-minus', function() {
-                var productId = $(this).data('product-id');
-                var $quantityInput = $(this).closest('.input-group').find('.quantity-input');
-                var currentQuantity = parseInt($quantityInput.val()) || 0;
-                var newQuantity = Math.max(1, currentQuantity - 1);
-
-                updateCartQuantity(productId, newQuantity, $quantityInput);
-            });
-
-            // Handle direct quantity input change
-            $(document).on('change', '.quantity-input', function() {
-                var productId = $(this).closest('tr').data('product-id');
-                var newQuantity = parseInt($(this).val()) || 1;
-
-                updateCartQuantity(productId, newQuantity, $(this));
-            });
-
-            // Handle item removal
-            $(document).on('click', '.remove-item', function(e) {
-                e.preventDefault();
-                var productId = $(this).data('product-id');
-                removeFromCart(productId);
-            });
-
-            // Handle clear cart
-            $(document).on('click', '.clear-cart', function() {
-                if (confirm('Are you sure you want to clear your cart?')) {
-                    clearCart();
-                }
-            });
-        });
-
-        function updateCartQuantity(productId, quantity, $quantityInput) {
-            console.log('Updating cart quantity:', productId, quantity);
-
-            $.ajax({
-                url: '@Url.Action("UpdateCart", "Cart")',
-                type: 'POST',
-                data: {
-                    productId: productId,
-                    quantity: quantity
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Check if cart became empty
-                        if (response.cartCount === 0 || response.cartCount <= 0) {
-                            window.location.href = '@Url.Action("Cart", "FrontEnd")';
-                            return;
-                        }
-
-                        // Update quantity input
-                        $quantityInput.val(quantity);
-
-                        // Update line total
-                        var price = parseFloat($quantityInput.closest('tr').find('.product-price span').text().replace('$', ''));
-                        var lineTotal = (price * quantity).toFixed(2);
-                        $quantityInput.closest('tr').find('.product-total span').text('$' + lineTotal);
-
-                        // Update cart totals
-                        updateCartTotals(response);
-                    } else {
-                        alert('Error updating cart: ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX error:', error);
-                    alert('Error updating cart. Please try again.');
-                }
-            });
-        }
-
-        function removeFromCart(productId) {
-            $.ajax({
-                url: '@Url.Action("RemoveFromCart", "Cart")',
-                type: 'POST',
-                data: { productId: productId },
-                success: function(response) {
-                    if (response.success) {
-                        // Remove the row from table
-                        $('tr[data-product-id="' + productId + '"]').fadeOut(300, function() {
-                            $(this).remove();
-                        });
-
-                        // Check if cart is empty
-                        if (response.cartCount === 0 || response.cartCount <= 0) {
-                            setTimeout(function() {
-                                window.location.href = '@Url.Action("Cart", "FrontEnd")';
-                            }, 500);
-                            return;
-                        }
-
-                        // Update cart totals
-                        updateCartTotals(response);
-                    } else {
-                        alert('Error removing item: ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert('Error removing item. Please try again.');
-                }
-            });
-        }
-
-        function clearCart() {
-            $.ajax({
-                url: '@Url.Action("ClearCart", "Cart")',
-                type: 'POST',
-                success: function(response) {
-                    if (response.success) {
-                        window.location.href = '@Url.Action("Cart", "FrontEnd")';
-                    } else {
-                        alert('Error clearing cart: ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert('Error clearing cart. Please try again.');
-                }
-            });
-        }
-
-        function updateCartTotals(response) {
-            $('#subtotal').text('$' + response.subtotal);
-            $('#tax').text('$' + response.tax);
-
-            // Update shipping display
-            if (parseFloat(response.shipping) === 0) {
-                $('#shipping').html('<span class="text-success">FREE</span>');
-            } else {
-                $('#shipping').html('<span>$' + response.shipping + '</span>');
-            }
-
-            $('#total').text('$' + response.total);
-        }
-    </script>
+    $(document).on('click','.js-btn-plus',function(){const $input=$(this).siblings('.quantity-input');updateCartQuantity($(this).data('product-id'),(parseInt($input.val())||1)+1,$input);});
+    $(document).on('click','.js-btn-minus',function(){const $input=$(this).siblings('.quantity-input');updateCartQuantity($(this).data('product-id'),Math.max(1,(parseInt($input.val())||1)-1),$input);});
+    $(document).on('change','.quantity-input',function(){updateCartQuantity($(this).closest('.cart-item').data('product-id'),$(this).val(),$(this));});
+    $(document).on('click','.remove-item',function(e){e.preventDefault();const $row=$(this).closest('.cart-item');removeFromCart($(this).data('product-id'),$row);});
+    $('.js-show-clear').on('click',()=>$('#clearConfirm').addClass('show'));
+    $('.js-cancel-clear').on('click',()=>$('#clearConfirm').removeClass('show'));
+    $('.clear-cart').on('click',function(){
+        const $btn=$(this);$btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Clearing');
+        $.ajax({url:'@Url.Action("ClearCart","Cart")',type:'POST'})
+        .done(response=>{if(response.success)window.location.href=cartUrl;else{toast(response.message||'Could not clear cart.');$btn.prop('disabled',false).text('Clear cart');}})
+        .fail(()=>{$btn.prop('disabled',false).text('Clear cart');toast('Could not clear cart. Please try again.');});
+    });
+})(jQuery);
+</script>
 }
