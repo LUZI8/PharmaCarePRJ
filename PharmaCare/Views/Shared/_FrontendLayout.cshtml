@@ -38,7 +38,7 @@
         .pc-footer{background:linear-gradient(145deg,#0a2529,#0d3032);color:#d8e3e5;margin-top:0;position:relative;overflow:hidden}.pc-footer:before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:rgba(45,212,191,.07);right:-120px;top:-170px}.pc-footer-inner{position:relative;padding:58px 0 26px}.pc-footer-grid{display:grid;grid-template-columns:1.35fr .8fr .9fr 1fr;gap:42px}.pc-footer-brand{color:#fff;font-weight:700;font-size:22px;margin-bottom:14px;display:flex;align-items:center;gap:10px}.pc-footer p{font-size:12px;line-height:1.8;color:#a9bbc0;margin:0}.pc-footer h4{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#fff;margin:5px 0 15px}.pc-footer ul{list-style:none;padding:0;margin:0}.pc-footer li{margin:9px 0;color:#bfd0d4;font-size:12px}.pc-footer a{color:#bfd0d4;transition:.2s}.pc-footer a:hover{color:#66e2d6;text-decoration:none}.pc-contact li{display:flex;gap:10px;align-items:flex-start}.pc-contact i{color:#43cdbf;margin-top:3px;width:15px}.pc-footer-bottom{margin-top:38px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;gap:20px;color:#8da3a8;font-size:10px}.pc-trust{display:flex;gap:13px;flex-wrap:wrap}.pc-trust span{display:inline-flex;align-items:center;gap:6px}.pc-trust i{color:#69d8cd}
         #back-to-top{background:var(--pc)!important;color:#fff!important;border:0!important;box-shadow:0 10px 24px rgba(13,148,136,.3);z-index:1060}
 
-        .pc-mobile-tools{display:none}.pc-mobile-tool{width:100%;height:46px;border-radius:12px;border:1px solid var(--pc-line);background:#fff;color:#26353c;display:flex;align-items:center;justify-content:center;gap:9px;font-size:13px;font-weight:600;transition:.2s}.pc-mobile-tool.primary{background:var(--pc);border-color:var(--pc);color:#fff}.pc-mobile-tool:hover{border-color:var(--pc);color:var(--pc)}.pc-mobile-tool.primary:hover{background:var(--pc2);color:#fff}.pc-mobile-tool-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+        .pc-mobile-tools{display:none}.pc-mobile-tool{width:100%;height:46px;border-radius:12px;border:1px solid var(--pc-line);background:#fff;color:#26353c;display:flex;align-items:center;justify-content:center;gap:9px;font-size:13px;font-weight:600;transition:.2s}.pc-mobile-tool.primary{background:var(--pc);border-color:var(--pc);color:#fff}.pc-mobile-tool:hover{border-color:var(--pc);color:var(--pc)}.pc-mobile-tool.primary:hover{background:var(--pc2);color:#fff}.pc-mobile-tool-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.pc-theme-state{font-weight:700}
 
         @@media(max-width:1199px){.pc-search{display:none}.pc-menu{gap:0}.pc-menu>li>a{padding:10px 8px}}
         @@media(max-width:991px){
@@ -49,10 +49,10 @@
         }
         @@media(max-width:575px){
             .pc-brand span:last-child{font-size:16px}.pc-brand-mark{width:36px;height:36px}.pc-actions{gap:5px}.pc-icon-btn{height:38px;width:38px}
-            .pc-footer-inner{padding:38px 0 22px}.pc-footer-grid{grid-template-columns:1fr;gap:25px}.pc-footer-grid>div{grid-column:auto!important}.pc-footer-brand{font-size:18px;margin-bottom:10px}.pc-footer p{font-size:11px;line-height:1.7}.pc-footer h4{margin-bottom:10px}.pc-footer li{margin:7px 0;font-size:11px}.pc-footer-bottom{flex-direction:column;margin-top:26px;gap:13px}.pc-trust{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;width:100%}.pc-trust span:last-child{grid-column:1/-1}.pc-footer:before{width:240px;height:240px;right:-100px;top:-105px}
+            .pc-footer-inner{padding:42px 18px 24px}.pc-footer-grid{display:flex;flex-direction:column;align-items:center;text-align:center;gap:28px}.pc-footer-grid>div{width:100%;max-width:300px}.pc-footer-grid>div:first-child{display:none}.pc-footer h4{margin:0 0 12px;font-size:11px;letter-spacing:1.4px}.pc-footer ul{display:flex;flex-direction:column;align-items:center}.pc-footer li{margin:6px 0;font-size:12px}.pc-contact li{justify-content:center;align-items:center;text-align:center}.pc-contact i{margin-top:0;width:14px}.pc-footer-bottom{flex-direction:column;align-items:center;text-align:center;margin-top:30px;gap:15px}.pc-trust{display:flex;justify-content:center;gap:10px 16px;width:100%}.pc-trust span{justify-content:center}.pc-footer:before{width:220px;height:220px;right:-105px;top:-100px}
             #back-to-top{right:16px!important;bottom:16px!important;width:46px;height:46px;padding:0!important;display:none;place-items:center}
         }
-        @@media(max-width:390px){.pc-brand span:last-child{font-size:14px}.site-mobile-menu{width:92vw!important}.pc-actions{gap:4px}.pc-trust{grid-template-columns:1fr}.pc-trust span:last-child{grid-column:auto}}
+        @@media(max-width:390px){.pc-brand span:last-child{font-size:14px}.site-mobile-menu{width:92vw!important}.pc-actions{gap:4px}.pc-mobile-tool-row{grid-template-columns:1fr}.pc-trust{flex-direction:column;align-items:center}}
     </style>
     @RenderSection("Styles", required:false)
 </head>
@@ -123,14 +123,27 @@ $(function(){
         <div class="pc-mobile-tools">\
             <div class="pc-mobile-tool-row">\
                 <a class="pc-mobile-tool primary" href="@(ViewBag.IsLoggedIn==true ? Url.Action("Profile","Account") : Url.Action("Login","Account"))"><i class="fas fa-user"></i> @(ViewBag.IsLoggedIn==true ? "My account" : "Sign in")</a>\
-                <button type="button" class="pc-mobile-tool" id="mobile-theme-toggle"><i class="fas fa-adjust"></i> Theme</button>\
+                <button type="button" class="pc-mobile-tool" id="mobile-theme-toggle"><i class="fas fa-moon pc-theme-icon"></i> <span class="pc-theme-state">Light mode</span></button>\
             </div>\
             <a class="pc-mobile-tool" style="margin-top:10px" href="@Url.Action("Cart","FrontEnd")"><i class="fas fa-shopping-bag"></i> Shopping cart</a>\
             @if(ViewBag.IsLoggedIn==true){<a class="pc-mobile-tool" style="margin-top:10px" href="@Url.Action("Logout","Account")"><i class="fas fa-sign-out-alt"></i> Sign out</a>}\
         </div>';
         $body.append(tools);
     }
-    $(document).on('click','#mobile-theme-toggle',function(){ $('#theme-toggle-btn').trigger('click'); });
+
+    function syncMobileThemeState(){
+        var isDark=document.body.classList.contains('dark-mode');
+        var $btn=$('#mobile-theme-toggle');
+        $btn.find('.pc-theme-state').text(isDark?'Dark mode':'Light mode');
+        $btn.find('.pc-theme-icon').attr('class',isDark?'fas fa-moon pc-theme-icon':'fas fa-sun pc-theme-icon');
+        $btn.attr('aria-label',isDark?'Current theme: Dark mode. Switch to light mode.':'Current theme: Light mode. Switch to dark mode.');
+    }
+    syncMobileThemeState();
+    setTimeout(syncMobileThemeState,50);
+    $(document).on('click','#mobile-theme-toggle',function(){
+        $('#theme-toggle-btn').trigger('click');
+        setTimeout(syncMobileThemeState,220);
+    });
 });
 </script>
 @RenderSection("Scripts", required:false)
