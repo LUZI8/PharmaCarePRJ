@@ -2,23 +2,130 @@
 @{
     ViewData["Title"] = "Edit Product";
     Layout = "~/Views/Shared/_Adminlayout.cshtml";
+    var galleryCount = Model.ExistingImages?.Count ?? 0;
 }
 @section Styles{
 <style>
-.form-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:28px 0 18px}.form-head h2{font-weight:750;margin:0}.form-head p{color:#6c757d;margin:5px 0 0}.form-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);overflow:hidden}.form-card .card-header{background:transparent;padding:16px 20px;font-weight:750}.form-card .card-body{padding:22px}.section-title{font-size:11px;text-transform:uppercase;letter-spacing:.65px;color:#6c757d;font-weight:750;margin-bottom:15px}.form-control{border-radius:8px}.switch-row{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid #e7e9ec;border-radius:10px;margin-bottom:12px}.switch-row .meta{font-size:12px;color:#6c757d}.switch{position:relative;display:inline-block;width:44px;height:24px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#ccc;border-radius:30px;cursor:pointer;transition:.2s}.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:#0d9488}.switch input:checked+.slider:before{transform:translateX(20px)}.image-drop{border:2px dashed #d6dbe0;border-radius:12px;padding:22px;text-align:center;min-height:270px;display:flex;flex-direction:column;justify-content:center}.image-preview{width:180px;height:180px;object-fit:contain;border-radius:12px;border:1px solid #e9ecef;margin:0 auto 14px;background:#fff}.rx-note{display:none}.rx-note.show{display:block}.field-help{font-size:11px;color:#7a838b;margin-top:4px}.gallery-link{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:10px;background:#eaf8f6;color:#0f766e;font-weight:700;text-decoration:none!important;margin-top:12px;border:1px solid #cde9e5}.gallery-link:hover{background:#dff3f0;color:#0b655f}.dark-mode .form-card{background:#1f1f1f}.dark-mode .switch-row,.dark-mode .image-drop{border-color:#3b3b3b}.dark-mode .form-control{background:#262626;color:#eee;border-color:#444}.dark-mode .gallery-link{background:#243b39;color:#67ddd2;border-color:#355753}@@media(max-width:767px){.form-head{align-items:flex-start;flex-direction:column}}
+.edit-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:28px 0 18px}.edit-head h2{font-weight:800;margin:0}.edit-head p{color:#6c757d;margin:5px 0 0}.form-card{border:0;border-radius:14px;box-shadow:0 5px 18px rgba(0,0,0,.06);overflow:hidden}.form-card .card-header{background:transparent;padding:17px 20px;font-weight:800}.form-card .card-body{padding:22px}.section-title{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:#6c757d;font-weight:800;margin-bottom:15px}.form-control{border-radius:9px}.switch-row{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid #e7e9ec;border-radius:11px;margin-bottom:12px}.switch-row .meta{font-size:12px;color:#6c757d}.switch{position:relative;display:inline-block;width:44px;height:24px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#ccc;border-radius:30px;cursor:pointer;transition:.2s}.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:#0d9488}.switch input:checked+.slider:before{transform:translateX(20px)}.field-help{font-size:11px;color:#7a838b;margin-top:4px}.rx-note{display:none}.rx-note.show{display:block}.advanced-toggle{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid #dde5e6;background:#f8fbfb;border-radius:12px;padding:15px 16px;font-weight:750;color:#16393a;cursor:pointer}.advanced-toggle:hover{border-color:#0d9488;background:#eef9f7}.advanced-panel{display:none;margin-top:14px}.advanced-panel.show{display:block}.gallery-shell{border:1px solid #e2e9e9;border-radius:14px;padding:18px;background:#fbfdfd}.gallery-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}.gallery-top h5{margin:0;font-weight:800}.gallery-top .count{font-size:12px;background:#e8f8f4;color:#0f766e;padding:6px 10px;border-radius:999px;font-weight:700}.upload-box{border:2px dashed #cbd8d8;border-radius:12px;padding:18px;text-align:center;background:#fff;margin-bottom:18px}.upload-box input{max-width:440px;margin:12px auto}.gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.gallery-card{border:1px solid #e4eceb;border-radius:12px;padding:10px;background:#fff;position:relative}.gallery-card.primary{border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.09)}.gallery-card img{width:100%;height:170px;object-fit:contain;border-radius:9px;background:#f5f8f8}.gallery-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:9px}.primary-badge{display:inline-flex;align-items:center;gap:5px;background:#e8f8f4;color:#0f766e;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:750}.gallery-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.gallery-actions form{margin:0}.empty-gallery{text-align:center;padding:28px;color:#7b8589}.dark-mode .form-card,.dark-mode .gallery-shell,.dark-mode .gallery-card,.dark-mode .upload-box{background:#20282c;color:#eef4f5}.dark-mode .switch-row,.dark-mode .gallery-shell,.dark-mode .gallery-card,.dark-mode .upload-box{border-color:#39474b}.dark-mode .form-control{background:#262f33;color:#eee;border-color:#46555a}.dark-mode .advanced-toggle{background:#243034;border-color:#3d4a4e;color:#e8f3f3}.dark-mode .advanced-toggle:hover{border-color:#37b8ae}.dark-mode .gallery-card img{background:#263135}
+@@media(max-width:991px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+@@media(max-width:767px){.edit-head{align-items:flex-start;flex-direction:column}.gallery-grid{grid-template-columns:1fr}.gallery-card img{height:220px}.gallery-actions .btn{width:100%}}
 </style>}
-<div class="form-head"><div><h2>Edit Product</h2><p>Update inventory and pharmacy data for <strong>@Model.ProductName</strong>.</p></div><a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Back to Inventory</a></div>
-<form asp-action="Edit" asp-route-id="@Model.ProductId" method="post" enctype="multipart/form-data">@Html.AntiForgeryToken()<input asp-for="ProductId" type="hidden"/><div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-<div class="row"><div class="col-lg-8">
-<div class="card form-card mb-4"><div class="card-header">Product Information</div><div class="card-body">
-<div class="section-title">Basic information</div><div class="form-group"><label asp-for="ProductName">Product Name</label><input asp-for="ProductName" class="form-control"/><span asp-validation-for="ProductName" class="text-danger small"></span></div>
-<div class="form-row"><div class="form-group col-md-6"><label asp-for="Manufacturer">Manufacturer</label><input asp-for="Manufacturer" class="form-control" placeholder="Manufacturer or supplier brand"/><span asp-validation-for="Manufacturer" class="text-danger small"></span></div><div class="form-group col-md-6"><label asp-for="CategoryID">Category</label><select asp-for="CategoryID" asp-items="Model.ListOfCategories" class="form-control"></select><span asp-validation-for="CategoryID" class="text-danger small"></span></div></div>
-<div class="form-group"><label asp-for="Description">Description</label><textarea asp-for="Description" rows="6" class="form-control" placeholder="Add customer-facing uses, dosage form, benefits, directions and warnings."></textarea></div>
-<hr/><div class="section-title">Inventory identification</div><div class="form-row"><div class="form-group col-md-6"><label asp-for="SKU">SKU</label><input asp-for="SKU" class="form-control"/><div class="field-help">Unique internal stock code.</div><span asp-validation-for="SKU" class="text-danger small"></span></div><div class="form-group col-md-6"><label asp-for="Barcode">Barcode</label><div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-barcode"></i></span></div><input asp-for="Barcode" class="form-control"/></div><div class="field-help">Barcode / GTIN used for scanning.</div><span asp-validation-for="Barcode" class="text-danger small"></span></div></div>
-<hr/><div class="section-title">Pricing, stock & safety</div><div class="form-row"><div class="form-group col-md-4"><label asp-for="Price">Unit Price</label><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">$</span></div><input asp-for="Price" type="number" min="0.01" step="0.01" class="form-control"/></div><span asp-validation-for="Price" class="text-danger small"></span></div><div class="form-group col-md-4"><label asp-for="Stock">Current Stock</label><div class="input-group"><input asp-for="Stock" type="number" min="0" class="form-control"/><div class="input-group-append"><span class="input-group-text">units</span></div></div><span asp-validation-for="Stock" class="text-danger small"></span></div><div class="form-group col-md-4"><label asp-for="ReorderLevel">Low Stock Alert</label><div class="input-group"><input asp-for="ReorderLevel" type="number" min="0" class="form-control"/><div class="input-group-append"><span class="input-group-text">units</span></div></div><span asp-validation-for="ReorderLevel" class="text-danger small"></span></div></div>
-<div class="form-group"><label asp-for="ExpiryDate">Expiry Date</label><input asp-for="ExpiryDate" type="date" class="form-control"/><span asp-validation-for="ExpiryDate" class="text-danger small"></span></div>
-</div></div>
-<div class="card form-card mb-4"><div class="card-header">Pharmacy Controls</div><div class="card-body"><div class="switch-row"><div><strong>Active Product</strong><div class="meta">Controls customer visibility and availability.</div></div><label class="switch"><input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "")/><span class="slider"></span></label></div><div class="switch-row"><div><strong>Requires Prescription</strong><div class="meta">Enable for prescription-only medication.</div></div><label class="switch"><input type="checkbox" name="RequiresPrescription" value="true" id="rxToggle" @(Model.RequiresPrescription ? "checked" : "")/><span class="slider"></span></label></div><div class="form-group rx-note" id="rxNote"><label asp-for="PrescriptionNote">Prescription Instructions</label><textarea asp-for="PrescriptionNote" rows="3" class="form-control"></textarea></div></div></div>
+
+<div class="edit-head">
+    <div><h2>Edit Product</h2><p>Update product information and manage all customer-facing images from one page.</p></div>
+    <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Back to Inventory</a>
 </div>
-<div class="col-lg-4"><div class="card form-card mb-4"><div class="card-header">Primary Product Image</div><div class="card-body"><div class="image-drop"><img id="preview" class="image-preview" src="@(string.IsNullOrWhiteSpace(Model.ImageUrl)?"/images/product_01.png":Model.ImageUrl)" alt="@Model.ProductName"/><div class="small text-muted mb-3">This legacy image remains as a fallback. Use Product Gallery for multiple customer-facing photos.</div><input asp-for="File" id="imageInput" type="file" accept="image/png,image/jpeg" class="form-control-file"/></div><a class="gallery-link" href="@Url.Action("ManageImages","Product",new{id=Model.ProductId})"><i class="far fa-images"></i> Manage Product Gallery (@Model.ExistingImages.Count/5)</a></div></div><div class="card form-card mb-4"><div class="card-body"><div class="small text-muted">Created</div><strong>@Model.CreatedAt.ToString("MMM dd, yyyy")</strong>@if(Model.UpdatedAt.HasValue){<div class="small text-muted mt-3">Last updated</div><strong>@Model.UpdatedAt.Value.ToString("MMM dd, yyyy HH:mm")</strong>}<hr/><div class="small text-muted">Inventory rule</div><strong>Low stock at ≤ @Model.ReorderLevel units</strong></div></div><button class="btn btn-success btn-block" type="submit"><i class="fas fa-save mr-1"></i> Save Changes</button><a href="@Url.Action("Details","Product",new{id=Model.ProductId})" class="btn btn-outline-info btn-block">View Details</a><a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary btn-block">Cancel</a></div></div></form>
-@section Scripts{<partial name="_ValidationScriptsPartial"/><script>(function(){const rx=document.getElementById('rxToggle'),note=document.getElementById('rxNote'),input=document.getElementById('imageInput'),preview=document.getElementById('preview');function sync(){note.classList.toggle('show',rx.checked);}rx.addEventListener('change',sync);sync();input.addEventListener('change',function(){const f=this.files&&this.files[0];if(!f)return;const r=new FileReader();r.onload=e=>preview.src=e.target.result;r.readAsDataURL(f);});})();</script>}
+
+@if (TempData["SuccessMessage"] != null){<div class="alert alert-success">@TempData["SuccessMessage"]</div>}
+@if (TempData["ErrorMessage"] != null){<div class="alert alert-danger">@TempData["ErrorMessage"]</div>}
+
+<form asp-action="Edit" asp-route-id="@Model.ProductId" method="post" id="editProductForm">
+    @Html.AntiForgeryToken()
+    <input asp-for="ProductId" type="hidden"/>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="card form-card mb-4">
+        <div class="card-header">Product Information</div>
+        <div class="card-body">
+            <div class="section-title">Basic information</div>
+            <div class="form-group"><label asp-for="ProductName">Product Name</label><input asp-for="ProductName" class="form-control"/><span asp-validation-for="ProductName" class="text-danger small"></span></div>
+            <div class="form-row">
+                <div class="form-group col-md-6"><label asp-for="Manufacturer">Manufacturer</label><input asp-for="Manufacturer" class="form-control" placeholder="Manufacturer or supplier brand"/><span asp-validation-for="Manufacturer" class="text-danger small"></span></div>
+                <div class="form-group col-md-6"><label asp-for="CategoryID">Category</label><select asp-for="CategoryID" asp-items="Model.ListOfCategories" class="form-control"></select><span asp-validation-for="CategoryID" class="text-danger small"></span></div>
+            </div>
+            <div class="form-group"><label asp-for="Description">Description</label><textarea asp-for="Description" rows="8" class="form-control" placeholder="Customer-facing description, benefits, directions and relevant product details."></textarea></div>
+
+            <hr/>
+            <div class="section-title">Price & stock</div>
+            <div class="form-row">
+                <div class="form-group col-md-4"><label asp-for="Price">Unit Price</label><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">$</span></div><input asp-for="Price" type="number" min="0.01" step="0.01" class="form-control"/></div><span asp-validation-for="Price" class="text-danger small"></span></div>
+                <div class="form-group col-md-4"><label asp-for="Stock">Current Stock</label><div class="input-group"><input asp-for="Stock" type="number" min="0" class="form-control"/><div class="input-group-append"><span class="input-group-text">units</span></div></div><span asp-validation-for="Stock" class="text-danger small"></span></div>
+                <div class="form-group col-md-4"><label asp-for="ExpiryDate">Expiry Date</label><input asp-for="ExpiryDate" type="date" class="form-control"/><span asp-validation-for="ExpiryDate" class="text-danger small"></span></div>
+            </div>
+
+            <hr/>
+            <div class="section-title">Pharmacy controls</div>
+            <div class="switch-row"><div><strong>Active Product</strong><div class="meta">Visible and available to customers when stock rules allow.</div></div><label class="switch"><input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "")/><span class="slider"></span></label></div>
+            <div class="switch-row"><div><strong>Requires Prescription</strong><div class="meta">Enable for prescription-only medication.</div></div><label class="switch"><input type="checkbox" name="RequiresPrescription" value="true" id="rxToggle" @(Model.RequiresPrescription ? "checked" : "")/><span class="slider"></span></label></div>
+
+            <button type="button" class="advanced-toggle" id="advancedToggle"><span><i class="fas fa-sliders-h mr-2"></i> Advanced Settings</span><i class="fas fa-chevron-down" id="advancedIcon"></i></button>
+            <div class="advanced-panel" id="advancedPanel">
+                <div class="form-row">
+                    <div class="form-group col-md-4"><label asp-for="SKU">SKU</label><input asp-for="SKU" class="form-control"/><div class="field-help">Internal stock code.</div><span asp-validation-for="SKU" class="text-danger small"></span></div>
+                    <div class="form-group col-md-4"><label asp-for="Barcode">Barcode</label><input asp-for="Barcode" class="form-control"/><div class="field-help">Barcode / GTIN for scanning.</div><span asp-validation-for="Barcode" class="text-danger small"></span></div>
+                    <div class="form-group col-md-4"><label asp-for="ReorderLevel">Low Stock Alert</label><input asp-for="ReorderLevel" type="number" min="0" class="form-control"/><div class="field-help">Warn when stock reaches this level.</div></div>
+                </div>
+                <div class="form-group rx-note" id="rxNote"><label asp-for="PrescriptionNote">Prescription Instructions</label><textarea asp-for="PrescriptionNote" rows="3" class="form-control" placeholder="Optional instructions shown to customers."></textarea></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-end" style="gap:10px">
+        <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary">Cancel</a>
+        <button class="btn btn-success px-4" type="submit"><i class="fas fa-save mr-1"></i> Save Product Changes</button>
+    </div>
+</form>
+
+<div class="card form-card mt-4 mb-5">
+    <div class="card-header">Product Gallery</div>
+    <div class="card-body">
+        <div class="gallery-shell">
+            <div class="gallery-top"><div><h5>Customer-facing images</h5><div class="small text-muted mt-1">Add up to 5 images, choose the primary one, or remove any incorrect image.</div></div><span class="count">@galleryCount / 5 images</span></div>
+
+            @if(galleryCount < 5)
+            {
+                <form asp-action="UploadImages" asp-route-id="@Model.ProductId" method="post" enctype="multipart/form-data" class="upload-box">
+                    @Html.AntiForgeryToken()
+                    <i class="far fa-images fa-2x text-info mb-2"></i>
+                    <div class="font-weight-bold">Add more product images</div>
+                    <div class="small text-muted">Choose one or multiple JPG/PNG files. Existing images stay unchanged.</div>
+                    <input type="file" name="galleryFiles" accept="image/png,image/jpeg" multiple class="form-control-file"/>
+                    <button class="btn btn-success mt-2" type="submit"><i class="fas fa-cloud-upload-alt mr-1"></i> Add Images</button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-info">Maximum gallery size reached. Delete an image first if you want to replace one.</div>
+            }
+
+            @if(Model.ExistingImages != null && Model.ExistingImages.Any())
+            {
+                <div class="gallery-grid">
+                    @foreach(var image in Model.ExistingImages.OrderByDescending(x=>x.IsPrimary).ThenBy(x=>x.DisplayOrder))
+                    {
+                        <div class="gallery-card @(image.IsPrimary ? "primary" : "")">
+                            <img src="@image.ImageUrl" alt="@Model.ProductName"/>
+                            <div class="gallery-meta"><span class="small text-muted">Image #@(image.DisplayOrder + 1)</span>@if(image.IsPrimary){<span class="primary-badge"><i class="fas fa-star"></i> Primary</span>}</div>
+                            <div class="gallery-actions">
+                                @if(!image.IsPrimary)
+                                {
+                                    <form asp-action="SetPrimaryImage" asp-route-id="@Model.ProductId" method="post">@Html.AntiForgeryToken()<input type="hidden" name="imageId" value="@image.ProductImageId"/><button class="btn btn-outline-info btn-sm" type="submit"><i class="fas fa-star mr-1"></i> Set Primary</button></form>
+                                }
+                                <form asp-action="DeleteGalleryImage" asp-route-id="@Model.ProductId" method="post" onsubmit="return confirm('Remove this image from the product?');">@Html.AntiForgeryToken()<input type="hidden" name="imageId" value="@image.ProductImageId"/><button class="btn btn-outline-danger btn-sm" type="submit"><i class="fas fa-trash mr-1"></i> Delete</button></form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-gallery"><i class="far fa-images fa-2x mb-2"></i><div>No gallery images yet. Add the first product image above.</div></div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<partial name="_ValidationScriptsPartial"/>
+<script>
+(function(){
+    const rx=document.getElementById('rxToggle'), note=document.getElementById('rxNote'), panel=document.getElementById('advancedPanel'), toggle=document.getElementById('advancedToggle'), icon=document.getElementById('advancedIcon');
+    function setAdvanced(open){panel.classList.toggle('show',open);icon.classList.toggle('fa-chevron-up',open);icon.classList.toggle('fa-chevron-down',!open);}
+    function syncRx(){note.classList.toggle('show',rx.checked);if(rx.checked)setAdvanced(true);}
+    toggle.addEventListener('click',()=>setAdvanced(!panel.classList.contains('show')));
+    rx.addEventListener('change',syncRx);
+    if(rx.checked)setAdvanced(true);
+    syncRx();
+})();
+</script>
+}
