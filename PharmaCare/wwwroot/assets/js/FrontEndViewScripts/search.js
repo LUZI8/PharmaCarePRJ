@@ -276,6 +276,11 @@ function handleShopSearch() {
         }
 
         function openPanel() {
+            const aiPanel = document.getElementById('pc-ai-panel');
+            if (aiPanel) {
+                aiPanel.classList.remove('is-open');
+                aiPanel.setAttribute('aria-hidden', 'true');
+            }
             panel.classList.add('is-open');
             panel.setAttribute('aria-hidden', 'false');
             document.getElementById('pc-support-page').value = window.location.pathname + window.location.search;
@@ -372,4 +377,14 @@ function handleShopSearch() {
     } else {
         initSupportWidget();
     }
+})();
+
+// Load the AI assistant as a separate module so support and AI stay independently maintainable.
+(function () {
+    if (document.querySelector('script[data-pc-ai-loader]')) return;
+    const script = document.createElement('script');
+    script.src = '/assets/js/FrontEndViewScripts/ai-assistant.js';
+    script.defer = true;
+    script.dataset.pcAiLoader = 'true';
+    document.head.appendChild(script);
 })();
