@@ -1,123 +1,117 @@
 @{
-    ViewData["Title"] = "PharmaCare Contact";
+    ViewData["Title"] = "Contact PharmaCare";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
 }
 
-<div class="site-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h2 class="h3 mb-5 text-danger">Get in touch / Give us your feedback</h2>
+@section Styles {
+<style>
+    .contact-page{background:#f6faf9;color:#142129;overflow:hidden}
+    .contact-shell{width:min(1180px,calc(100% - 40px));margin:0 auto}
+    .contact-hero{position:relative;padding:82px 0 76px;background:linear-gradient(110deg,#073b3c 0%,#0a7771 62%,#119b90 100%);color:#fff;overflow:hidden}
+    .contact-hero:before,.contact-hero:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.13);pointer-events:none}.contact-hero:before{width:390px;height:390px;right:-100px;top:-190px}.contact-hero:after{width:230px;height:230px;left:-75px;bottom:-125px}
+    .contact-hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:end}.contact-kicker{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:18px}.contact-hero h1{font-size:clamp(42px,5.5vw,68px);line-height:1;letter-spacing:-2px;font-weight:850;margin:0 0 20px;max-width:720px}.contact-hero p{font-size:17px;line-height:1.75;color:#d3e7e4;max-width:650px;margin:0}.contact-hero-note{display:grid;gap:11px}.contact-hero-line{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(255,255,255,.07);font-size:14px;color:#edf8f6}.contact-hero-line i{width:22px;text-align:center;color:#54ddd0}
+    .contact-main{padding:72px 0 84px}.contact-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:24px;align-items:start}.contact-card{background:#fff;border:1px solid #dfeae8;border-radius:24px;box-shadow:0 18px 50px rgba(15,74,72,.07);overflow:hidden}.contact-card-head{padding:28px 30px 20px;border-bottom:1px solid #edf2f1}.contact-card-head h2{font-size:27px;font-weight:850;margin:0 0 6px}.contact-card-head p{margin:0;color:#708087;font-size:14px}.contact-form{padding:28px 30px 32px}.contact-fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}.contact-field{margin-bottom:18px}.contact-field.full{grid-column:1/-1}.contact-field label{display:block;font-size:12px;font-weight:850;letter-spacing:.55px;text-transform:uppercase;color:#53636a;margin-bottom:8px}.contact-field label span{color:#0b9a8e}.contact-input-wrap{position:relative}.contact-input-wrap>i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#8a989e;pointer-events:none}.contact-input,.contact-textarea{width:100%;border:1px solid #d6e1df;background:#fbfdfd;color:#17262c;border-radius:13px;outline:none;transition:.2s ease}.contact-input{height:50px;padding:0 15px 0 43px}.contact-textarea{min-height:180px;padding:15px;resize:vertical}.contact-input:focus,.contact-textarea:focus{border-color:#0e9c90;box-shadow:0 0 0 4px rgba(14,156,144,.09);background:#fff}.contact-submit{width:100%;height:54px;border:0;border-radius:14px;background:#109b90;color:#fff;font-weight:850;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 12px 26px rgba(16,155,144,.2);transition:.2s ease}.contact-submit:hover{background:#0a887e;transform:translateY(-2px)}
+    .contact-alert{margin-bottom:18px;padding:14px 16px;border-radius:13px;font-size:14px;line-height:1.6}.contact-alert.success{background:#e9f8f1;border:1px solid #bee9d4;color:#16734d}.contact-alert.info{background:#eaf7fa;border:1px solid #bfe4eb;color:#176473}
+    .contact-side{display:grid;gap:18px}.contact-info-card{padding:24px;background:#073b3c;color:#fff;border-radius:22px;box-shadow:0 18px 44px rgba(7,59,60,.14)}.contact-info-card h3{font-size:22px;font-weight:850;margin:0 0 8px}.contact-info-card>p{color:#bdd9d6;font-size:14px;line-height:1.65;margin:0 0 22px}.contact-methods{display:grid;gap:11px}.contact-method{display:flex;align-items:center;gap:13px;padding:13px;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:rgba(255,255,255,.055)}.contact-method-icon{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#125b59;color:#5ce1d3}.contact-method strong{display:block;font-size:12px;margin-bottom:3px}.contact-method span{font-size:13px;color:#c9e0de}.contact-help-card{padding:23px;background:#fff;border:1px solid #dfeae8;border-radius:20px}.contact-help-card h3{font-size:18px;font-weight:850;margin:0 0 9px}.contact-help-card p{font-size:13px;line-height:1.65;color:#6c7b82;margin:0}.contact-help-card i{color:#0c978b;margin-right:7px}
+    .feedback-section{padding:0 0 92px}.feedback-head{text-align:center;max-width:690px;margin:0 auto 30px}.feedback-kicker{font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:850;color:#0c9487;margin-bottom:10px}.feedback-head h2{font-size:clamp(30px,4vw,43px);font-weight:850;letter-spacing:-1px;margin:0 0 10px}.feedback-head p{color:#6c7a81;line-height:1.7;margin:0}.feedback-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.feedback-card{position:relative;background:#fff;border:1px solid #dfe9e7;border-radius:20px;padding:25px;transition:.25s ease}.feedback-card:hover{transform:translateY(-5px);box-shadow:0 18px 38px rgba(20,63,61,.08)}.feedback-stars{display:flex;gap:3px;color:#e8a90b;font-size:12px;margin-bottom:15px}.feedback-card blockquote{font-size:14px;line-height:1.75;color:#53636a;margin:0 0 19px}.feedback-person{display:flex;align-items:center;gap:11px}.feedback-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e7f7f4;color:#0c9487;font-weight:850}.feedback-person strong{display:block;font-size:14px}.feedback-person span{font-size:12px;color:#849096}
+    .dark-mode .contact-page{background:#151b1d;color:#f3f7f6}.dark-mode .contact-card,.dark-mode .contact-help-card,.dark-mode .feedback-card{background:#20282a;border-color:#303b3d}.dark-mode .contact-card-head{border-color:#303b3d}.dark-mode .contact-card-head h2,.dark-mode .contact-help-card h3,.dark-mode .feedback-head h2,.dark-mode .feedback-person strong{color:#f5f7f7}.dark-mode .contact-card-head p,.dark-mode .contact-help-card p,.dark-mode .feedback-head p,.dark-mode .feedback-card blockquote,.dark-mode .feedback-person span{color:#aeb9bc}.dark-mode .contact-field label{color:#c2cccf}.dark-mode .contact-input,.dark-mode .contact-textarea{background:#171e20;border-color:#364144;color:#f4f7f7}.dark-mode .contact-input:focus,.dark-mode .contact-textarea:focus{background:#1a2224}.dark-mode .feedback-avatar{background:#183c39}
+    @@keyframes contactFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}.contact-reveal{animation:contactFade .6s ease both}.contact-delay{animation-delay:.1s}
+    @@media(max-width:991px){.contact-hero-grid,.contact-grid{grid-template-columns:1fr}.contact-hero-note{grid-template-columns:repeat(3,1fr)}.feedback-grid{grid-template-columns:1fr 1fr}}
+    @@media(max-width:767px){.contact-shell{width:min(100% - 28px,1180px)}.contact-hero{padding:60px 0}.contact-hero h1{font-size:43px}.contact-hero-note{grid-template-columns:1fr}.contact-main{padding:48px 0 64px}.contact-card-head,.contact-form{padding-left:20px;padding-right:20px}.contact-fields{grid-template-columns:1fr}.contact-field.full{grid-column:auto}.feedback-grid{grid-template-columns:1fr}.feedback-section{padding-bottom:68px}}
+</style>
+}
+
+<div class="contact-page">
+    <section class="contact-hero">
+        <div class="contact-shell contact-hero-grid">
+            <div class="contact-reveal">
+                <div class="contact-kicker"><i class="far fa-comments"></i> Contact PharmaCare</div>
+                <h1>Questions, feedback or help with an order?</h1>
+                <p>Send us a message and our pharmacy team will help point you in the right direction. For order-specific questions, include the order number in your message when available.</p>
             </div>
-
-            <!-- Conditional success message display from TempData -->
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="col-md-12">
-                    <div class="alert alert-success mb-4">
-                        @TempData["SuccessMessage"]
-                    </div>
-                </div>
-            }
-
-            <!-- Special information for password reset requests -->
-            @if (ViewBag.PrefilledSubject == "Password Reset Request")
-            {
-                <div class="col-md-12">
-                    <div class="alert alert-info mb-4">
-                        <i class="fas fa-info-circle"></i> Please provide your name, email, and any additional information to help us verify your identity. An administrator will contact you shortly with instructions to reset your password.
-                    </div>
-                </div>
-            }
-            <div class="col-md-12">
-                <!-- Contact form with POST submission to FrontEnd controller -->
-                <form action="@Url.Action("SubmitContact", "FrontEnd")" method="post">
-
-                    <div class="p-3 p-lg-5 border">
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <!-- Required field indicators with red asterisks -->
-                                <label for="c_fname" class=" text-dark">First Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="c_fname" name="c_fname">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="c_lname" class="text-dark">Last Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="c_lname" name="c_lname">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label for="c_email" class="text-dark">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="c_email" name="c_email" placeholder="">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label for="c_subject" class="text-dark">Subject </label>
-                                <!-- Subject field with conditional prefilling from ViewBag -->
-                                <input type="text" class="form-control" id="c_subject" name="c_subject"
-                                       value="@(ViewBag.PrefilledSubject ?? "")"
-                                       placeholder="@(ViewBag.PrefilledSubject == "Password Reset Request" ? "Password Reset Request" : "")">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <label for="c_message" class="text-dark">Message </label>
-                                <textarea name="c_message" id="c_message" cols="30" rows="7" class="form-control"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-lg-12">
-                                <input type="submit" class="btn btn-danger btn-lg btn-block" value="Send Message">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Anti-forgery token for form security -->
-                    @Html.AntiForgeryToken()
-
-                </form>
+            <div class="contact-hero-note contact-reveal contact-delay">
+                <div class="contact-hero-line"><i class="fas fa-map-marker-alt"></i><span>Amman, Jordan</span></div>
+                <div class="contact-hero-line"><i class="fas fa-phone-alt"></i><span>+962 7 9999 8888</span></div>
+                <div class="contact-hero-line"><i class="fas fa-envelope"></i><span>pharmacare@info.com</span></div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- Customer testimonials section with varying background colors -->
-<div class="site-section bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h2 class="text-dark mb-4">Feedback</h2>
-            </div>
-            <!-- Testimonial cards with different background styling -->
-            <div class="col-lg-4">
-                <div class="p-4 bg-light mb-3 rounded">
-                    <span class="d-block text-black h6 text-uppercase">Mohammad Ali </span>
-                    <p class="mb-0 text-black">
-                        "The customer service team is amazing! They answered all my questions quickly and made the whole process so easy. Highly recommend!"
-                    </p>
+    <main class="contact-main">
+        <div class="contact-shell contact-grid">
+            <section class="contact-card contact-reveal">
+                <div class="contact-card-head">
+                    <h2>Send us a message</h2>
+                    <p>Tell us what you need and include enough detail for us to help quickly.</p>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <!-- White background for visual variety -->
-                <div class="p-4 bg-white mb-3 rounded">
-                    <span class="d-block text-black h6 text-uppercase">Salem Ayoub</span>
-                    <p class="mb-0 text-black">
-                        "This website has a great selection of medicines, and the filtering feature makes it easy to find what I need. It's so convenient and saves me a lot of time!"
-                    </p>
+                <div class="contact-form">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="contact-alert success"><i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]</div>
+                    }
+                    @if (ViewBag.PrefilledSubject == "Password Reset Request")
+                    {
+                        <div class="contact-alert info"><i class="fas fa-info-circle"></i> Please provide your name, email and any additional information that can help us verify the request.</div>
+                    }
+                    <form action="@Url.Action("SubmitContact", "FrontEnd")" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="contact-fields">
+                            <div class="contact-field">
+                                <label for="c_fname">First name <span>*</span></label>
+                                <div class="contact-input-wrap"><i class="fas fa-user"></i><input type="text" class="contact-input" id="c_fname" name="c_fname" autocomplete="given-name" required /></div>
+                            </div>
+                            <div class="contact-field">
+                                <label for="c_lname">Last name <span>*</span></label>
+                                <div class="contact-input-wrap"><i class="fas fa-user"></i><input type="text" class="contact-input" id="c_lname" name="c_lname" autocomplete="family-name" required /></div>
+                            </div>
+                            <div class="contact-field full">
+                                <label for="c_email">Email address <span>*</span></label>
+                                <div class="contact-input-wrap"><i class="fas fa-envelope"></i><input type="email" class="contact-input" id="c_email" name="c_email" autocomplete="email" required /></div>
+                            </div>
+                            <div class="contact-field full">
+                                <label for="c_subject">Subject</label>
+                                <div class="contact-input-wrap"><i class="fas fa-tag"></i><input type="text" class="contact-input" id="c_subject" name="c_subject" value="@(ViewBag.PrefilledSubject ?? "")" placeholder="What can we help with?" /></div>
+                            </div>
+                            <div class="contact-field full">
+                                <label for="c_message">Message</label>
+                                <textarea name="c_message" id="c_message" class="contact-textarea" placeholder="Tell us how we can help..."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="contact-submit"><i class="fas fa-paper-plane"></i> Send message</button>
+                    </form>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="p-4 bg-white mb-3 rounded">
-                    <span class="d-block text-black h6 text-uppercase">Jawad Hassan</span>
-                    <p class="mb-0 text-black">
-                        "Fast and reliable delivery! My order arrived right on time, and everything was perfectly packaged. Great experience!"
-                    </p>
+            </section>
+
+            <aside class="contact-side contact-reveal contact-delay">
+                <div class="contact-info-card">
+                    <h3>Contact information</h3>
+                    <p>Use the form for general support, product questions, feedback or help with an existing order.</p>
+                    <div class="contact-methods">
+                        <div class="contact-method"><span class="contact-method-icon"><i class="fas fa-map-marker-alt"></i></span><span><strong>Visit us</strong><span>Almadina Almonoara St, Amman, Jordan</span></span></div>
+                        <div class="contact-method"><span class="contact-method-icon"><i class="fas fa-phone-alt"></i></span><span><strong>Call us</strong><span>+962 7 9999 8888</span></span></div>
+                        <div class="contact-method"><span class="contact-method-icon"><i class="fas fa-envelope"></i></span><span><strong>Email us</strong><span>pharmacare@info.com</span></span></div>
+                    </div>
                 </div>
+                <div class="contact-help-card"><h3><i class="fas fa-headset"></i> Need order help?</h3><p>For faster support, include your order number and the email address used for your PharmaCare account.</p></div>
+                <div class="contact-help-card"><h3><i class="fas fa-prescription-bottle-alt"></i> Prescription pickup</h3><p>Prescription medicines are reserved online and verified at the pharmacy when you arrive for pickup.</p></div>
+            </aside>
+        </div>
+    </main>
+
+    <section class="feedback-section">
+        <div class="contact-shell">
+            <div class="feedback-head">
+                <div class="feedback-kicker">Customer feedback</div>
+                <h2>What customers say about PharmaCare</h2>
+                <p>Feedback helps us keep the ordering and pharmacy experience clear, dependable and easy to use.</p>
+            </div>
+            <div class="feedback-grid">
+                <article class="feedback-card"><div class="feedback-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><blockquote>“The customer service team answered my questions quickly and made the whole process easy.”</blockquote><div class="feedback-person"><span class="feedback-avatar">MA</span><span><strong>Mohammad Ali</strong><span>PharmaCare customer</span></span></div></article>
+                <article class="feedback-card"><div class="feedback-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><blockquote>“The product selection and filtering make it easy to find what I need without wasting time.”</blockquote><div class="feedback-person"><span class="feedback-avatar">SA</span><span><strong>Salem Ayoub</strong><span>PharmaCare customer</span></span></div></article>
+                <article class="feedback-card"><div class="feedback-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><blockquote>“Delivery was reliable, everything arrived well packaged and the order experience was straightforward.”</blockquote><div class="feedback-person"><span class="feedback-avatar">JH</span><span><strong>Jawad Hassan</strong><span>PharmaCare customer</span></span></div></article>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
-<!-- External JavaScript file for contact form functionality -->
 <script src="~/assets/js/FrontEndViewScripts/Contact.js"></script>
