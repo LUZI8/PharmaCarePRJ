@@ -46,21 +46,21 @@ namespace PharmaCare.Controllers
                     .OrderBy(p => p.Stock)
                     .ToListAsync();
 
-                // Keep dashboard aggregates in SQL instead of loading the full orders table into memory.
-                var orderCountTask = _context.Orders.AsNoTracking().CountAsync();
-                var ordersTodayTask = _context.Orders.AsNoTracking().CountAsync(o => o.OrderDate >= today && o.OrderDate < tomorrow);
-                var totalRevenueTask = _context.Orders.AsNoTracking().Where(o => o.Status != "Cancelled")
-                    .SumAsync(o => (decimal?)o.TotalAmount);
-                var revenueTodayTask = _context.Orders.AsNoTracking()
+                // Execute database aggregates sequentially on this scoped DbContext.
+                // This stays memory-efficient without triggering EF Core's concurrent-operation restriction.
+                var orderCount = await _context.Orders.AsNoTracking().CountAsync();
+                var ordersToday = await _context.Orders.AsNoTracking()
+                    .CountAsync(o => o.OrderDate >= today && o.OrderDate < tomorrow);
+                var totalRevenue = await _context.Orders.AsNoTracking().Where(o => o.Status != "Cancelled")
+                    .SumAsync(o => (decimal?)o.TotalAmount) ?? 0m;
+                var revenueToday = await _context.Orders.AsNoTracking()
                     .Where(o => o.Status != "Cancelled" && o.OrderDate >= today && o.OrderDate < tomorrow)
-                    .SumAsync(o => (decimal?)o.TotalAmount);
-                var customerCountTask = _context.User.AsNoTracking().CountAsync(u => u.Role == "Customer" && u.IsActive);
-                var pickupCountTask = _context.PrescriptionReservations.AsNoTracking().CountAsync(r => r.Status == "Reserved");
-                var feedbackCountTask = _context.ContactMessages.AsNoTracking().CountAsync();
+                    .SumAsync(o => (decimal?)o.TotalAmount) ?? 0m;
+                var customerCount = await _context.User.AsNoTracking().CountAsync(u => u.Role == "Customer" && u.IsActive);
+                var pickupCount = await _context.PrescriptionReservations.AsNoTracking().CountAsync(r => r.Status == "Reserved");
+                var feedbackCount = await _context.ContactMessages.AsNoTracking().CountAsync();
 
-                await Task.WhenAll(orderCountTask, ordersTodayTask, totalRevenueTask, revenueTodayTask, customerCountTask, pickupCountTask, feedbackCountTask);
-
-                var lowStock = activeProducts.Where(p => p.Stock > 0 && p.Stock <= Math.Max(10, p.ReorderLevel)).ToList();
+                var lowStock = activeProducts.Where(p => p.Stock > 0 && (p.Stock <= 10 || p.Stock <= p.ReorderLevel)).ToList();
                 var outOfStock = activeProducts.Where(p => p.Stock <= 0).ToList();
                 var expiringSoon = activeProducts
                     .Where(p => p.ExpiryDate >= today && p.ExpiryDate <= expiryThreshold)
@@ -71,17 +71,17 @@ namespace PharmaCare.Controllers
                 {
                     Products = activeProducts,
                     RecentOrders = await _orderRepository.GetRecentOrdersAsync(5),
-                    OrderCount = orderCountTask.Result,
+                    OrderCount = orderCount,
                     InventoryCount = activeProducts.Count,
-                    CustomerCount = customerCountTask.Result,
+                    CustomerCount = customerCount,
                     LowStockCount = lowStock.Count,
                     OutOfStockCount = outOfStock.Count,
                     ExpiringSoonCount = expiringSoon.Count,
-                    PendingPickupCount = pickupCountTask.Result,
-                    FeedbackCount = feedbackCountTask.Result,
-                    OrdersToday = ordersTodayTask.Result,
-                    TotalRevenue = totalRevenueTask.Result ?? 0m,
-                    RevenueToday = revenueTodayTask.Result ?? 0m,
+                    PendingPickupCount = pickupCount,
+                    FeedbackCount = feedbackCount,
+                    OrdersToday = ordersToday,
+                    TotalRevenue = totalRevenue,
+                    RevenueToday = revenueToday,
                     LowStockProducts = outOfStock.Concat(lowStock).Take(5).ToList(),
                     ExpiringProducts = expiringSoon.Take(5).ToList()
                 };
