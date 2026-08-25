@@ -1,7 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Load an untracked local overrides file last, so it wins over appsettings.json.
-// This is where the SMTP password lives on each machine; it's git-ignored, never committed.
+// This is where local secrets such as SMTP and AI API keys live; it is git-ignored and never committed.
 builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 
 builder.Services.AddControllersWithViews();
@@ -22,6 +22,10 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 // With no SMTP host configured, EmailService logs codes instead of sending (dev fallback).
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// AI: keep the provider secret in appsettings.Local.json or user-secrets, never in source control.
+builder.Services.Configure<AISettings>(builder.Configuration.GetSection("AISettings"));
+builder.Services.AddHttpClient<IAIService, OpenAIService>();
 
 // Background service for expired reservations cleanup
 builder.Services.AddScoped<IExpiredReservationsService, ExpiredReservationsService>();
