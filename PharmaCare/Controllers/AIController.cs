@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace PharmaCare.Controllers
 {
@@ -8,22 +9,34 @@ namespace PharmaCare.Controllers
         private readonly IAIService _aiService;
         private readonly DataDbContext _db;
         private readonly ILogger<AIController> _logger;
+        private readonly AISettings _aiSettings;
 
         private const int MaxMessageLength = 1200;
         private const int MaxRequestsPerWindow = 20;
         private static readonly TimeSpan RateWindow = TimeSpan.FromMinutes(10);
 
-        public AIController(IAIService aiService, DataDbContext db, ILogger<AIController> logger)
+        public AIController(
+            IAIService aiService,
+            DataDbContext db,
+            ILogger<AIController> logger,
+            IOptions<AISettings> aiOptions)
         {
             _aiService = aiService;
             _db = db;
             _logger = logger;
+            _aiSettings = aiOptions.Value;
         }
 
         [HttpGet]
         public IActionResult Status()
         {
-            return Json(new { enabled = _aiService.IsConfigured });
+            return Json(new
+            {
+                enabled = _aiService.IsConfigured,
+                enabledSetting = _aiSettings.Enabled,
+                hasApiKey = !string.IsNullOrWhiteSpace(_aiSettings.ApiKey),
+                model = _aiSettings.Model
+            });
         }
 
         [HttpPost]
