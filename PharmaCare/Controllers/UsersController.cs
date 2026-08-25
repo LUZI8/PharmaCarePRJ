@@ -133,23 +133,33 @@
             {
                 var user = await _userRepository.GetByIdAsync(id);
                 if (user == null)
-                    return Json(new { success = false, message = "User not found." });
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToAction(nameof(Index));
+                }
 
                 var currentUserId = HttpContext.Session.GetInt32("UserId");
                 if (currentUserId == id)
-                    return Json(new { success = false, message = "You cannot deactivate your own administrator account." });
+                {
+                    TempData["ErrorMessage"] = "You cannot deactivate your own administrator account.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
 
                 user.IsActive = !user.IsActive;
                 var result = await _userRepository.UpdateAsync(user);
                 if (result == null)
-                    return Json(new { success = false, message = "Unable to update account status." });
+                {
+                    TempData["ErrorMessage"] = "Unable to update account status.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
 
-                var statusText = result.IsActive ? "activated" : "deactivated";
-                return Json(new { success = true, message = $"User {statusText} successfully.", isActive = result.IsActive });
+                TempData["SuccessMessage"] = result.IsActive ? "User activated successfully." : "User deactivated successfully.";
+                return RedirectToAction(nameof(Details), new { id });
             }
             catch
             {
-                return Json(new { success = false, message = "Unable to update account status. Please try again." });
+                TempData["ErrorMessage"] = "Unable to update account status. Please try again.";
+                return RedirectToAction(nameof(Details), new { id });
             }
         }
 
