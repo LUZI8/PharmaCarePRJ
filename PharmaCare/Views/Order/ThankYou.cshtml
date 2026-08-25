@@ -1,118 +1,114 @@
-﻿@model PharmaCare.Models.Order
+@model PharmaCare.Models.Order
 @{
-    ViewData["Title"] = "Thank You";
+    ViewData["Title"] = "Order Confirmed";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
     ViewBag.HideCategories = true;
+    var itemCount = Model.OrderItems?.Sum(x => x.Quantity) ?? 0;
 }
-<link rel="stylesheet" href="/assets/css/OrderViewStyles/ThankYouPage.css" />
 
-<div class="site-section thank-you-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <!-- Success icon and confirmation message displayed prominently -->
-                <i class="fas fa-check-circle success-icon"></i>
-                <h2 class="display-3 text-black">Thank you!</h2>
-                <p class="lead mb-5">Your order has been successfully placed.</p>
+@section Styles {
+<style>
+.thank-page{--ty-accent:#0f9d8f;--ty-accent-dark:#08776d;--ty-ink:#15212b;--ty-muted:#71808d;--ty-line:#e3eaee;--ty-card:#fff;position:relative;overflow:hidden;background:linear-gradient(180deg,#f3fbfa 0,#f8fbfb 320px,#fff 100%);padding:48px 0 76px;color:var(--ty-ink)}
+.thank-page:before,.thank-page:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.thank-page:before{width:420px;height:420px;right:-190px;top:-170px;background:radial-gradient(circle,rgba(15,157,143,.13),rgba(15,157,143,0) 68%)}.thank-page:after{width:300px;height:300px;left:-150px;bottom:70px;background:radial-gradient(circle,rgba(20,184,166,.08),rgba(20,184,166,0) 70%)}
+.thank-shell{max-width:1160px;margin:0 auto;padding:0 22px;position:relative;z-index:1}.success-hero{text-align:center;max-width:760px;margin:0 auto 28px;animation:tyRise .5s ease both}.success-badge{width:86px;height:86px;margin:0 auto 20px;border-radius:28px;background:linear-gradient(145deg,#10b981,#0f9d8f);display:grid;place-items:center;color:#fff;font-size:38px;box-shadow:0 16px 38px rgba(15,157,143,.24);position:relative}.success-badge:after{content:"";position:absolute;inset:-9px;border-radius:34px;border:1px solid rgba(15,157,143,.18);animation:tyPulse 2.2s ease-out infinite}.success-kicker{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:#e8f8f5;color:var(--ty-accent-dark);font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}.success-title{font-size:46px;line-height:1.06;letter-spacing:-1.3px;font-weight:900;margin:0 0 12px}.success-copy{font-size:16px;color:var(--ty-muted);margin:0 auto;max-width:620px;line-height:1.6}.success-copy strong{color:var(--ty-ink)}
+.order-reference{margin:22px auto 0;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.ref-pill{display:flex;align-items:center;gap:9px;padding:10px 13px;border:1px solid var(--ty-line);border-radius:12px;background:#fff;box-shadow:0 6px 18px rgba(15,23,42,.045);font-size:12px;color:var(--ty-muted)}.ref-pill i{color:var(--ty-accent)}.ref-pill strong{color:var(--ty-ink);font-size:12px}
+.thank-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.72fr);gap:22px;align-items:start}.ty-card{background:var(--ty-card);border:1px solid var(--ty-line);border-radius:20px;box-shadow:0 14px 38px rgba(15,23,42,.06);overflow:hidden;animation:tyRise .5s .05s ease both}.ty-card+.ty-card{margin-top:18px}.ty-card-head{padding:18px 20px;border-bottom:1px solid var(--ty-line);display:flex;align-items:center;justify-content:space-between;gap:12px}.ty-card-head h2{font-size:17px;font-weight:850;margin:0}.ty-card-head span{font-size:11px;color:var(--ty-muted)}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:18px 20px 20px}.detail-box{border:1px solid #e7edef;border-radius:14px;padding:14px 15px;background:#fbfdfd;min-width:0}.detail-label{display:flex;align-items:center;gap:7px;color:#8a98a3;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.55px;margin-bottom:7px}.detail-label i{color:var(--ty-accent)}.detail-value{font-size:14px;font-weight:800;color:var(--ty-ink);overflow-wrap:anywhere}.status-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#fff4cc;color:#8a6600;font-size:11px;font-weight:850}
+.ship-card{padding:18px 20px 20px}.ship-line{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid #edf1f3}.ship-line:last-child{border-bottom:0}.ship-icon{width:38px;height:38px;border-radius:11px;background:#eaf8f6;color:var(--ty-accent-dark);display:flex;align-items:center;justify-content:center;flex:none}.ship-line small{display:block;color:var(--ty-muted);font-size:10px;text-transform:uppercase;letter-spacing:.55px;font-weight:800;margin-bottom:4px}.ship-line strong{display:block;font-size:13px;font-weight:750;line-height:1.45;overflow-wrap:anywhere}
+.items-wrap{padding:4px 20px 14px}.order-item-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 100px 110px;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #edf1f3}.order-item-row.header{padding:11px 0 9px;color:#8a98a3;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.55px}.order-item-row.header span:last-child,.order-item-row:not(.header) .item-total{text-align:right}.item-name{font-size:13px;font-weight:800}.item-meta{font-size:12px;color:var(--ty-muted)}.item-total{font-size:14px;font-weight:850}.order-total-row{display:flex;justify-content:flex-end;align-items:center;gap:28px;padding:17px 0 4px}.order-total-row span{font-size:12px;color:var(--ty-muted);font-weight:800}.order-total-row strong{font-size:22px;color:var(--ty-accent-dark)}
+.next-card{position:sticky;top:96px;background:#0b3d3b;color:#fff;border-radius:20px;padding:22px;box-shadow:0 18px 42px rgba(5,63,60,.18);overflow:hidden;animation:tyRise .55s .1s ease both}.next-card:before{content:"";position:absolute;width:205px;height:205px;border-radius:50%;right:-95px;top:-105px;background:rgba(45,212,191,.12)}.next-card h2{position:relative;font-size:20px;font-weight:900;margin:0 0 7px}.next-card>p{position:relative;color:#b9d4d2;font-size:12px;line-height:1.55;margin:0 0 18px}.step-list{position:relative;display:grid;gap:10px;margin-bottom:18px}.step{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;padding:10px 0}.step-num{width:34px;height:34px;border-radius:10px;background:rgba(94,234,212,.12);color:#5eead4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}.step strong{display:block;font-size:13px;margin-bottom:2px}.step span{display:block;color:#bdd3d1;font-size:10.5px;line-height:1.45}.next-actions{position:relative;display:grid;gap:9px}.ty-btn{min-height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-size:13px;font-weight:850;transition:.2s}.ty-btn-primary{background:#19b7a8;color:#fff;box-shadow:0 9px 22px rgba(25,183,168,.22)}.ty-btn-primary:hover{background:#24c9b9;color:#fff;text-decoration:none;transform:translateY(-2px)}.ty-btn-secondary{border:1px solid rgba(255,255,255,.24);color:#fff;background:rgba(255,255,255,.04)}.ty-btn-secondary:hover{background:rgba(255,255,255,.1);color:#fff;text-decoration:none}.support-note{position:relative;display:flex;align-items:center;gap:7px;margin-top:14px;color:#b9d4d2;font-size:10px}.support-note i{color:#5eead4}
+.ty-perks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}.ty-perk{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:11px;padding:13px;background:#fff;border:1px solid var(--ty-line);border-radius:14px;box-shadow:0 7px 22px rgba(15,23,42,.04)}.ty-perk i{width:42px;height:42px;border-radius:12px;background:#eaf8f6;color:var(--ty-accent-dark);display:flex;align-items:center;justify-content:center}.ty-perk strong{display:block;font-size:12px;margin-bottom:3px}.ty-perk span{display:block;color:var(--ty-muted);font-size:10px;line-height:1.4}
+@@keyframes tyRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}@@keyframes tyPulse{0%{transform:scale(.92);opacity:.65}70%{transform:scale(1.15);opacity:0}100%{opacity:0}}
+.dark-mode .thank-page{--ty-ink:#edf5f4;--ty-muted:#9ba8ad;--ty-line:#2d3d3e;--ty-card:#172122;background:linear-gradient(180deg,#101819,#121718 330px)}.dark-mode .ref-pill,.dark-mode .ty-perk{background:#172122}.dark-mode .detail-box{background:#131c1d;border-color:#2c3a3b}.dark-mode .ship-line{border-color:#283536}.dark-mode .ty-perk i,.dark-mode .ship-icon{background:#173331;color:#78e2d6}
+@@media(max-width:991px){.thank-layout{grid-template-columns:1fr}.next-card{position:static}.ty-perks{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@@media(max-width:767px){.thank-page{padding:34px 0 54px}.thank-shell{padding:0 15px}.success-badge{width:74px;height:74px;border-radius:24px;font-size:32px}.success-title{font-size:36px}.success-copy{font-size:14px}.detail-grid{grid-template-columns:1fr}.order-item-row{grid-template-columns:minmax(0,1fr) 52px 90px}.order-item-row.header span:nth-child(3),.order-item-row:not(.header) .item-meta.price{display:none}.order-item-row.header span:nth-child(4){grid-column:3}.item-total{grid-column:3}.ty-perks{grid-template-columns:1fr}.next-card{border-radius:17px}}
+@@media(max-width:420px){.success-title{font-size:32px}.order-reference{justify-content:stretch}.ref-pill{width:100%;justify-content:center}.order-item-row{grid-template-columns:minmax(0,1fr) 48px 76px;gap:7px}.items-wrap{padding-left:14px;padding-right:14px}}
+</style>
+}
 
-                <!-- Order summary card displaying key order information -->
-                <div class="order-details-card mb-4">
-                    <h4>Order Details</h4>
-                    <div class="row mt-4">
-                        <div class="col-md-6 text-md-right">
-                            <p><strong>Order Number:</strong></p>
-                            <p><strong>Order Date:</strong></p>
-                            <p><strong>Total Amount:</strong></p>
-                            <p><strong>Payment Method:</strong></p>
-                            <p><strong>Status:</strong></p>
-                        </div>
-                        <div class="col-md-6 text-md-left">
-                            <p>@Model.OrderNumber</p>
-                            <!-- Format date to full month name, day, and year -->
-                            <p>@Model.OrderDate.ToString("MMMM dd, yyyy")</p>
-                            <!-- Display total amount with 2 decimal places -->
-                            <p>$@Model.TotalAmount.ToString("0.00")</p>
-                            <p>@Model.PaymentMethod</p>
-                            <!-- Status badge with Bootstrap info styling -->
-                            <p><span class="badge badge-info">@Model.Status</span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Shipping address information card -->
-                <div class="order-details-card mb-4">
-                    <h4>Shipping Address</h4>
-                    <p>@Model.ShippingAddress</p>
-                    <p>@Model.City</p>
-                    <p>Phone: @Model.PhoneNumber</p>
-                </div>
-
-                <!-- Detailed order items table with totals -->
-                <div class="order-details-card mb-5">
-                    <h4>Order Items</h4>
-                    <div class="table-responsive mt-4">
-                        <table class="table order-table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Loop through each order item to display product details -->
-                                @foreach (var item in Model.OrderItems)
-                                {
-                                    <tr>
-                                        <td>@item.ProductName</td>
-                                        <td>@item.Quantity</td>
-                                        <!-- Display individual item price formatted to 2 decimals -->
-                                        <td>$@item.Price.ToString("0.00")</td>
-                                        <!-- Calculate and display line total (price × quantity) -->
-                                        <td>$@((item.Price * item.Quantity).ToString("0.00"))</td>
-                                    </tr>
-                                }
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <!-- Order total row spanning 3 columns with right alignment -->
-                                    <th colspan="3" class="text-right">Total:</th>
-                                    <th>$@Model.TotalAmount.ToString("0.00")</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Navigation buttons for user actions after order completion -->
-                <p>
-                    <!-- Primary button to return to homepage -->
-                    <a href="@Url.Action("Index", "FrontEnd")" class="btn btn-primary">Back to Homepage</a>
-                    <!-- Secondary button to continue shopping -->
-                    <a href="@Url.Action("Shop", "FrontEnd")" class="btn btn-custom-outline">Continue Shopping</a>
-                </p>
-
-                <!-- Additional navigation option to return to cart -->
-                <p class="mt-3">
-                    <a href="@Url.Action("Cart", "FrontEnd")" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left mr-2"></i>Back to Cart
-                    </a>
-                </p>
+<section class="thank-page">
+    <div class="thank-shell">
+        <header class="success-hero">
+            <div class="success-badge"><i class="fas fa-check"></i></div>
+            <div class="success-kicker"><i class="fas fa-shield-alt"></i> Order confirmed</div>
+            <h1 class="success-title">Thank you for your order.</h1>
+            <p class="success-copy">Your order has been placed successfully. We’ll prepare it for fulfillment and you can follow its progress from <strong>My Orders</strong>.</p>
+            <div class="order-reference">
+                <div class="ref-pill"><i class="fas fa-receipt"></i><span>Order</span><strong>#@Model.OrderNumber</strong></div>
+                <div class="ref-pill"><i class="far fa-calendar-alt"></i><span>Placed</span><strong>@Model.OrderDate.ToString("MMM dd, yyyy")</strong></div>
+                <div class="ref-pill"><i class="fas fa-box"></i><span>Items</span><strong>@itemCount</strong></div>
             </div>
+        </header>
+
+        <div class="thank-layout">
+            <div>
+                <section class="ty-card">
+                    <div class="ty-card-head"><div><h2>Order summary</h2><span>Everything you need for your records</span></div><span class="status-pill"><i class="fas fa-clock"></i> @Model.Status</span></div>
+                    <div class="detail-grid">
+                        <div class="detail-box"><div class="detail-label"><i class="fas fa-hashtag"></i> Order number</div><div class="detail-value">@Model.OrderNumber</div></div>
+                        <div class="detail-box"><div class="detail-label"><i class="far fa-calendar-alt"></i> Order date</div><div class="detail-value">@Model.OrderDate.ToString("MMMM dd, yyyy")</div></div>
+                        <div class="detail-box"><div class="detail-label"><i class="fas fa-money-bill-wave"></i> Payment</div><div class="detail-value">@Model.PaymentMethod</div></div>
+                        <div class="detail-box"><div class="detail-label"><i class="fas fa-wallet"></i> Total paid on delivery</div><div class="detail-value">$@Model.TotalAmount.ToString("0.00")</div></div>
+                    </div>
+                </section>
+
+                <section class="ty-card">
+                    <div class="ty-card-head"><div><h2>Delivery details</h2><span>We’ll use these details to fulfill your order</span></div></div>
+                    <div class="ship-card">
+                        <div class="ship-line"><span class="ship-icon"><i class="fas fa-map-marker-alt"></i></span><div><small>Shipping address</small><strong>@Model.ShippingAddress</strong></div></div>
+                        <div class="ship-line"><span class="ship-icon"><i class="fas fa-city"></i></span><div><small>City</small><strong>@Model.City</strong></div></div>
+                        <div class="ship-line"><span class="ship-icon"><i class="fas fa-phone-alt"></i></span><div><small>Phone</small><strong>@Model.PhoneNumber</strong></div></div>
+                    </div>
+                </section>
+
+                <section class="ty-card">
+                    <div class="ty-card-head"><div><h2>Items in this order</h2><span>@itemCount item@(itemCount == 1 ? "" : "s")</span></div></div>
+                    <div class="items-wrap">
+                        <div class="order-item-row header"><span>Product</span><span>Qty</span><span>Price</span><span>Total</span></div>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <div class="order-item-row">
+                                <div><div class="item-name">@item.ProductName</div></div>
+                                <div class="item-meta">@item.Quantity</div>
+                                <div class="item-meta price">$@item.Price.ToString("0.00")</div>
+                                <div class="item-total">$@((item.Price * item.Quantity).ToString("0.00"))</div>
+                            </div>
+                        }
+                        <div class="order-total-row"><span>Order total</span><strong>$@Model.TotalAmount.ToString("0.00")</strong></div>
+                    </div>
+                </section>
+
+                <div class="ty-perks">
+                    <div class="ty-perk"><i class="fas fa-box"></i><div><strong>Order received</strong><span>Your order is now in our system.</span></div></div>
+                    <div class="ty-perk"><i class="fas fa-warehouse"></i><div><strong>Pharmacy managed</strong><span>Stock is handled by the pharmacy team.</span></div></div>
+                    <div class="ty-perk"><i class="fas fa-headset"></i><div><strong>Need help?</strong><span>Contact us if you need order support.</span></div></div>
+                </div>
+            </div>
+
+            <aside class="next-card">
+                <h2>What happens next?</h2>
+                <p>Your order is confirmed. Here’s what to expect from this point.</p>
+                <div class="step-list">
+                    <div class="step"><span class="step-num">1</span><div><strong>We review your order</strong><span>The pharmacy team checks the order and available stock.</span></div></div>
+                    <div class="step"><span class="step-num">2</span><div><strong>Your order is prepared</strong><span>Status will update as the order moves through fulfillment.</span></div></div>
+                    <div class="step"><span class="step-num">3</span><div><strong>Payment on delivery</strong><span>Pay the delivery person when your order arrives.</span></div></div>
+                </div>
+                <div class="next-actions">
+                    <a href="@Url.Action("Index", "Order")" class="ty-btn ty-btn-primary"><i class="fas fa-box-open"></i> View my orders <i class="fas fa-arrow-right"></i></a>
+                    <a href="@Url.Action("Shop", "FrontEnd")" class="ty-btn ty-btn-secondary"><i class="fas fa-shopping-bag"></i> Continue shopping</a>
+                </div>
+                <div class="support-note"><i class="fas fa-shield-alt"></i> Keep your order number for reference.</div>
+            </aside>
         </div>
     </div>
-</div>
+</section>
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            /* Push current state to browser history to prevent accidental back navigation */
-            window.history.pushState({page: "thank-you"}, "Thank You", window.location.href);
-            /* Redirect to cart page if user tries to navigate back using browser back button */
-            window.onpopstate = function() {
-                window.location.href = "@Url.Action("Cart", "FrontEnd")";
-            };
-        });
-    </script>
+<script>
+(function(){
+    if (window.history && window.history.replaceState) {
+        window.history.replaceState({ page: 'thank-you' }, 'Order confirmed', window.location.href);
+    }
+})();
+</script>
 }
