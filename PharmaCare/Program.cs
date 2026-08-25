@@ -56,14 +56,16 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// Refresh the visible demo catalog once in development. The seeder is idempotent and keeps
-// products referenced by historical orders/reservations archived instead of breaking history.
+// Refresh the visible demo catalog once in development. Historical references stay intact.
+// Then replace remaining demo artwork with real medicine/package photography where verified.
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<DataDbContext>();
-    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DemoCatalogSeeder");
-    await DemoCatalogSeeder.SeedAsync(db, logger);
+    var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+
+    await DemoCatalogSeeder.SeedAsync(db, loggerFactory.CreateLogger("DemoCatalogSeeder"));
+    await RealMedicineImageSeeder.SeedAsync(db, loggerFactory.CreateLogger("RealMedicineImageSeeder"));
 }
 
 // Development vs Production error handling
