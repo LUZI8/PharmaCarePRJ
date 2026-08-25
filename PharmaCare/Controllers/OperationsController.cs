@@ -23,28 +23,38 @@ public class OperationsController : Controller
     {
         var now = DateTime.Now;
         var today = now.Date;
+        var tomorrow = today.AddDays(1);
         var expiry90 = today.AddDays(90);
 
         var products = await _db.Product.AsNoTracking().Where(p => p.IsActive).ToListAsync(ct);
-        var orders = await _db.Orders.AsNoTracking().OrderByDescending(o => o.OrderDate).Take(100).ToListAsync(ct);
+        var recentOrders = await _db.Orders.AsNoTracking().OrderByDescending(o => o.OrderDate).Take(12).ToListAsync(ct);
         var reservations = await _db.PrescriptionReservations.AsNoTracking()
-            .Include(r => r.Product).Include(r => r.User)
+            .Include(r => r.Product)
             .OrderByDescending(r => r.ReservationDate).Take(30).ToListAsync(ct);
         var feedback = await _db.ContactMessages.AsNoTracking().OrderByDescending(m => m.DateSubmitted).Take(20).ToListAsync(ct);
+
+        var ordersToday = await _db.Orders.AsNoTracking().CountAsync(o => o.OrderDate >= today && o.OrderDate < tomorrow, ct);
+        var revenueToday = await _db.Orders.AsNoTracking()
+            .Where(o => o.Status != "Cancelled" && o.OrderDate >= today && o.OrderDate < tomorrow)
+            .SumAsync(o => (decimal?)o.TotalAmount, ct) ?? 0m;
+        var pendingOrders = await _db.Orders.AsNoTracking()
+            .CountAsync(o => o.Status == "Pending" || o.Status == "Processing", ct);
+        var pendingPrescriptions = await _db.PrescriptionReservations.AsNoTracking()
+            .CountAsync(r => r.Status == "Reserved", ct);
 
         var model = new OperationsViewModel
         {
             GeneratedAt = now,
-            OrdersToday = orders.Count(o => o.OrderDate.Date == today),
-            RevenueToday = orders.Where(o => o.Status != "Cancelled" && o.OrderDate.Date == today).Sum(o => o.TotalAmount),
-            PendingOrders = orders.Count(o => o.Status is "Pending" or "Processing"),
-            PendingPrescriptions = reservations.Count(r => r.Status == "Reserved"),
-            LowStock = products.Where(p => p.Stock > 0 && p.Stock <= Math.Max(10, p.ReorderLevel)).OrderBy(p => p.Stock).Take(12).ToList(),
+            OrdersToday = ordersToday,
+            RevenueToday = revenueToday,
+            PendingOrders = pendingOrders,
+            PendingPrescriptions = pendingPrescriptions,
+            LowStock = products.Where(p => p.Stock > 0 && (p.Stock <= 10 || p.Stock <= p.ReorderLevel)).OrderBy(p => p.Stock).Take(12).ToList(),
             OutOfStock = products.Where(p => p.Stock <= 0).OrderBy(p => p.ProductName).Take(12).ToList(),
-            ExpiringSoon = products.Where(p => p.ExpiryDate.Date >= today && p.ExpiryDate.Date <= expiry90).OrderBy(p => p.ExpiryDate).Take(12).ToList(),
+            ExpiringSoon = products.Where(p => p.ExpiryDate >= today && p.ExpiryDate <= expiry90).OrderBy(p => p.ExpiryDate).Take(12).ToList(),
             Reservations = reservations,
             RecentFeedback = feedback,
-            RecentOrders = orders.Take(12).ToList()
+            RecentOrders = recentOrders
         };
 
         return View(model);
