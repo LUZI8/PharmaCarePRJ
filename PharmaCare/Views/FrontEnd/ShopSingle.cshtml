@@ -1,13 +1,40 @@
-﻿@model ProductViewModel
+@model ProductViewModel
 @{
     ViewData["Title"] = Model.ProductName + " | PharmaCare";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+
     var images = Model.GalleryImages.ToList();
-    if (!images.Any()) { images.Add(Url.Content("~/assets/images/no-image.png")); }
+    if (!images.Any())
+    {
+        images.Add(Url.Content("~/assets/images/no-image.png"));
+    }
+
     var daysRemaining = (Model.ExpiryDate.Date - DateTime.Now.Date).Days;
-    var related = ViewBag.RelatedProducts as IEnumerable<ProductViewModel> ?? Enumerable.Empty<ProductViewModel>();
+    var relatedSource = ViewBag.RelatedProducts as IEnumerable<ProductViewModel> ?? Enumerable.Empty<ProductViewModel>();
+
+    // Keep OTC recommendations OTC and prescription recommendations prescription-only.
+    // This prevents a normal product page from unexpectedly promoting Rx-only medicine.
+    var related = relatedSource
+        .Where(x => x.ProductId != Model.ProductId)
+        .Where(x => x.RequiresPrescription == Model.RequiresPrescription)
+        .Take(3)
+        .ToList();
 }
-<link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/ShopSingle.css" />
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/ShopSingle.css" asp-append-version="true" />
+    <style>
+        /* Critical layout fallback so product images can never expand to their natural size
+           even if the browser still has an old stylesheet cached. */
+        .product-hero-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:44px}
+        .gallery-stage{height:500px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .gallery-stage>img{width:88%;height:88%;max-width:100%;max-height:100%;object-fit:contain}
+        .gallery-thumb img,.related-image img{max-width:100%;max-height:100%;object-fit:contain}
+        .related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+        @@media(max-width:991px){.product-hero-card{grid-template-columns:1fr;gap:24px}.gallery-stage{height:430px}}
+        @@media(max-width:575px){.gallery-stage{height:330px}.related-grid{grid-template-columns:1fr}}
+    </style>
+}
 
 <main class="product-page">
     <div class="container product-container-shell">
@@ -24,11 +51,18 @@
         <section class="product-hero-card">
             <div class="product-gallery" data-gallery>
                 <div class="gallery-stage">
-                    @if (Model.RequiresPrescription) { <span class="gallery-badge rx"><i class="fas fa-prescription"></i> Prescription</span> }
-                    @if (Model.IsExpiringSoon && !Model.IsExpired) { <span class="gallery-badge expiry"><i class="far fa-clock"></i> Expiring soon</span> }
+                    @if (Model.RequiresPrescription)
+                    {
+                        <span class="gallery-badge rx"><i class="fas fa-prescription"></i> Prescription</span>
+                    }
+                    @if (Model.IsExpiringSoon && !Model.IsExpired)
+                    {
+                        <span class="gallery-badge expiry"><i class="far fa-clock"></i> Expiring soon</span>
+                    }
                     <button type="button" class="gallery-zoom" aria-label="Open image preview"><i class="fas fa-search-plus"></i></button>
                     <img id="mainProductImage" src="@images[0]" alt="@Model.ProductName" />
                 </div>
+
                 <div class="gallery-thumbs" aria-label="Product images">
                     @for (var i = 0; i < images.Count; i++)
                     {
@@ -38,7 +72,7 @@
                     }
                     @if (images.Count < 4)
                     {
-                        <div class="gallery-more-hint"><i class="far fa-images"></i><span>Gallery ready<br/>for more photos</span></div>
+                        <div class="gallery-more-hint"><i class="far fa-images"></i><span>More product<br />photos can be added</span></div>
                     }
                 </div>
             </div>
@@ -46,12 +80,20 @@
             <div class="product-purchase-panel">
                 <div class="product-eyebrow">
                     <span>@(Model.Category?.CategoryName ?? "Pharmacy product")</span>
-                    @if (!string.IsNullOrWhiteSpace(Model.Manufacturer)) { <span>• @Model.Manufacturer</span> }
+                    @if (!string.IsNullOrWhiteSpace(Model.Manufacturer))
+                    {
+                        <span>• @Model.Manufacturer</span>
+                    }
                 </div>
+
                 <h1>@Model.ProductName</h1>
+
                 <div class="product-price-row">
                     <strong class="product-price">$@Model.Price.ToString("0.00")</strong>
-                    @if (!string.IsNullOrWhiteSpace(Model.SKU)) { <span class="product-sku">SKU: @Model.SKU</span> }
+                    @if (!string.IsNullOrWhiteSpace(Model.SKU))
+                    {
+                        <span class="product-sku">SKU: @Model.SKU</span>
+                    }
                 </div>
 
                 <div class="status-strip @(Model.IsExpired ? "danger" : Model.IsExpiringSoon ? "warning" : "success")">
@@ -78,7 +120,10 @@
                 {
                     <div class="rx-card">
                         <div class="rx-card-icon"><i class="fas fa-prescription-bottle-alt"></i></div>
-                        <div><strong>Prescription required</strong><p>@(string.IsNullOrWhiteSpace(Model.PrescriptionNote) ? "Reserve this medicine online, then bring a valid prescription when you collect it from the pharmacy." : Model.PrescriptionNote)</p></div>
+                        <div>
+                            <strong>Prescription required</strong>
+                            <p>@(string.IsNullOrWhiteSpace(Model.PrescriptionNote) ? "Reserve this medicine online, then bring a valid prescription when you collect it from the pharmacy." : Model.PrescriptionNote)</p>
+                        </div>
                     </div>
                 }
 
@@ -182,13 +227,20 @@
         @if (related.Any())
         {
             <section class="related-section">
-                <div class="related-heading"><div><span class="section-kicker">You may also need</span><h2>Related products</h2></div><a href="@Url.Action("Shop","FrontEnd",new{category=Model.CategoryID})">View category <i class="fas fa-arrow-right"></i></a></div>
+                <div class="related-heading">
+                    <div><span class="section-kicker">More from this selection</span><h2>Related products</h2></div>
+                    <a href="@Url.Action("Shop","FrontEnd",new{category=Model.CategoryID})">View category <i class="fas fa-arrow-right"></i></a>
+                </div>
                 <div class="related-grid">
                     @foreach (var item in related)
                     {
                         <a class="related-card" href="@Url.Action("ShopSingle","FrontEnd",new{id=item.ProductId})">
                             <div class="related-image"><img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? Url.Content("~/assets/images/no-image.png") : item.ImageUrl)" alt="@item.ProductName" loading="lazy" /></div>
-                            <div class="related-body"><span>@(item.RequiresPrescription ? "Prescription" : "Pharmacy")</span><h3>@item.ProductName</h3><strong>$@item.Price.ToString("0.00")</strong></div>
+                            <div class="related-body">
+                                <span>@(item.RequiresPrescription ? "Prescription" : (item.Category?.CategoryName ?? "Pharmacy"))</span>
+                                <h3>@item.ProductName</h3>
+                                <strong>$@item.Price.ToString("0.00")</strong>
+                            </div>
                         </a>
                     }
                 </div>
@@ -197,19 +249,21 @@
     </div>
 </main>
 
-<div class="image-lightbox" id="productLightbox" aria-hidden="true"><button type="button" class="lightbox-close" aria-label="Close preview"><i class="fas fa-times"></i></button><img src="@images[0]" alt="@Model.ProductName preview" /></div>
-<div id="toast-notification" class="toast-notification"><div class="toast-content"><i class="fas fa-check-circle toast-icon"></i><div class="toast-text"><strong id="toast-title">Added to Cart!</strong><p id="toast-message">Product added successfully</p></div></div><button class="toast-close" onclick="hideToast()">&times;</button></div>
+<div class="image-lightbox" id="productLightbox" aria-hidden="true">
+    <button type="button" class="lightbox-close" aria-label="Close preview"><i class="fas fa-times"></i></button>
+    <img src="@images[0]" alt="@Model.ProductName preview" />
+</div>
 
 @section Scripts {
 <script>
-window.shopSingleData={
-    addToCartUrl:'@Url.Action("AddToCart","Cart")',
-    productId:@Model.ProductId,
-    productName:@Html.Raw(Json.Serialize(Model.ProductName)),
-    maxStock:@Model.Stock,
-    requiresPrescription:@Model.RequiresPrescription.ToString().ToLower(),
-    isExpired:@Model.IsExpired.ToString().ToLower()
+window.shopSingleData = {
+    addToCartUrl: '@Url.Action("AddToCart","Cart")',
+    productId: @Model.ProductId,
+    productName: @Html.Raw(Json.Serialize(Model.ProductName)),
+    maxStock: @Model.Stock,
+    requiresPrescription: @Model.RequiresPrescription.ToString().ToLower(),
+    isExpired: @Model.IsExpired.ToString().ToLower()
 };
 </script>
-<script src="~/assets/js/FrontEndViewScripts/ShopSingle.js"></script>
+<script src="~/assets/js/FrontEndViewScripts/ShopSingle.js" asp-append-version="true"></script>
 }
