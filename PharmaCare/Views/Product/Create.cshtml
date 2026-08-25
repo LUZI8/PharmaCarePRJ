@@ -27,7 +27,7 @@
             <h1>Create Product</h1>
             <p>Add the customer-facing product first, then configure internal pharmacy settings only when needed.</p>
         </div>
-        <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary back-btn"><i class="fas fa-arrow-left mr-1"></i> Back to Inventory</a>
+        <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary back-btn js-inventory-back"><i class="fas fa-arrow-left mr-1"></i> Back to Inventory</a>
     </div>
 
     <form asp-action="Create" method="post" enctype="multipart/form-data" id="productForm">
@@ -171,7 +171,7 @@
 
                         <div class="action-panel">
                             <button type="submit" class="btn create-btn"><i class="fas fa-save mr-1"></i> Create Product</button>
-                            <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary cancel-btn">Cancel</a>
+                            <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary cancel-btn js-inventory-back">Cancel</a>
                         </div>
                     </div>
                 </section>
@@ -184,6 +184,15 @@
 <partial name="_ValidationScriptsPartial" />
 <script>
 (function(){
+    const inventoryUrl='@Url.Action("Index","Product")';
+    const editorUrl=window.location.href;
+    if(!history.state || history.state.page!=='product-editor'){
+        history.replaceState({page:'product-inventory-fallback'},'',inventoryUrl);
+        history.pushState({page:'product-editor'},'',editorUrl);
+    }
+    window.addEventListener('popstate',()=>window.location.replace(inventoryUrl));
+    document.querySelectorAll('.js-inventory-back').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();history.back();}));
+
     const rx=document.getElementById('rxToggle'), note=document.getElementById('rxNote'), input=document.getElementById('galleryInput'), previews=document.getElementById('galleryPreviews'), count=document.getElementById('imageCount'), drop=document.getElementById('imageDrop'), primaryField=document.getElementById('primaryImageIndex'), advancedToggle=document.getElementById('advancedToggle'), advancedBody=document.getElementById('advancedBody');
     let selectedFiles=[]; let primaryIndex=0;
 
