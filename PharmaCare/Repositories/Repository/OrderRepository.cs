@@ -1,13 +1,10 @@
-﻿namespace PharmaCare.Repositories.Repository
+namespace PharmaCare.Repositories.Repository
 {
-    /* Repository implementation for comprehensive order management with business logic */
     public class OrderRepository : IOrderRepository
     {
         private readonly DataDbContext _context;
         private readonly ICartRepository _cartRepository;
-        private readonly IProductRepository _productRepository;
 
-        /* Constructor with multiple repository dependencies for complex operations */
         public OrderRepository(
             DataDbContext context,
             ICartRepository cartRepository,
@@ -15,225 +12,205 @@
         {
             _context = context;
             _cartRepository = cartRepository;
-            _productRepository = productRepository;
         }
 
-        /* Retrieve all orders with related entities for admin management */
         public async Task<List<Order>> GetAllOrdersAsync()
         {
-            /* Include user and order items with products for complete order data */
             return await _context.Orders
+                .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
+                .AsSplitQuery()
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
 
-        /* Get orders for specific user for order history display */
         public async Task<List<Order>> GetUserOrdersAsync(int userId)
         {
             return await _context.Orders
+                .AsNoTracking()
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
+                .AsSplitQuery()
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
 
-        /* Retrieve single order by ID with all related data */
         public async Task<Order> GetOrderByIdAsync(int orderId)
         {
             return await _context.Orders
+                .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
         }
 
-        /* Find order by customer-facing order number */
         public async Task<Order> GetOrderByNumberAsync(string orderNumber)
         {
             return await _context.Orders
+                .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
         }
 
-        /* Complex order creation from cart with inventory management and validation */
         public async Task<Order> CreateOrderFromCartAsync(int userId, string shippingAddress, string city, string phoneNumber, string paymentMethod)
         {
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+            if (cart.CartItems == null || cart.CartItems.Count == 0) return null;
 
-            /* Validate cart has items before proceeding */
-            if (cart.CartItems == null || !cart.CartItems.Any())
-            {
-                return null;
-            }
+            await using var transaction = await _context.Database.BeginTransactionAsync();
 
-            /* Pre-validate stock availability to prevent overselling */
-            foreach (var cartItem in cart.CartItems)
+            try
             {
-                var product = _productRepository.Find(cartItem.ProductId);
-                if (product == null || product.Stock < cartItem.Quantity)
+                var productIds = cart.CartItems.Select(i => i.ProductId).Distinct().ToList();
+                var products = await _context.Product
+                    .Where(p => productIds.Contains(p.ProductId))
+                    .ToDictionaryAsync(p => p.ProductId);
+
+                var now = DateTime.Now;
+                var orderItems = new List<OrderItem>();
+                decimal subtotal = 0m;
+
+                foreach (var cartItem in cart.CartItems)
                 {
-                    throw new Exception($"Not enough stock for {cartItem.Product.ProductName}. Available: {product?.Stock ?? 0}, Requested: {cartItem.Quantity}");
+                    if (!products.TryGetValue(cartItem.ProductId, out var product) ||
+                        !product.IsActive || product.RequiresPrescription || product.ExpiryDate <= now)
+                    {
+                        throw new InvalidOperationException($"{cartItem.Product?.ProductName ?? "A product"} is not currently available for online checkout.");
+                    }
+
+                    if (cartItem.Quantity <= 0 || product.Stock < cartItem.Quantity)
+                    {
+                        throw new InvalidOperationException($"Not enough stock for {product.ProductName}. Available: {product.Stock}, Requested: {cartItem.Quantity}.");
+                    }
+
+                    // Checkout uses the current catalog price so stale cart snapshots cannot undercharge an order.
+                    var unitPrice = product.Price;
+                    orderItems.Add(new OrderItem
+                    {
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        Quantity = cartItem.Quantity,
+                        Price = unitPrice,
+                        CreatedAt = now
+                    });
+
+                    subtotal += unitPrice * cartItem.Quantity;
+                    product.Stock -= cartItem.Quantity;
+                    product.UpdatedAt = now;
                 }
-            }
 
-            /* Generate unique order number for tracking */
-            string orderNumber = GenerateOrderNumber();
+                var tax = Math.Round(subtotal * 0.05m, 2);
+                var preShipping = subtotal + tax;
+                var shipping = preShipping >= 50m ? 0m : 5.99m;
 
-            var orderItems = new List<OrderItem>();
-            decimal totalAmount = 0;
-
-            /* Convert cart items to order items and update inventory */
-            foreach (var cartItem in cart.CartItems)
-            {
-                var orderItem = new OrderItem
+                var order = new Order
                 {
-                    ProductId = cartItem.ProductId,
-                    ProductName = cartItem.Product.ProductName,
-                    Quantity = cartItem.Quantity,
-                    Price = cartItem.Price,
-                    CreatedAt = DateTime.Now
+                    UserId = userId,
+                    OrderNumber = GenerateOrderNumber(),
+                    TotalAmount = preShipping + shipping,
+                    Status = "Pending",
+                    OrderDate = now,
+                    ShippingAddress = shippingAddress,
+                    City = city,
+                    PhoneNumber = phoneNumber,
+                    PaymentMethod = paymentMethod,
+                    IsPaid = false,
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    OrderItems = orderItems
                 };
 
-                orderItems.Add(orderItem);
-                totalAmount += cartItem.Price * cartItem.Quantity;
+                _context.Orders.Add(order);
+                _context.CartItems.RemoveRange(cart.CartItems);
+                cart.UpdatedAt = now;
 
-                /* Decrease product stock and update product entity */
-                var product = _productRepository.Find(cartItem.ProductId);
-                if (product != null)
-                {
-                    product.Stock -= cartItem.Quantity;
-                    if (product.Stock < 0) product.Stock = 0;
-                    product.UpdatedAt = DateTime.Now;
-                    _productRepository.Update(product.ProductId, product);
-                }
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return order;
             }
-
-            /* Apply business rules for tax and shipping */
-            totalAmount += Math.Round(totalAmount * 0.05m, 2);
-            /* Add shipping cost for orders under $50 */
-            if (totalAmount <= 50)
+            catch
             {
-                totalAmount += 5.99m;
+                await transaction.RollbackAsync();
+                throw;
             }
-
-            /* Create order entity with all details */
-            var order = new Order
-            {
-                UserId = userId,
-                OrderNumber = orderNumber,
-                TotalAmount = totalAmount,
-                Status = "Pending",
-                OrderDate = DateTime.Now,
-                ShippingAddress = shippingAddress,
-                City = city,
-                PhoneNumber = phoneNumber,
-                PaymentMethod = paymentMethod,
-                IsPaid = false,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                OrderItems = orderItems
-            };
-
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            /* Clear cart after successful order creation */
-            await _cartRepository.ClearCartAsync(userId);
-
-            return order;
         }
 
-        /* Update order status with automatic timestamp handling */
         public async Task<bool> UpdateOrderStatusAsync(int orderId, string status)
         {
             var order = await _context.Orders.FindAsync(orderId);
-
-            if (order == null)
-            {
-                return false;
-            }
+            if (order == null) return false;
 
             order.Status = status;
             order.UpdatedAt = DateTime.Now;
-
-            /* Automatically set delivery timestamp when status changes to delivered */
-            if (status == "Delivered")
-            {
-                order.DeliveredAt = DateTime.Now;
-            }
-
+            if (status == "Delivered") order.DeliveredAt = DateTime.Now;
             await _context.SaveChangesAsync();
-
             return true;
         }
 
-        /* Generate recent orders as ViewModels for dashboard display */
         public async Task<List<OrderViewModel>> GetRecentOrdersAsync(int count)
         {
-            var orders = await _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
+            return await _context.Orders
+                .AsNoTracking()
                 .OrderByDescending(o => o.OrderDate)
                 .Take(count)
+                .Select(o => new OrderViewModel
+                {
+                    OrderId = o.OrderId,
+                    OrderNumber = o.OrderNumber,
+                    CustomerName = o.User.FirstName + " " + o.User.LastName,
+                    CustomerEmail = o.User.Email,
+                    Status = o.Status,
+                    TotalAmount = o.TotalAmount,
+                    OrderDate = o.OrderDate,
+                    ItemCount = o.OrderItems.Count
+                })
                 .ToListAsync();
-
-            /* Transform entities to ViewModels with calculated properties */
-            return orders.Select(o => new OrderViewModel
-            {
-                OrderId = o.OrderId,
-                OrderNumber = o.OrderNumber,
-                CustomerName = $"{o.User.FirstName} {o.User.LastName}",
-                CustomerEmail = o.User.Email,
-                Status = o.Status,
-                TotalAmount = o.TotalAmount,
-                OrderDate = o.OrderDate,
-                ItemCount = o.OrderItems.Count
-            }).ToList();
         }
 
-        /* Generate order statistics dictionary for dashboard metrics */
         public async Task<Dictionary<string, int>> GetOrderStatisticsAsync()
         {
-            var allOrders = await _context.Orders.ToListAsync();
+            var grouped = await _context.Orders
+                .AsNoTracking()
+                .GroupBy(o => o.Status)
+                .Select(g => new { Status = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Status, x => x.Count);
 
-            /* Count orders by status using LINQ grouping */
+            var total = grouped.Values.Sum();
             return new Dictionary<string, int>
             {
-                { "Total", allOrders.Count },
-                { "Pending", allOrders.Count(o => o.Status == "Pending") },
-                { "Processing", allOrders.Count(o => o.Status == "Processing") },
-                { "Shipped", allOrders.Count(o => o.Status == "Shipped") },
-                { "Delivered", allOrders.Count(o => o.Status == "Delivered") },
-                { "Cancelled", allOrders.Count(o => o.Status == "Cancelled") }
+                ["Total"] = total,
+                ["Pending"] = grouped.GetValueOrDefault("Pending"),
+                ["Processing"] = grouped.GetValueOrDefault("Processing"),
+                ["Shipped"] = grouped.GetValueOrDefault("Shipped"),
+                ["Delivered"] = grouped.GetValueOrDefault("Delivered"),
+                ["Cancelled"] = grouped.GetValueOrDefault("Cancelled")
             };
         }
 
-        /* Generate unique order number with date and GUID components */
         private string GenerateOrderNumber()
         {
-            return $"ORD-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
+            return $"ORD-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}";
         }
 
-        /* Comprehensive order update including payment and delivery status */
         public async Task UpdateOrderStatusAndPaymentAsync(int orderId, string status, bool isPaid, DateTime? paidAt, DateTime? deliveredAt)
         {
             var order = await _context.Orders.FindAsync(orderId);
-            if (order != null)
-            {
-                order.Status = status;
-                order.IsPaid = isPaid;
-                order.PaidAt = paidAt;
-                order.DeliveredAt = deliveredAt;
+            if (order == null) return;
 
-                _context.Orders.Update(order);
-                await _context.SaveChangesAsync();
-            }
+            order.Status = status;
+            order.IsPaid = isPaid;
+            order.PaidAt = paidAt;
+            order.DeliveredAt = deliveredAt;
+            order.UpdatedAt = DateTime.Now;
+            await _context.SaveChangesAsync();
         }
     }
 }
