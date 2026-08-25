@@ -1,4 +1,4 @@
-﻿namespace PharmaCare.Controllers
+namespace PharmaCare.Controllers
 {
     public class ProductController : Controller
     {
@@ -7,14 +7,16 @@
         private readonly IFileHelper fileHelper;
         private readonly IWebHostEnvironment env;
         private readonly ILogger<ProductController> _logger;
+        private readonly DataDbContext _context;
 
-        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository, IFileHelper fileHelper, IWebHostEnvironment environment, ILogger<ProductController> logger)
+        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository, IFileHelper fileHelper, IWebHostEnvironment environment, ILogger<ProductController> logger, DataDbContext context)
         {
             ProductRepository = productRepository;
             this.categoryRepository = categoryRepository;
             this.fileHelper = fileHelper;
             env = environment;
             _logger = logger;
+            _context = context;
         }
 
         private void SetAdminViewBagProperties()
@@ -26,6 +28,18 @@
         private ProductViewModel ToViewModel(Product p)
         {
             var category = categoryRepository.Find(p.CategoryID) ?? new Category { CategoryName = "Unknown" };
+            var gallery = _context.ProductImages
+                .Where(i => i.ProductId == p.ProductId)
+                .OrderByDescending(i => i.IsPrimary)
+                .ThenBy(i => i.DisplayOrder)
+                .Select(i => new ProductImageViewModel
+                {
+                    ProductImageId = i.ProductImageId,
+                    ImageUrl = NormalizeImageUrl(i.ImageUrl),
+                    DisplayOrder = i.DisplayOrder,
+                    IsPrimary = i.IsPrimary
+                }).ToList();
+
             return new ProductViewModel
             {
                 ProductId = p.ProductId,
@@ -40,6 +54,8 @@
                 Manufacturer = p.Manufacturer,
                 ReorderLevel = p.ReorderLevel,
                 ImageUrl = NormalizeImageUrl(p.ImageUrl),
+                ExistingImages = gallery,
+                PrimaryImageId = gallery.FirstOrDefault(x => x.IsPrimary)?.ProductImageId,
                 IsActive = p.IsActive,
                 RequiresPrescription = p.RequiresPrescription,
                 PrescriptionNote = p.PrescriptionNote,
@@ -122,8 +138,8 @@
                 };
 
                 ProductRepository.Add(product);
-                TempData["SuccessMessage"] = "Product created successfully!";
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Product created successfully. You can now add gallery images.";
+                return RedirectToAction(nameof(ManageImages), new { id = product.ProductId });
             }
             catch (Exception ex)
             {
@@ -200,6 +216,104 @@
             }
         }
 
+        public ActionResult ManageImages(int id)
+        {
+            SetAdminViewBagProperties();
+            var product = ProductRepository.Find(id);
+            if (product == null) return NotFound();
+            return View(ToViewModel(product));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadImages(int id, List<IFormFile> galleryFiles)
+        {
+            var product = ProductRepository.Find(id);
+            if (product == null) return NotFound();
+
+            var existingCount = _context.ProductImages.Count(i => i.ProductId == id);
+            var files = (galleryFiles ?? new List<IFormFile>()).Where(f => f != null && f.Length > 0).Take(Math.Max(0, 5 - existingCount)).ToList();
+            if (!files.Any())
+            {
+                TempData["ErrorMessage"] = existingCount >= 5 ? "A product can have up to 5 gallery images." : "Choose at least one image.";
+                return RedirectToAction(nameof(ManageImages), new { id });
+            }
+
+            var nextOrder = _context.ProductImages.Where(i => i.ProductId == id).Select(i => (int?)i.DisplayOrder).Max() ?? -1;
+            foreach (var file in files)
+            {
+                var saved = SaveImage(file, null);
+                if (saved == "Error") continue;
+                nextOrder++;
+                _context.ProductImages.Add(new ProductImage
+                {
+                    ProductId = id,
+                    ImageUrl = saved!,
+                    DisplayOrder = nextOrder,
+                    IsPrimary = existingCount == 0 && nextOrder == 0,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            _context.SaveChanges();
+
+            var primary = _context.ProductImages.FirstOrDefault(i => i.ProductId == id && i.IsPrimary);
+            if (primary != null)
+            {
+                product.ImageUrl = primary.ImageUrl;
+                product.UpdatedAt = DateTime.Now;
+                ProductRepository.Update(id, product);
+            }
+
+            TempData["SuccessMessage"] = "Product gallery updated.";
+            return RedirectToAction(nameof(ManageImages), new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SetPrimaryImage(int id, int imageId)
+        {
+            var product = ProductRepository.Find(id);
+            var selected = _context.ProductImages.FirstOrDefault(i => i.ProductImageId == imageId && i.ProductId == id);
+            if (product == null || selected == null) return NotFound();
+
+            foreach (var image in _context.ProductImages.Where(i => i.ProductId == id)) image.IsPrimary = image.ProductImageId == imageId;
+            _context.SaveChanges();
+            product.ImageUrl = selected.ImageUrl;
+            product.UpdatedAt = DateTime.Now;
+            ProductRepository.Update(id, product);
+            TempData["SuccessMessage"] = "Primary product image changed.";
+            return RedirectToAction(nameof(ManageImages), new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteGalleryImage(int id, int imageId)
+        {
+            var product = ProductRepository.Find(id);
+            var image = _context.ProductImages.FirstOrDefault(i => i.ProductImageId == imageId && i.ProductId == id);
+            if (product == null || image == null) return NotFound();
+
+            var wasPrimary = image.IsPrimary;
+            DeletePhysicalImage(image.ImageUrl);
+            _context.ProductImages.Remove(image);
+            _context.SaveChanges();
+
+            if (wasPrimary)
+            {
+                var replacement = _context.ProductImages.Where(i => i.ProductId == id).OrderBy(i => i.DisplayOrder).FirstOrDefault();
+                if (replacement != null)
+                {
+                    replacement.IsPrimary = true;
+                    product.ImageUrl = replacement.ImageUrl;
+                    _context.SaveChanges();
+                }
+            }
+            product.UpdatedAt = DateTime.Now;
+            ProductRepository.Update(id, product);
+            TempData["SuccessMessage"] = "Gallery image removed.";
+            return RedirectToAction(nameof(ManageImages), new { id });
+        }
+
         private ProductViewModel BuildFormModel(IFormCollection form)
         {
             int.TryParse(form["CategoryID"], out var categoryId);
@@ -210,18 +324,10 @@
 
             return new ProductViewModel
             {
-                ProductName = form["ProductName"],
-                Description = form["Description"],
-                CategoryID = categoryId,
-                Price = price,
-                Stock = stock,
-                SKU = form["SKU"],
-                Barcode = form["Barcode"],
-                Manufacturer = form["Manufacturer"],
-                ReorderLevel = reorderLevel < 0 ? 0 : reorderLevel,
-                IsActive = form.Keys.Contains("IsActive"),
-                RequiresPrescription = form.Keys.Contains("RequiresPrescription"),
-                PrescriptionNote = form["PrescriptionNote"],
+                ProductName = form["ProductName"], Description = form["Description"], CategoryID = categoryId, Price = price,
+                Stock = stock, SKU = form["SKU"], Barcode = form["Barcode"], Manufacturer = form["Manufacturer"],
+                ReorderLevel = reorderLevel < 0 ? 0 : reorderLevel, IsActive = form.Keys.Contains("IsActive"),
+                RequiresPrescription = form.Keys.Contains("RequiresPrescription"), PrescriptionNote = form["PrescriptionNote"],
                 ExpiryDate = expiryDate == default ? DateTime.Now.AddYears(2) : expiryDate,
                 File = form.Files.Count > 0 ? form.Files[0] : null
             };
@@ -237,17 +343,11 @@
             if (model.ExpiryDate.Date <= DateTime.Now.Date) ModelState.AddModelError("ExpiryDate", "Expiry date must be in the future");
 
             var products = ProductRepository.View();
-            if (products.Any(p => p.ProductId != currentId && p.CategoryID == model.CategoryID && p.ProductName.Equals(model.ProductName?.Trim(), StringComparison.OrdinalIgnoreCase)))
-                ModelState.AddModelError("ProductName", "A product with this name already exists in the selected category.");
-
+            if (products.Any(p => p.ProductId != currentId && p.CategoryID == model.CategoryID && p.ProductName.Equals(model.ProductName?.Trim(), StringComparison.OrdinalIgnoreCase))) ModelState.AddModelError("ProductName", "A product with this name already exists in the selected category.");
             var sku = Clean(model.SKU);
-            if (sku != null && products.Any(p => p.ProductId != currentId && string.Equals(p.SKU, sku, StringComparison.OrdinalIgnoreCase)))
-                ModelState.AddModelError("SKU", "This SKU is already assigned to another product.");
-
+            if (sku != null && products.Any(p => p.ProductId != currentId && string.Equals(p.SKU, sku, StringComparison.OrdinalIgnoreCase))) ModelState.AddModelError("SKU", "This SKU is already assigned to another product.");
             var barcode = Clean(model.Barcode);
-            if (barcode != null && products.Any(p => p.ProductId != currentId && string.Equals(p.Barcode, barcode, StringComparison.OrdinalIgnoreCase)))
-                ModelState.AddModelError("Barcode", "This barcode is already assigned to another product.");
-
+            if (barcode != null && products.Any(p => p.ProductId != currentId && string.Equals(p.Barcode, barcode, StringComparison.OrdinalIgnoreCase))) ModelState.AddModelError("Barcode", "This barcode is already assigned to another product.");
             return ModelState.IsValid;
         }
 
@@ -257,6 +357,14 @@
             var imageName = fileHelper.SaveImage(file, oldImage ?? string.Empty, "Images");
             if (imageName == "Error") return "Error";
             return NormalizeImageUrl(imageName);
+        }
+
+        private void DeletePhysicalImage(string? imageUrl)
+        {
+            if (string.IsNullOrWhiteSpace(imageUrl) || imageUrl.StartsWith("http") || imageUrl == "/images/product_01.png") return;
+            var fileName = imageUrl.StartsWith("/Images/") ? imageUrl.Substring("/Images/".Length) : imageUrl.TrimStart('/');
+            var fullPath = Path.Combine(env.WebRootPath, "Images", fileName);
+            if (System.IO.File.Exists(fullPath)) { try { System.IO.File.Delete(fullPath); } catch { } }
         }
 
         private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
@@ -277,17 +385,9 @@
         {
             try
             {
+                foreach (var image in _context.ProductImages.Where(i => i.ProductId == id).ToList()) DeletePhysicalImage(image.ImageUrl);
                 var product = ProductRepository.Find(id);
-                if (product != null && !string.IsNullOrEmpty(product.ImageUrl) && !product.ImageUrl.StartsWith("http") && product.ImageUrl != "/images/product_01.png")
-                {
-                    var fileName = product.ImageUrl.StartsWith("/Images/") ? product.ImageUrl.Substring("/Images/".Length) : product.ImageUrl.TrimStart('/');
-                    var fullPath = Path.Combine(env.WebRootPath, "Images", fileName);
-                    if (System.IO.File.Exists(fullPath))
-                    {
-                        try { System.IO.File.Delete(fullPath); } catch { }
-                    }
-                }
-
+                if (product != null) DeletePhysicalImage(product.ImageUrl);
                 ProductRepository.Delete(id);
                 TempData["SuccessMessage"] = "Product deleted successfully!";
                 return RedirectToAction(nameof(Index));
