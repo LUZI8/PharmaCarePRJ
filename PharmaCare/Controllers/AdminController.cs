@@ -38,33 +38,52 @@ namespace PharmaCare.Controllers
 
                 var now = DateTime.Now;
                 var today = now.Date;
+                var tomorrow = today.AddDays(1);
                 var expiryThreshold = today.AddDays(90);
 
-                var activeProducts = await _context.Product
+                var activeProducts = await _context.Product.AsNoTracking()
                     .Where(p => p.IsActive)
                     .OrderBy(p => p.Stock)
                     .ToListAsync();
 
-                var orders = await _context.Orders.AsNoTracking().ToListAsync();
+                // Keep dashboard aggregates in SQL instead of loading the full orders table into memory.
+                var orderCountTask = _context.Orders.AsNoTracking().CountAsync();
+                var ordersTodayTask = _context.Orders.AsNoTracking().CountAsync(o => o.OrderDate >= today && o.OrderDate < tomorrow);
+                var totalRevenueTask = _context.Orders.AsNoTracking().Where(o => o.Status != "Cancelled")
+                    .SumAsync(o => (decimal?)o.TotalAmount);
+                var revenueTodayTask = _context.Orders.AsNoTracking()
+                    .Where(o => o.Status != "Cancelled" && o.OrderDate >= today && o.OrderDate < tomorrow)
+                    .SumAsync(o => (decimal?)o.TotalAmount);
+                var customerCountTask = _context.User.AsNoTracking().CountAsync(u => u.Role == "Customer" && u.IsActive);
+                var pickupCountTask = _context.PrescriptionReservations.AsNoTracking().CountAsync(r => r.Status == "Reserved");
+                var feedbackCountTask = _context.ContactMessages.AsNoTracking().CountAsync();
+
+                await Task.WhenAll(orderCountTask, ordersTodayTask, totalRevenueTask, revenueTodayTask, customerCountTask, pickupCountTask, feedbackCountTask);
+
+                var lowStock = activeProducts.Where(p => p.Stock > 0 && p.Stock <= Math.Max(10, p.ReorderLevel)).ToList();
+                var outOfStock = activeProducts.Where(p => p.Stock <= 0).ToList();
+                var expiringSoon = activeProducts
+                    .Where(p => p.ExpiryDate >= today && p.ExpiryDate <= expiryThreshold)
+                    .OrderBy(p => p.ExpiryDate)
+                    .ToList();
 
                 var viewModel = new DashboardViewModel
                 {
                     Products = activeProducts,
                     RecentOrders = await _orderRepository.GetRecentOrdersAsync(5),
-                    OrderCount = orders.Count,
+                    OrderCount = orderCountTask.Result,
                     InventoryCount = activeProducts.Count,
-                    CustomerCount = await _context.User.CountAsync(u => u.Role == "Customer" && u.IsActive),
-                    LowStockCount = activeProducts.Count(p => p.Stock > 0 && p.Stock <= 10),
-                    OutOfStockCount = activeProducts.Count(p => p.Stock <= 0),
-                    ExpiringSoonCount = activeProducts.Count(p => p.ExpiryDate >= today && p.ExpiryDate <= expiryThreshold),
-                    PendingPickupCount = await _context.PrescriptionReservations.CountAsync(r => r.Status == "Reserved"),
-                    FeedbackCount = await _context.ContactMessages.CountAsync(),
-                    OrdersToday = orders.Count(o => o.OrderDate.Date == today),
-                    TotalRevenue = orders.Where(o => o.Status != "Cancelled").Sum(o => o.TotalAmount),
-                    RevenueToday = orders.Where(o => o.Status != "Cancelled" && o.OrderDate.Date == today).Sum(o => o.TotalAmount),
-                    LowStockProducts = activeProducts.Where(p => p.Stock <= 10).Take(5).ToList(),
-                    ExpiringProducts = activeProducts.Where(p => p.ExpiryDate >= today && p.ExpiryDate <= expiryThreshold)
-                        .OrderBy(p => p.ExpiryDate).Take(5).ToList()
+                    CustomerCount = customerCountTask.Result,
+                    LowStockCount = lowStock.Count,
+                    OutOfStockCount = outOfStock.Count,
+                    ExpiringSoonCount = expiringSoon.Count,
+                    PendingPickupCount = pickupCountTask.Result,
+                    FeedbackCount = feedbackCountTask.Result,
+                    OrdersToday = ordersTodayTask.Result,
+                    TotalRevenue = totalRevenueTask.Result ?? 0m,
+                    RevenueToday = revenueTodayTask.Result ?? 0m,
+                    LowStockProducts = outOfStock.Concat(lowStock).Take(5).ToList(),
+                    ExpiringProducts = expiringSoon.Take(5).ToList()
                 };
 
                 ViewBag.OrderStatistics = await _orderRepository.GetOrderStatisticsAsync();
@@ -98,7 +117,7 @@ namespace PharmaCare.Controllers
             try
             {
                 var userRole = HttpContext.Session.GetString("UserRole");
-                var messages = await _context.ContactMessages.Include(m => m.User)
+                var messages = await _context.ContactMessages.AsNoTracking().Include(m => m.User)
                     .OrderByDescending(m => m.DateSubmitted).ToListAsync();
 
                 if (userRole == "Pharmacist")
