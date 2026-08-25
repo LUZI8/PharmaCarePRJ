@@ -1,6 +1,8 @@
-﻿// Prevent the global cart observer from observing #cart-count.
-// The layout observer writes back to the same element it watches, which can create
-// an endless MutationObserver loop and make the storefront appear to never finish loading.
+﻿// Guard the cart-count observer against self-triggered mutation loops.
+// The shared layout observes #cart-count and also writes back to #cart-count.
+// A native MutationObserver would therefore keep triggering itself. This wrapper
+// only suppresses duplicate callbacks for that one element and leaves every
+// other MutationObserver on the site completely untouched.
 (function () {
     const NativeMutationObserver = window.MutationObserver;
     if (!NativeMutationObserver || window.__pcCartObserverGuardInstalled) return;
@@ -8,12 +10,32 @@
     window.__pcCartObserverGuardInstalled = true;
 
     function PharmaCareMutationObserver(callback) {
-        const observer = new NativeMutationObserver(callback);
-        const nativeObserve = observer.observe.bind(observer);
+        let observedCartCount = false;
+        let lastCartValue = null;
 
+        const observer = new NativeMutationObserver(function (mutations, nativeObserver) {
+            if (!observedCartCount) {
+                callback(mutations, nativeObserver);
+                return;
+            }
+
+            const target = mutations && mutations.length ? mutations[0].target : null;
+            const cartElement = target && target.nodeType === 3 ? target.parentElement : target;
+            const currentValue = cartElement ? cartElement.textContent.trim() : '';
+
+            if (currentValue === lastCartValue) {
+                return;
+            }
+
+            lastCartValue = currentValue;
+            callback(mutations, nativeObserver);
+        });
+
+        const nativeObserve = observer.observe.bind(observer);
         observer.observe = function (target, options) {
             if (target && target.id === 'cart-count') {
-                return;
+                observedCartCount = true;
+                lastCartValue = target.textContent.trim();
             }
 
             return nativeObserve(target, options);
@@ -24,10 +46,6 @@
 
     PharmaCareMutationObserver.prototype = NativeMutationObserver.prototype;
     window.MutationObserver = PharmaCareMutationObserver;
-
-    window.addEventListener('load', function () {
-        window.MutationObserver = NativeMutationObserver;
-    }, { once: true });
 })();
 
 // Search functionality for PharmaCare
@@ -37,18 +55,15 @@ $(document).ready(function () {
     const searchBtn = $('#navbar-search-btn');
     const searchResults = $('#navbar-search-results');
 
-    // Function to perform search
     function performSearch(query) {
         if (query.length < 2) {
             hideSearchResults();
             return;
         }
 
-        // Show loading state
         showSearchResults();
         searchResults.html('<div class="navbar-search-results-wrapper"><div class="navbar-search-results-header">Searching...</div></div>');
 
-        // Make AJAX call to search endpoint
         $.ajax({
             url: '/FrontEnd/SearchProducts',
             type: 'GET',
@@ -66,7 +81,6 @@ $(document).ready(function () {
         });
     }
 
-    // Function to display search results
     function displaySearchResults(products, query) {
         if (!products || products.length === 0) {
             searchResults.html(`
@@ -88,7 +102,6 @@ $(document).ready(function () {
                 <div class="navbar-search-results-list">
         `;
 
-        // Limit to first 8 results for dropdown
         const limitedProducts = products.slice(0, 8);
 
         limitedProducts.forEach(function (product) {
@@ -124,30 +137,22 @@ $(document).ready(function () {
         searchResults.html(resultsHtml);
     }
 
-    // Function to show search results
     function showSearchResults() {
         searchResults.show();
     }
 
-    // Function to hide search results
     function hideSearchResults() {
         searchResults.hide();
     }
 
-    // Search input event handlers
     searchInput.on('input', function () {
         const query = $(this).val().trim();
-
-        // Clear previous timeout
         clearTimeout(searchTimeout);
-
-        // Set new timeout for debounced search
         searchTimeout = setTimeout(function () {
             performSearch(query);
-        }, 300); // Wait 300ms after user stops typing
+        }, 300);
     });
 
-    // Search button click handler
     searchBtn.on('click', function (e) {
         e.preventDefault();
         const query = searchInput.val().trim();
@@ -159,41 +164,35 @@ $(document).ready(function () {
         }
     });
 
-    // Handle Enter key press
     searchInput.on('keypress', function (e) {
-        if (e.which === 13) { // Enter key
+        if (e.which === 13) {
             e.preventDefault();
             const query = $(this).val().trim();
 
             if (query.length >= 2) {
-                // If there are results, go to full search page
                 window.location.href = `/FrontEnd/Shop?search=${encodeURIComponent(query)}`;
             }
         }
     });
 
-    // Hide search results when clicking outside
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.navbar-search-container').length) {
             hideSearchResults();
         }
     });
 
-    // Prevent search results from closing when clicking inside them
     searchResults.on('click', function (e) {
         e.stopPropagation();
     });
 
-    // Focus search input with Ctrl+K or Cmd+K
     $(document).on('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.which === 75) { // Ctrl/Cmd + K
+        if ((e.ctrlKey || e.metaKey) && e.which === 75) {
             e.preventDefault();
             searchInput.focus();
         }
     });
 });
 
-// Additional helper function to handle search form submission on shop page
 function handleShopSearch() {
     const searchForm = $('#search-form');
     if (searchForm.length) {
