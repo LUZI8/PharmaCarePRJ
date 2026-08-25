@@ -2,6 +2,11 @@
 @{
     ViewData["Title"] = "Confirm Prescription Reservation";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    var prescriptionError = TempData["ErrorMessage"]?.ToString();
+    if (string.Equals(prescriptionError, "Your cart is empty!", StringComparison.OrdinalIgnoreCase))
+    {
+        prescriptionError = null;
+    }
 }
 
 @section Styles {
@@ -24,9 +29,9 @@
         <p>Review your contact details and pickup information before reserving this medicine.</p>
     </div>
 
-    @if (TempData["ErrorMessage"] != null)
+    @if (!string.IsNullOrWhiteSpace(prescriptionError))
     {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        <div class="alert alert-danger">@prescriptionError</div>
     }
 
     <div class="rx-notice">
