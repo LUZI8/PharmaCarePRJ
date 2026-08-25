@@ -159,7 +159,12 @@ $(function () {
             success: function (response) {
                 if (response.success) {
                     showToast('Added to cart', productName + ' - $' + productPrice.toFixed(2), 'success');
-                    if (response.cartCount !== undefined) $('#cart-count').text(response.cartCount);
+                    if (response.cartCount !== undefined) {
+                        $('#cart-count').text(response.cartCount);
+                        updateFloatingCart(response.cartCount);
+                    } else {
+                        updateFloatingCart();
+                    }
                     $button.html('<i class="fas fa-check"></i> Added');
                     setTimeout(function () {
                         $button.prop('disabled', false).html(originalHtml);
@@ -179,6 +184,112 @@ $(function () {
         });
     });
 
+    function ensureFloatingCart() {
+        if ($('#shop-floating-cart').length) return;
+
+        $('head').append(`
+            <style id="shop-floating-cart-styles">
+                #shop-floating-cart {
+                    position: fixed;
+                    right: 24px;
+                    bottom: 24px;
+                    z-index: 1190;
+                    display: none;
+                    align-items: center;
+                    gap: 12px;
+                    min-width: 190px;
+                    padding: 13px 16px;
+                    border: 0;
+                    border-radius: 16px;
+                    background: #0d9488;
+                    color: #fff;
+                    box-shadow: 0 14px 34px rgba(13,148,136,.32);
+                    font-weight: 700;
+                    font-size: 13px;
+                    cursor: pointer;
+                    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+                }
+                #shop-floating-cart:hover {
+                    transform: translateY(-3px);
+                    background: #0f766e;
+                    box-shadow: 0 18px 40px rgba(13,148,136,.38);
+                }
+                #shop-floating-cart .floating-cart-icon {
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 12px;
+                    display: grid;
+                    place-items: center;
+                    background: rgba(255,255,255,.15);
+                    font-size: 15px;
+                    flex: 0 0 38px;
+                }
+                #shop-floating-cart .floating-cart-copy {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    line-height: 1.15;
+                }
+                #shop-floating-cart .floating-cart-copy small {
+                    margin-top: 4px;
+                    font-size: 10px;
+                    color: rgba(255,255,255,.78);
+                    font-weight: 600;
+                }
+                #shop-floating-cart .floating-cart-count {
+                    min-width: 25px;
+                    height: 25px;
+                    padding: 0 7px;
+                    border-radius: 999px;
+                    display: grid;
+                    place-items: center;
+                    margin-left: auto;
+                    background: #fff;
+                    color: #0d9488;
+                    font-size: 11px;
+                    font-weight: 800;
+                }
+                @media (max-width: 575px) {
+                    #shop-floating-cart {
+                        left: 14px;
+                        right: 14px;
+                        bottom: 14px;
+                        width: calc(100% - 28px);
+                        justify-content: flex-start;
+                    }
+                }
+            </style>`);
+
+        $('body').append(`
+            <button type="button" id="shop-floating-cart" aria-label="Open shopping cart">
+                <span class="floating-cart-icon"><i class="fas fa-shopping-bag"></i></span>
+                <span class="floating-cart-copy">View cart<small>Ready when you are</small></span>
+                <span class="floating-cart-count">0</span>
+            </button>`);
+
+        $('#shop-floating-cart').on('click', function () {
+            window.location.href = '/Cart';
+        });
+    }
+
+    function updateFloatingCart(count) {
+        ensureFloatingCart();
+
+        let cartCount = parseInt(count, 10);
+        if (Number.isNaN(cartCount)) {
+            cartCount = parseInt($('#cart-count').text(), 10) || 0;
+        }
+
+        const $floatingCart = $('#shop-floating-cart');
+        $floatingCart.find('.floating-cart-count').text(cartCount);
+
+        if (cartCount > 0) {
+            $floatingCart.css('display', 'flex');
+        } else {
+            $floatingCart.hide();
+        }
+    }
+
     function showToast(title, message, type) {
         const $toast = $('#toast-notification');
         $('#toast-title').text(title);
@@ -194,4 +305,6 @@ $(function () {
     window.hideToast = function () {
         $('#toast-notification').removeClass('show');
     };
+
+    updateFloatingCart();
 });
