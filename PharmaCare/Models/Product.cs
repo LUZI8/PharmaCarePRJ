@@ -1,4 +1,4 @@
-﻿namespace PharmaCare.Models
+namespace PharmaCare.Models
 {
     public class Product
     {
@@ -18,7 +18,10 @@
         /* Per-product threshold instead of a hard-coded global low-stock value. */
         public int ReorderLevel { get; set; } = 10;
 
+        /* Legacy primary image kept for backwards compatibility with cards and old data. */
         public string? ImageUrl { get; set; }
+        public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
+
         public bool IsActive { get; set; }
         public bool RequiresPrescription { get; set; }
         public string? PrescriptionNote { get; set; }
