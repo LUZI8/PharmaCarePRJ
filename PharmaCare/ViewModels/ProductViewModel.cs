@@ -37,18 +37,13 @@
         public int ReorderLevel { get; set; } = 10;
 
         public string? ImageUrl { get; set; }
-        public string? ImageUrl2 { get; set; }
-        public string? ImageUrl3 { get; set; }
-        public string? ImageUrl4 { get; set; }
         public IFormFile? File { get; set; }
-        public IFormFile? File2 { get; set; }
-        public IFormFile? File3 { get; set; }
-        public IFormFile? File4 { get; set; }
 
-        public IEnumerable<string> GalleryImages => new[] { ImageUrl, ImageUrl2, ImageUrl3, ImageUrl4 }
-            .Where(x => !string.IsNullOrWhiteSpace(x))!
-            .Cast<string>()
-            .Distinct(StringComparer.OrdinalIgnoreCase);
+        /* Storefront gallery abstraction. It currently uses the primary image and is ready
+           to accept additional images later without changing the product-page markup. */
+        public IEnumerable<string> GalleryImages => string.IsNullOrWhiteSpace(ImageUrl)
+            ? Enumerable.Empty<string>()
+            : new[] { ImageUrl };
 
         public bool IsActive { get; set; }
         public bool RequiresPrescription { get; set; } = false;
