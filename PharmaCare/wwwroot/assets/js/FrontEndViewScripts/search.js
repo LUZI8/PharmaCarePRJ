@@ -1,8 +1,4 @@
 ﻿// Guard the cart-count observer against self-triggered mutation loops.
-// The shared layout observes #cart-count and also writes back to #cart-count.
-// A native MutationObserver would therefore keep triggering itself. This wrapper
-// only suppresses duplicate callbacks for that one element and leaves every
-// other MutationObserver on the site completely untouched.
 (function () {
     const NativeMutationObserver = window.MutationObserver;
     if (!NativeMutationObserver || window.__pcCartObserverGuardInstalled) return;
@@ -23,9 +19,7 @@
             const cartElement = target && target.nodeType === 3 ? target.parentElement : target;
             const currentValue = cartElement ? cartElement.textContent.trim() : '';
 
-            if (currentValue === lastCartValue) {
-                return;
-            }
+            if (currentValue === lastCartValue) return;
 
             lastCartValue = currentValue;
             callback(mutations, nativeObserver);
@@ -37,7 +31,6 @@
                 observedCartCount = true;
                 lastCartValue = target.textContent.trim();
             }
-
             return nativeObserve(target, options);
         };
 
@@ -67,13 +60,8 @@ $(document).ready(function () {
         $.ajax({
             url: '/FrontEnd/SearchProducts',
             type: 'GET',
-            data: {
-                query: query,
-                sort: 'relevance'
-            },
-            success: function (data) {
-                displaySearchResults(data, query);
-            },
+            data: { query: query, sort: 'relevance' },
+            success: function (data) { displaySearchResults(data, query); },
             error: function (xhr, status, error) {
                 console.error('Search error:', error);
                 searchResults.html('<div class="navbar-search-results-wrapper"><div class="navbar-search-no-results"><p>Search error occurred. Please try again.</p></div></div>');
@@ -102,9 +90,7 @@ $(document).ready(function () {
                 <div class="navbar-search-results-list">
         `;
 
-        const limitedProducts = products.slice(0, 8);
-
-        limitedProducts.forEach(function (product) {
+        products.slice(0, 8).forEach(function (product) {
             resultsHtml += `
                 <a href="/FrontEnd/ShopSingle/${product.id}" class="navbar-search-result-item">
                     <div class="navbar-search-result-content">
@@ -129,61 +115,39 @@ $(document).ready(function () {
             `;
         }
 
-        resultsHtml += `
-                </div>
-            </div>
-        `;
-
+        resultsHtml += '</div></div>';
         searchResults.html(resultsHtml);
     }
 
-    function showSearchResults() {
-        searchResults.show();
-    }
-
-    function hideSearchResults() {
-        searchResults.hide();
-    }
+    function showSearchResults() { searchResults.show(); }
+    function hideSearchResults() { searchResults.hide(); }
 
     searchInput.on('input', function () {
         const query = $(this).val().trim();
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(function () {
-            performSearch(query);
-        }, 300);
+        searchTimeout = setTimeout(function () { performSearch(query); }, 300);
     });
 
     searchBtn.on('click', function (e) {
         e.preventDefault();
         const query = searchInput.val().trim();
-
-        if (query.length >= 2) {
-            performSearch(query);
-        } else if (query.length === 0) {
-            hideSearchResults();
-        }
+        if (query.length >= 2) performSearch(query);
+        else if (query.length === 0) hideSearchResults();
     });
 
     searchInput.on('keypress', function (e) {
         if (e.which === 13) {
             e.preventDefault();
             const query = $(this).val().trim();
-
-            if (query.length >= 2) {
-                window.location.href = `/FrontEnd/Shop?search=${encodeURIComponent(query)}`;
-            }
+            if (query.length >= 2) window.location.href = `/FrontEnd/Shop?search=${encodeURIComponent(query)}`;
         }
     });
 
     $(document).on('click', function (e) {
-        if (!$(e.target).closest('.navbar-search-container').length) {
-            hideSearchResults();
-        }
+        if (!$(e.target).closest('.navbar-search-container').length) hideSearchResults();
     });
 
-    searchResults.on('click', function (e) {
-        e.stopPropagation();
-    });
+    searchResults.on('click', function (e) { e.stopPropagation(); });
 
     $(document).on('keydown', function (e) {
         if ((e.ctrlKey || e.metaKey) && e.which === 75) {
@@ -199,9 +163,7 @@ function handleShopSearch() {
         searchForm.on('submit', function (e) {
             e.preventDefault();
             const query = $('#search-input').val().trim();
-            if (query) {
-                window.location.href = `/FrontEnd/Shop?search=${encodeURIComponent(query)}`;
-            }
+            if (query) window.location.href = `/FrontEnd/Shop?search=${encodeURIComponent(query)}`;
         });
     }
 }
@@ -217,10 +179,10 @@ function handleShopSearch() {
         const style = document.createElement('style');
         style.id = 'pc-support-styles';
         style.textContent = `
-            .pc-support-launcher{position:fixed;right:24px;bottom:102px;z-index:1090;width:58px;height:58px;border:0;border-radius:50%;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;box-shadow:0 16px 34px rgba(13,148,136,.3);display:grid;place-items:center;font-size:20px;cursor:pointer;transition:.2s ease}.pc-support-launcher:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 20px 40px rgba(13,148,136,.36)}.pc-support-launcher:focus{outline:3px solid rgba(45,212,191,.24);outline-offset:3px}.pc-support-launcher .pc-support-dot{position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#34d399;border:2px solid #fff}
-            .pc-support-panel{position:fixed;right:24px;bottom:172px;z-index:1095;width:min(390px,calc(100vw - 28px));background:#fff;color:#18242a;border:1px solid #dce8e6;border-radius:22px;box-shadow:0 26px 70px rgba(17,44,51,.22);overflow:hidden;opacity:0;visibility:hidden;transform:translateY(12px) scale(.98);transition:.22s ease}.pc-support-panel.is-open{opacity:1;visibility:visible;transform:none}.pc-support-head{padding:20px 20px 17px;background:linear-gradient(135deg,#073b3c,#0d766f);color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.pc-support-head h3{margin:0 0 4px;font-size:18px;font-weight:800}.pc-support-head p{margin:0;color:#cce2df;font-size:12px;line-height:1.5}.pc-support-close{width:34px;height:34px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(255,255,255,.08);color:#fff;display:grid;place-items:center;cursor:pointer}.pc-support-body{padding:18px}.pc-support-status{display:none;margin-bottom:12px;padding:11px 12px;border-radius:12px;font-size:12px;line-height:1.5}.pc-support-status.success{display:block;background:#e8f8f1;color:#126a49;border:1px solid #bce7d2}.pc-support-status.error{display:block;background:#fff0f0;color:#a03b3b;border:1px solid #f1c6c6}.pc-support-types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.pc-support-type{border:1px solid #dce6e4;border-radius:11px;background:#f8fbfa;color:#425159;padding:10px 9px;font-size:11px;font-weight:700;cursor:pointer;transition:.18s}.pc-support-type:hover,.pc-support-type.active{border-color:#0d9488;background:#eaf8f6;color:#087b71}.pc-support-label{display:block;margin:0 0 6px;font-size:11px;font-weight:800;color:#52636a;text-transform:uppercase;letter-spacing:.5px}.pc-support-input,.pc-support-message{width:100%;border:1px solid #d8e3e1;border-radius:11px;background:#fbfdfd;color:#172329;outline:none;transition:.18s}.pc-support-input{height:44px;padding:0 12px;margin-bottom:11px}.pc-support-message{min-height:112px;padding:11px 12px;resize:vertical;margin-bottom:12px}.pc-support-input:focus,.pc-support-message:focus{border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.08);background:#fff}.pc-support-send{width:100%;height:46px;border:0;border-radius:12px;background:#0d9488;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.18s}.pc-support-send:hover{background:#0f766e}.pc-support-send:disabled{opacity:.6;cursor:not-allowed}.pc-support-meta{margin-top:10px;text-align:center;color:#849196;font-size:10px}.pc-support-page{display:none}
-            body.dark-mode .pc-support-panel{background:#20282b;color:#eef4f4;border-color:#344043}.dark-mode .pc-support-body{background:#20282b}.dark-mode .pc-support-label{color:#c3cecf}.dark-mode .pc-support-input,.dark-mode .pc-support-message{background:#171e20;border-color:#384548;color:#f4f7f7}.dark-mode .pc-support-type{background:#252e31;border-color:#394649;color:#dfe7e8}.dark-mode .pc-support-type:hover,.dark-mode .pc-support-type.active{background:#173a36;border-color:#2fb6aa;color:#7ee0d5}
-            @media(max-width:575px){.pc-support-launcher{right:16px;bottom:88px;width:52px;height:52px}.pc-support-panel{left:14px;right:14px;bottom:152px;width:auto;max-height:calc(100vh - 180px);overflow:auto}.pc-support-types{grid-template-columns:1fr 1fr}}
+            .pc-support-launcher{position:fixed;right:24px;bottom:160px;z-index:1090;width:58px;height:58px;border:0;border-radius:50%;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;box-shadow:0 16px 34px rgba(13,148,136,.3);display:grid;place-items:center;font-size:20px;cursor:pointer;transition:.2s ease}.pc-support-launcher:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 20px 40px rgba(13,148,136,.36)}.pc-support-launcher:focus{outline:3px solid rgba(45,212,191,.24);outline-offset:3px}.pc-support-launcher .pc-support-dot{position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#34d399;border:2px solid #fff}
+            .pc-support-panel{position:fixed;right:24px;bottom:228px;z-index:1095;width:min(390px,calc(100vw - 28px));background:#fff;color:#18242a;border:1px solid #dce8e6;border-radius:22px;box-shadow:0 26px 70px rgba(17,44,51,.22);overflow:hidden;opacity:0;visibility:hidden;transform:translateY(12px) scale(.98);transition:.22s ease}.pc-support-panel.is-open{opacity:1;visibility:visible;transform:none}.pc-support-head{padding:20px 20px 17px;background:linear-gradient(135deg,#073b3c,#0d766f);color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.pc-support-head h3{margin:0 0 4px;font-size:18px;font-weight:800}.pc-support-head p{margin:0;color:#cce2df;font-size:12px;line-height:1.5}.pc-support-close{width:34px;height:34px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(255,255,255,.08);color:#fff;display:grid;place-items:center;cursor:pointer}.pc-support-body{padding:18px}.pc-support-status{display:none;margin-bottom:12px;padding:11px 12px;border-radius:12px;font-size:12px;line-height:1.5}.pc-support-status.success{display:block;background:#e8f8f1;color:#126a49;border:1px solid #bce7d2}.pc-support-status.error{display:block;background:#fff0f0;color:#a03b3b;border:1px solid #f1c6c6}.pc-support-types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.pc-support-type{border:1px solid #dce6e4;border-radius:11px;background:#f8fbfa;color:#425159;padding:10px 9px;font-size:11px;font-weight:700;cursor:pointer;transition:.18s}.pc-support-type:hover,.pc-support-type.active{border-color:#0d9488;background:#eaf8f6;color:#087b71}.pc-support-label{display:block;margin:0 0 6px;font-size:11px;font-weight:800;color:#52636a;text-transform:uppercase;letter-spacing:.5px}.pc-support-input,.pc-support-message{width:100%;border:1px solid #d8e3e1;border-radius:11px;background:#fbfdfd;color:#172329;outline:none;transition:.18s}.pc-support-input{height:44px;padding:0 12px;margin-bottom:11px}.pc-support-input[readonly]{background:#eef5f4;color:#52636a;cursor:not-allowed}.pc-support-message{min-height:112px;padding:11px 12px;resize:vertical;margin-bottom:12px}.pc-support-input:focus,.pc-support-message:focus{border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.08);background:#fff}.pc-support-send{width:100%;height:46px;border:0;border-radius:12px;background:#0d9488;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.18s}.pc-support-send:hover{background:#0f766e}.pc-support-send:disabled{opacity:.6;cursor:not-allowed}.pc-support-meta{margin-top:10px;text-align:center;color:#849196;font-size:10px}.pc-support-email-note{margin:-5px 0 11px;color:#0d9488;font-size:10px;display:none}.pc-support-page{display:none}
+            body.dark-mode .pc-support-panel{background:#20282b;color:#eef4f4;border-color:#344043}.dark-mode .pc-support-body{background:#20282b}.dark-mode .pc-support-label{color:#c3cecf}.dark-mode .pc-support-input,.dark-mode .pc-support-message{background:#171e20;border-color:#384548;color:#f4f7f7}.dark-mode .pc-support-input[readonly]{background:#263033;color:#aebcbe}.dark-mode .pc-support-type{background:#252e31;border-color:#394649;color:#dfe7e8}.dark-mode .pc-support-type:hover,.dark-mode .pc-support-type.active{background:#173a36;border-color:#2fb6aa;color:#7ee0d5}
+            @media(max-width:575px){.pc-support-launcher{right:16px;bottom:154px;width:52px;height:52px}.pc-support-panel{left:14px;right:14px;bottom:216px;width:auto;max-height:calc(100vh - 238px);overflow:auto}.pc-support-types{grid-template-columns:1fr 1fr}}
         `;
         document.head.appendChild(style);
     }
@@ -257,6 +219,7 @@ function handleShopSearch() {
                 <input id="pc-support-name" class="pc-support-input" type="text" autocomplete="name" placeholder="Your name">
                 <label class="pc-support-label" for="pc-support-email">Email</label>
                 <input id="pc-support-email" class="pc-support-input" type="email" autocomplete="email" placeholder="you@example.com">
+                <div id="pc-support-email-note" class="pc-support-email-note"><i class="fas fa-check-circle"></i> Using your verified PharmaCare account email.</div>
                 <label class="pc-support-label" for="pc-support-message">Message</label>
                 <textarea id="pc-support-message" class="pc-support-message" placeholder="Tell us what you need help with..."></textarea>
                 <input id="pc-support-page" class="pc-support-page" type="hidden">
@@ -301,6 +264,12 @@ function handleShopSearch() {
                 const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ').trim();
                 if (fullName) document.getElementById('pc-support-name').value = fullName;
                 if (data.email) document.getElementById('pc-support-email').value = data.email;
+
+                if (data.emailVerified && data.email) {
+                    const emailInput = document.getElementById('pc-support-email');
+                    emailInput.readOnly = true;
+                    document.getElementById('pc-support-email-note').style.display = 'block';
+                }
             } catch (error) {
                 console.debug('Support context unavailable.', error);
             }
@@ -383,7 +352,7 @@ function handleShopSearch() {
 
                 setStatus(data.message || 'Your message was sent successfully.', 'success');
                 document.getElementById('pc-support-message').value = '';
-                setTimeout(closePanel, 1800);
+                setTimeout(closePanel, 2200);
             } catch (error) {
                 setStatus(error.message || 'Unable to send your message. Please try again.', 'error');
             } finally {
