@@ -1,5 +1,5 @@
 ﻿.form-control:focus {
-    border-color: #dc3545; /* Red border color when form inputs are focused */
+    border-color: #0d9488; /* Red border color when form inputs are focused */
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); /* Red glow effect around focused form controls */
 }
 
@@ -23,27 +23,27 @@
 }
 
 .is-invalid {
-    border-color: #dc3545 !important; /* Red border for invalid form fields */
+    border-color: #0d9488 !important; /* Red border for invalid form fields */
 }
 
 .btn-outline-cart {
-    color: #dc3545; /* Red text for outline cart button */
-    border-color: #dc3545; /* Red border for outline style */
+    color: #0d9488; /* Red text for outline cart button */
+    border-color: #0d9488; /* Red border for outline style */
 }
 
     .btn-outline-cart:hover {
         color: #fff; /* White text on hover */
-        background-color: #dc3545; /* Red background fill on hover */
-        border-color: #dc3545;
+        background-color: #0d9488; /* Red background fill on hover */
+        border-color: #0d9488;
     }
 
 body.dark-mode .btn-outline-cart {
-    color: #dc3545; /* Maintains red color in dark mode */
-    border-color: #dc3545;
+    color: #0d9488; /* Maintains red color in dark mode */
+    border-color: #0d9488;
 }
 
     body.dark-mode .btn-outline-cart:hover {
         color: #fff; /* White text on hover in dark mode */
-        background-color: #dc3545;
-        border-color: #dc3545;
+        background-color: #0d9488;
+        border-color: #0d9488;
     }

@@ -43,13 +43,13 @@ body.dark-mode {
 }
 
 .form-control:focus {
-    border-color: #dc3545 !important; /* Sets red border color when form inputs are focused */
+    border-color: #0d9488 !important; /* Sets red border color when form inputs are focused */
     box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important; /* Adds red glow effect around focused inputs */
 }
 
 body.dark-mode .form-control:focus {
     background-color: #2b2b2b; /* Dark background for focused form inputs in dark mode */
-    border-color: #dc3545 !important;
+    border-color: #0d9488 !important;
     box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.3) !important; /* Slightly stronger red glow in dark mode */
     color: #fff;
 }
@@ -202,7 +202,7 @@ body.dark-mode .medication-info {
     position: absolute; /* Positions tag relative to parent container */
     top: 10px;
     right: 10px;
-    background-color: #dc3545; /* Red background for sale/promotional tags */
+    background-color: #0d9488; /* Red background for sale/promotional tags */
     color: white;
     padding: 5px 10px;
     border-radius: 3px;
@@ -254,7 +254,7 @@ body.dark-mode .badge-primary {
 .category-icon {
     display: inline-block;
     font-size: 40px;
-    color: #dc3545; /* Red color for category icons to match theme */
+    color: #0d9488; /* Red color for category icons to match theme */
     margin-bottom: 15px;
 }
 
@@ -281,7 +281,7 @@ body.dark-mode .category-item {
 
     .badge-item i {
         font-size: 24px;
-        color: #dc3545; /* Red color for trust badge icons */
+        color: #0d9488; /* Red color for trust badge icons */
         margin-bottom: 10px;
     }
 
@@ -298,7 +298,7 @@ body.dark-mode .badge-item i {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #dc3545;
+    background-color: #0d9488;
     color: white;
     padding: 5px 10px;
     border-radius: 3px;
@@ -402,12 +402,12 @@ body.dark-mode {
     }
 
     body.dark-mode #slider-range .ui-slider-handle {
-        background: #dc3545; /* Red background for slider handles */
-        border-color: #dc3545;
+        background: #0d9488; /* Red background for slider handles */
+        border-color: #0d9488;
     }
 
     body.dark-mode #slider-range .ui-slider-range {
-        background: #dc3545; /* Red background for active slider range */
+        background: #0d9488; /* Red background for active slider range */
     }
 
     body.dark-mode #slider-range {
@@ -422,7 +422,7 @@ body.dark-mode {
     }
 
     body.dark-mode .site-block-27 ul li.active span {
-        background-color: #dc3545; /* Red background for active pagination item */
+        background-color: #0d9488; /* Red background for active pagination item */
         color: white !important;
     }
 
@@ -550,7 +550,7 @@ body.dark-mode .item:hover {
     position: absolute;
     top: 10px;
     left: 10px;
-    background-color: #dc3545;
+    background-color: #0d9488;
     color: white;
     padding: 5px 10px;
     border-radius: 3px;
@@ -559,7 +559,7 @@ body.dark-mode .item:hover {
 
 .price {
     font-weight: bold;
-    color: #dc3545; /* Red color for product prices */
+    color: #0d9488; /* Red color for product prices */
 }
 
 body.dark-mode .price {
@@ -598,7 +598,7 @@ body.dark-mode #slider-range {
     }
 
     body.dark-mode #slider-range .ui-slider-range {
-        background: #dc3545 !important; /* Red active range on slider */
+        background: #0d9488 !important; /* Red active range on slider */
     }
 
 body.dark-mode #amount {
@@ -790,7 +790,7 @@ body.dark-mode .product-warnings {
 }
 
 body.dark-mode .product-table th {
-    background: #dc3545; /* Red background for table headers */
+    background: #0d9488; /* Red background for table headers */
 }
 
 body.dark-mode table {
@@ -803,18 +803,18 @@ body.dark-mode .product-card {
 }
 
 .btn-primary {
-    background-color: #dc3545 !important; /* Red background for primary buttons */
-    border-color: #dc3545 !important;
+    background-color: #0d9488 !important; /* Red background for primary buttons */
+    border-color: #0d9488 !important;
 }
 
     .btn-primary:hover {
-        background-color: #c82333 !important; /* Darker red on hover */
+        background-color: #0f766e !important; /* Darker red on hover */
         border-color: #bd2130 !important;
     }
 
 body.dark-mode .btn-primary {
-    background-color: #dc3545 !important;
-    border-color: #dc3545 !important;
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
 }
 
 .btn-outline-danger.text-black {
@@ -823,20 +823,20 @@ body.dark-mode .btn-primary {
 
 body.dark-mode .btn-outline-danger.text-black {
     color: #fff !important; /* White text for outline buttons in dark mode */
-    border-color: #dc3545;
+    border-color: #0d9488;
 }
 
 .bg-light a {
-    color: #dc3545 !important; /* Red color for links in light sections */
+    color: #0d9488 !important; /* Red color for links in light sections */
 }
 
     .bg-light a:hover {
-        color: #c82333 !important; /* Darker red on hover */
+        color: #0f766e !important; /* Darker red on hover */
         text-decoration: underline;
     }
 
 body.dark-mode .bg-light a {
-    color: #dc3545 !important;
+    color: #0d9488 !important;
 }
 
     body.dark-mode .bg-light a:hover {
@@ -864,11 +864,11 @@ body.dark-mode .site-footer {
     }
 
     body.dark-mode .site-footer a:hover {
-        color: #dc3545 !important; /* Red color on hover for footer links */
+        color: #0d9488 !important; /* Red color on hover for footer links */
     }
 
 .site-footer .fas {
-    color: #dc3545 !important; /* Red color for footer icons */
+    color: #0d9488 !important; /* Red color for footer icons */
     width: 20px;
 }
 
@@ -953,8 +953,8 @@ body.dark-mode .site-footer p {
         }
 
     .dark-mode .btn-primary {
-        background-color: #dc3545 !important; /* Maintains red color for primary buttons */
-        border-color: #dc3545 !important;
+        background-color: #0d9488 !important; /* Maintains red color for primary buttons */
+        border-color: #0d9488 !important;
     }
 
 @keyframes rotate {
@@ -981,7 +981,7 @@ body.dark-mode .site-footer p {
     }
 
 .border.mb-3 {
-    border-color: #dc3545 !important; /* Red border for accordion sections */
+    border-color: #0d9488 !important; /* Red border for accordion sections */
 }
 
     .border.mb-3 .h6 a {
@@ -993,15 +993,15 @@ body.dark-mode .border.mb-3 .h6 a {
 }
 
 .border.mb-3 .h6 a:hover {
-    color: #dc3545 !important; /* Red color on hover for accordion headers */
+    color: #0d9488 !important; /* Red color on hover for accordion headers */
 }
 
 body.dark-mode .border.mb-3 .h6 a:hover {
-    color: #dc3545 !important;
+    color: #0d9488 !important;
 }
 
 .border.mb-3 .collapse.show {
-    border-top: 1px solid #dc3545; /* Red border separator for expanded accordion content */
+    border-top: 1px solid #0d9488; /* Red border separator for expanded accordion content */
 }
 
 .border.mb-3 .collapse p {
@@ -1013,7 +1013,7 @@ body.dark-mode .border.mb-3 .collapse p {
 }
 
 .border.mb-3 .paypal.show {
-    border-top: 1px solid #dc3545; /* Red border for PayPal section when expanded */
+    border-top: 1px solid #0d9488; /* Red border for PayPal section when expanded */
 }
 
 .border.mb-3 .paypal p {
@@ -1150,14 +1150,14 @@ body, html {
 }
 
 :root {
-    --primary-color: #dc3545; /* CSS custom property for primary red color */
+    --primary-color: #0d9488; /* CSS custom property for primary red color */
     --secondary-color: #f8f9fa; /* CSS custom property for light gray background */
     --text-color: #333; /* CSS custom property for dark text */
     --bg-color: #fff; /* CSS custom property for white background */
 }
 
 body.dark-mode {
-    --primary-color: #e63946; /* Slightly different red for dark mode */
+    --primary-color: #14b8a6; /* Slightly different red for dark mode */
     --secondary-color: #343a40; /* Dark gray for secondary elements */
     --text-color: #f8f9fa; /* Light text for dark mode */
     --bg-color: #212529; /* Dark background for dark mode */
@@ -1270,7 +1270,7 @@ body {
     opacity: 0; /* Initially invisible */
     visibility: hidden;
     transition: all 0.3s ease; /* Smooth transition for appearance and hover effects */
-    background-color: #dc3545;
+    background-color: #0d9488;
     color: white;
 }
 
@@ -1281,11 +1281,11 @@ body {
 
     #back-to-top:hover {
         transform: translateY(-3px); /* Lifts button slightly on hover */
-        background-color: #dc3545;
+        background-color: #0d9488;
     }
 
 body.dark-mode #back-to-top {
-    background-color: #dc3545; /* Maintains red color in dark mode */
+    background-color: #0d9488; /* Maintains red color in dark mode */
     color: white;
 }
 
@@ -1342,3 +1342,45 @@ body.dark-mode #back-to-top {
     .icons > * {
         margin-left: 15px; /* Consistent spacing between icon elements */
     }
+
+/* ============================================================
+   Brand rebrand -> teal.
+   This app used Bootstrap's "danger" red as its accent colour.
+   Remap the danger BUTTON/TEXT utilities to the teal brand.
+   Genuine danger (badge-danger, alert-danger) stays red on purpose.
+   ============================================================ */
+.btn-danger {
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
+}
+
+    .btn-danger:hover,
+    .btn-danger:focus,
+    .btn-danger:active,
+    .btn-danger:not(:disabled):not(.disabled):active {
+        background-color: #0f766e !important;
+        border-color: #0f766e !important;
+        box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, .3) !important;
+    }
+
+.btn-outline-danger {
+    color: #0d9488 !important;
+    border-color: #0d9488 !important;
+}
+
+    .btn-outline-danger:hover,
+    .btn-outline-danger:focus,
+    .btn-outline-danger.active,
+    .btn-outline-danger:active {
+        background-color: #0d9488 !important;
+        border-color: #0d9488 !important;
+        color: #fff !important;
+    }
+
+/* Decorative brand text (e.g. the Rx icon) — errors use .alert-danger/.error-message, not .text-danger */
+.text-danger { color: #0d9488 !important; }
+
+.bg-danger { background-color: #0d9488 !important; }
+
+/* Left accent bars / borders that used the danger red */
+.border-danger { border-color: #0d9488 !important; }

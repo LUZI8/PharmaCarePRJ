@@ -61,7 +61,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #dc3545; /* Red background for search button */
+    background-color: #0d9488; /* Red background for search button */
     border-radius: 50%; /* Creates circular search button */
     width: 32px;
     height: 32px;
@@ -173,7 +173,7 @@
 .navbar-search-result-price {
     font-weight: 700;
     font-size: 16px;
-    color: #dc3545; /* Red color for product prices to match theme */
+    color: #0d9488; /* Red color for product prices to match theme */
     white-space: nowrap; /* Prevents price text from wrapping */
     margin-left: 15px;
 }
@@ -200,7 +200,7 @@
 }
 
     .no-results-container i {
-        color: #dc3545; /* Red color for icons in no results container */
+        color: #0d9488; /* Red color for icons in no results container */
         opacity: 0.6;
     }
 
@@ -209,7 +209,7 @@
         border-radius: 6px;
         padding: 20px;
         margin: 15px 0;
-        border-left: 4px solid #dc3545; /* Red left border for suggestion highlight */
+        border-left: 4px solid #0d9488; /* Red left border for suggestion highlight */
     }
 
         .no-results-container .suggestions ul li {
@@ -264,7 +264,7 @@
 }
 
     .category-link:hover {
-        color: #dc3545; /* Changes to red color on hover */
+        color: #0d9488; /* Changes to red color on hover */
     }
 
 .product-link {
@@ -294,7 +294,7 @@
 
 .product-price {
     font-size: 12px;
-    color: #dc3545; /* Red color for product prices */
+    color: #0d9488; /* Red color for product prices */
 }
 
 .no-results {
@@ -311,7 +311,7 @@
 }
 
 .view-all-link {
-    color: #dc3545; /* Red color for view all link */
+    color: #0d9488; /* Red color for view all link */
     font-weight: 500;
     text-decoration: none;
 }
@@ -334,26 +334,26 @@
     }
 
     .shop-filter-btn.active {
-        background-color: #dc3545; /* Red background for active filter buttons */
-        border-color: #dc3545;
+        background-color: #0d9488; /* Red background for active filter buttons */
+        border-color: #0d9488;
         color: white;
     }
 
         .shop-filter-btn.active:hover {
-            background-color: #c82333; /* Darker red on hover for active buttons */
+            background-color: #0f766e; /* Darker red on hover for active buttons */
             border-color: #bd2130;
         }
 
 .shop-clear-btn {
     background-color: #f8f9fa;
     border: 1px solid #ced4da;
-    color: #dc3545; /* Red text for clear button */
+    color: #0d9488; /* Red text for clear button */
     transition: all 0.3s ease;
 }
 
     .shop-clear-btn:hover {
-        background-color: #dc3545; /* Red background on hover */
-        border-color: #dc3545;
+        background-color: #0d9488; /* Red background on hover */
+        border-color: #0d9488;
         color: white;
     }
 
@@ -414,7 +414,7 @@ body.dark-mode .navbar-search-result-category {
 
 /* Dark mode for product prices */
 body.dark-mode .navbar-search-result-price {
-    color: #dc3545 !important; /* Red color for prices in dark mode */
+    color: #0d9488 !important; /* Red color for prices in dark mode */
 }
 
 /* Dark mode for no results message */
@@ -459,7 +459,7 @@ body.dark-mode .product-link {
     body.dark-mode .category-link:hover,
     body.dark-mode .product-price,
     body.dark-mode .view-all-link {
-        color: #dc3545; /* Red color on hover and for prices in dark mode */
+        color: #0d9488; /* Red color on hover and for prices in dark mode */
     }
 
 body.dark-mode .search-result-item:hover {
@@ -482,19 +482,19 @@ body.dark-mode .shop-filter-btn {
     }
 
     body.dark-mode .shop-filter-btn.active {
-        background-color: #dc3545; /* Red background for active buttons in dark mode */
-        border-color: #dc3545;
+        background-color: #0d9488; /* Red background for active buttons in dark mode */
+        border-color: #0d9488;
         color: white;
     }
 
 body.dark-mode .shop-clear-btn {
     background-color: #343a40; /* Dark background for clear button in dark mode */
     border-color: #495057;
-    color: #dc3545;
+    color: #0d9488;
 }
 
     body.dark-mode .shop-clear-btn:hover {
-        background-color: #dc3545; /* Red background on hover in dark mode */
-        border-color: #dc3545;
+        background-color: #0d9488; /* Red background on hover in dark mode */
+        border-color: #0d9488;
         color: white;
     }

@@ -16,14 +16,14 @@
     }
 
 .create-btn {
-    background-color: #dc3545 !important; /* Red background for create button to match theme */
-    border-color: #dc3545 !important;
+    background-color: #0d9488 !important; /* Red background for create button to match theme */
+    border-color: #0d9488 !important;
     color: white !important;
 }
 
     .create-btn:hover, .create-btn:focus, .create-btn:active {
-        background-color: #dc3545 !important; /* Maintains red color for all button states */
-        border-color: #dc3545 !important;
+        background-color: #0d9488 !important; /* Maintains red color for all button states */
+        border-color: #0d9488 !important;
         color: white !important;
         box-shadow: none !important; /* Removes default button shadow effects */
         transform: none !important; /* Disables transform animations */

@@ -1,5 +1,5 @@
 ﻿:root {
-    --primary-color: #dc3545;
+    --primary-color: #0d9488;
     --secondary-color: #f8f9fa;
     --text-color: #333;
     --bg-color: #fff;
@@ -107,7 +107,7 @@ a {
     }
 
         .btn.btn-primary:hover {
-            background-color: #c82333 !important;
+            background-color: #0f766e !important;
             border-color: #bd2130 !important;
         }
 
@@ -942,7 +942,7 @@ body.has-sticky-header {
 
     #back-to-top:hover {
         transform: translateY(-3px);
-        background-color: #c82333;
+        background-color: #0f766e;
     }
 
 /* Position toast notifications fixed in top-right with slide animation */
@@ -1016,7 +1016,7 @@ body.has-sticky-header {
 
 /* Apply dark theme color scheme using CSS custom properties */
 body.dark-mode {
-    --primary-color: #e63946;
+    --primary-color: #14b8a6;
     --secondary-color: #343a40;
     --text-color: #f8f9fa;
     --bg-color: #212529;

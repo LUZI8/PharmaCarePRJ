@@ -57,8 +57,8 @@ form .btn-primary,
 a.btn-primary,
 .btn-toolbar .btn-primary,
 .mt-4 .btn-primary {
-    background-color: #dc3545 !important; /* Forces red background for all primary buttons */
-    border-color: #dc3545 !important;
+    background-color: #0d9488 !important; /* Forces red background for all primary buttons */
+    border-color: #0d9488 !important;
     color: white !important;
     transition: none !important;
 }
@@ -71,8 +71,8 @@ a.btn-primary,
     a.btn-primary:hover,
     .btn-toolbar .btn-primary:hover,
     .mt-4 .btn-primary:hover {
-        background-color: #dc3545 !important; /* Maintains red color on hover */
-        border-color: #dc3545 !important;
+        background-color: #0d9488 !important; /* Maintains red color on hover */
+        border-color: #0d9488 !important;
         color: white !important;
         box-shadow: none !important;
         transform: none !important;
@@ -81,8 +81,8 @@ a.btn-primary,
     .btn-primary:active,
     .btn-primary:focus,
     .btn-primary:not(:disabled):not(.disabled):active {
-        background-color: #dc3545 !important; /* Consistent red for all button states */
-        border-color: #dc3545 !important;
+        background-color: #0d9488 !important; /* Consistent red for all button states */
+        border-color: #0d9488 !important;
         color: white !important;
         box-shadow: none !important;
     }

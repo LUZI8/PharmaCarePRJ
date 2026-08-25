@@ -132,7 +132,7 @@ body.dark-mode {
     position: absolute; /* Positions tag relative to product card */
     top: 10px;
     right: 10px;
-    background-color: var(--primary-color, #ff6767); /* Uses CSS variable for theme color */
+    background-color: var(--primary-color, #2dd4bf); /* Uses CSS variable for theme color */
     color: white;
     padding: 4px 8px;
     font-size: 12px;
@@ -204,7 +204,7 @@ body.dark-mode {
 
         .health-calculator .form-control:focus {
             background-color: var(--input-bg) !important;
-            border-color: #dc3545 !important; /* Red border on focus */
+            border-color: #0d9488 !important; /* Red border on focus */
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important; /* Red glow effect */
             color: var(--input-text) !important;
             outline: none; /* Removes default browser outline */
@@ -244,7 +244,7 @@ body.dark-mode .health-calculator select.form-control {
 }
 
     .health-calculator #results .card .card-header {
-        background-color: #dc3545 !important; /* Red header for results card */
+        background-color: #0d9488 !important; /* Red header for results card */
         color: #ffffff !important;
         border-bottom: 1px solid var(--calculator-border) !important;
     }
@@ -291,7 +291,7 @@ body.dark-mode .health-calculator select.form-control {
 .loader {
     display: none; /* Hidden by default until needed */
     border: 3px solid #f3f3f3; /* Light gray border for spinner ring */
-    border-top: 3px solid #dc3545; /* Red top border for spinning effect */
+    border-top: 3px solid #0d9488; /* Red top border for spinning effect */
     border-radius: 50%; /* Creates circular spinner */
     width: 30px;
     height: 30px;
@@ -301,7 +301,7 @@ body.dark-mode .health-calculator select.form-control {
 
 body.dark-mode .loader {
     border: 3px solid #495057; /* Dark gray border for dark mode */
-    border-top: 3px solid #dc3545;
+    border-top: 3px solid #0d9488;
 }
 
 .fade-in {
@@ -385,7 +385,7 @@ body:not(.dark-mode):not([data-theme="dark"]) .health-calculator {
         body:not(.dark-mode):not([data-theme="dark"]) .health-calculator .form-control:focus {
             /* Improved focus styling with red accent */
             background-color: #ffffff !important;
-            border-color: #dc3545 !important;
+            border-color: #0d9488 !important;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
             color: var(--input-text) !important;
         }

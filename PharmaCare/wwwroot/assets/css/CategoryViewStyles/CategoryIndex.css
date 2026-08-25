@@ -41,7 +41,7 @@
 }
 
 .badge-danger {
-    background-color: #dc3545 !important; /* Red background for danger badges */
+    background-color: #0d9488 !important; /* Red background for danger badges */
     color: white;
 }
 
@@ -77,8 +77,8 @@
         }
 
 .btn-primary.add-new {
-    background-color: #dc3545 !important; /* Red background for add new button */
-    border-color: #dc3545 !important;
+    background-color: #0d9488 !important; /* Red background for add new button */
+    border-color: #0d9488 !important;
     color: white !important;
 }
 

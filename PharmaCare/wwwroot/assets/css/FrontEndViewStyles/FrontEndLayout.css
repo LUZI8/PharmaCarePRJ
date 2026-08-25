@@ -98,7 +98,7 @@ body.dark-mode .site-menu li.active a::after {
         }
 
             .site-navbar .site-navigation .site-menu .has-children .dropdown a:hover {
-                color: #dc3545 !important; /* Red color on hover */
+                color: #0d9488 !important; /* Red color on hover */
                 background: #f8f9fa; /* Light background on hover */
             }
 
@@ -112,7 +112,7 @@ body:not(.dark-mode) .site-menu .dropdown {
 
         body:not(.dark-mode) .site-menu .dropdown a:hover {
             background-color: #f8f9fa !important; /* Light gray background on hover */
-            color: #dc3545 !important;
+            color: #0d9488 !important;
         }
 
 body.dark-mode .site-menu .dropdown {
@@ -144,7 +144,7 @@ body.dark-mode .site-navbar .site-navigation .site-menu .has-children .dropdown 
         }
 
 .user-dropdown a:hover {
-    color: #dc3545 !important; /* Red color for hovered user dropdown links */
+    color: #0d9488 !important; /* Red color for hovered user dropdown links */
     background-color: rgba(220, 53, 69, 0.1) !important; /* Light red background on hover */
 }
 
@@ -361,7 +361,7 @@ body.dark-mode .site-mobile-menu-body ul li.active a {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #dc3545; /* Red background for cart badge */
+    background-color: #0d9488; /* Red background for cart badge */
     color: white;
     font-size: 10px;
 }
@@ -410,9 +410,9 @@ body.dark-mode .navbar-search-input::placeholder {
 #view-all-results-btn,
 .navbar-search-results a.btn,
 #navbar-search-results a.btn {
-    background-color: #dc3545 !important; /* Red background for search result buttons */
+    background-color: #0d9488 !important; /* Red background for search result buttons */
     color: #ffffff !important;
-    border-color: #dc3545 !important;
+    border-color: #0d9488 !important;
     transition: none !important; /* Disables transition effects */
     display: block !important;
     width: 100% !important; /* Full width buttons */
@@ -428,17 +428,17 @@ body.dark-mode #view-all-results-btn,
 body:not(.dark-mode) .navbar-search-results .btn,
 body:not(.dark-mode) #navbar-search-results .btn,
 body:not(.dark-mode) #view-all-results-btn {
-    background-color: #dc3545 !important; /* Consistent red color across themes */
+    background-color: #0d9488 !important; /* Consistent red color across themes */
     color: #ffffff !important;
-    border-color: #dc3545 !important;
+    border-color: #0d9488 !important;
 }
 
 .navbar-search-results .btn:hover,
 #navbar-search-results .btn:hover,
 #view-all-results-btn:hover {
-    background-color: #dc3545 !important; /* Maintains red color on hover */
+    background-color: #0d9488 !important; /* Maintains red color on hover */
     color: #ffffff !important;
-    border-color: #dc3545 !important;
+    border-color: #0d9488 !important;
     transform: none !important;
     box-shadow: none !important; /* Removes hover effects */
     opacity: 1 !important;

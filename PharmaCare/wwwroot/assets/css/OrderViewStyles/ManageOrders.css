@@ -65,13 +65,13 @@ body.dark-mode .close {
 }
 
 .btn-update-status {
-    background-color: #dc3545; /* Red background for status update button */
-    border-color: #dc3545;
+    background-color: #0d9488; /* Red background for status update button */
+    border-color: #0d9488;
     color: #fff !important;
 }
 
     .btn-update-status:hover {
-        background-color: #c82333; /* Darker red on hover */
+        background-color: #0f766e; /* Darker red on hover */
         border-color: #bd2130;
         color: #fff !important;
     }

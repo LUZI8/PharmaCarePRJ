@@ -122,7 +122,7 @@ body.dark-mode .js-btn-minus:hover {
     }
 
     .toast-notification.error i {
-        color: #dc3545; /* Red icon for error notifications */
+        color: #0d9488; /* Red icon for error notifications */
     }
 
     .toast-notification i {
@@ -217,7 +217,7 @@ body.dark-mode .js-btn-minus:hover {
     }
 
     .toast-notification.error i {
-        color: #dc3545;
+        color: #0d9488;
     }
 
     .toast-notification i {

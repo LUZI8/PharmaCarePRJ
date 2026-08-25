@@ -60,8 +60,8 @@ dd {
 .edit-instead-btn,
 a.btn-outline-primary.edit-instead-btn,
 .delete-card a.btn-outline-primary.edit-instead-btn {
-    background-color: #dc3545 !important; /* Red background for edit button to match theme */
-    border-color: #dc3545 !important;
+    background-color: #0d9488 !important; /* Red background for edit button to match theme */
+    border-color: #0d9488 !important;
     color: white !important;
     transition: none !important; /* Disables transition effects for consistent appearance */
 }
@@ -69,23 +69,23 @@ a.btn-outline-primary.edit-instead-btn,
     .edit-instead-btn:hover,
     a.btn-outline-primary.edit-instead-btn:hover,
     .delete-card a.btn-outline-primary.edit-instead-btn:hover {
-        background-color: #dc3545 !important; /* Maintains red color on hover */
-        border-color: #dc3545 !important;
+        background-color: #0d9488 !important; /* Maintains red color on hover */
+        border-color: #0d9488 !important;
         color: white !important;
         box-shadow: none !important; /* Removes default button shadow effects */
         transform: none !important;
     }
 
 .btn-danger {
-    background-color: #dc3545 !important; /* Red background for danger buttons */
-    border-color: #dc3545 !important;
+    background-color: #0d9488 !important; /* Red background for danger buttons */
+    border-color: #0d9488 !important;
     color: white !important;
     transition: none !important;
 }
 
     .btn-danger:hover {
-        background-color: #dc3545 !important; /* Consistent red color on hover */
-        border-color: #dc3545 !important;
+        background-color: #0d9488 !important; /* Consistent red color on hover */
+        border-color: #0d9488 !important;
         color: white !important;
         box-shadow: none !important;
     }

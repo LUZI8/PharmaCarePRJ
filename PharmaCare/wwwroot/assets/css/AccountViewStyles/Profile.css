@@ -9,7 +9,7 @@
 
 /* Sidebar header with brand color styling */
 .sidebar-header {
-    background-color: #dc3545; /* Primary brand red color */
+    background-color: #0d9488; /* Primary brand red color */
     color: white;
     padding: 15px 20px;
     font-weight: 600; /* Semi-bold font for emphasis */
@@ -34,15 +34,15 @@
     /* Active sidebar item visual state */
     .account-sidebar .list-group-item.active {
         background-color: #f8f9fa; /* Light background for active state */
-        color: #dc3545; /* Brand color text for active item */
+        color: #0d9488; /* Brand color text for active item */
         font-weight: 600;
-        border-left: 4px solid #dc3545; /* Left accent border for active indicator */
+        border-left: 4px solid #0d9488; /* Left accent border for active indicator */
     }
 
     /* Hover effect for non-active sidebar items */
     .account-sidebar .list-group-item:hover:not(.active) {
         background-color: #f8f9fa;
-        color: #dc3545;
+        color: #0d9488;
         transform: translateX(5px); /* Slide animation on hover */
     }
 
@@ -81,8 +81,8 @@
 
 /* Primary action button styling */
 .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
+    background-color: #0d9488;
+    border-color: #0d9488;
     padding: 10px 20px;
     font-weight: 500;
     transition: all 0.3s ease; /* Smooth transition for hover animations */
@@ -90,7 +90,7 @@
 
     /* Enhanced button hover effect with elevation */
     .btn-danger:hover {
-        background-color: #c82333; /* Darker shade on hover */
+        background-color: #0f766e; /* Darker shade on hover */
         border-color: #bd2130;
         transform: translateY(-2px); /* Lift effect for modern interaction */
         box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3); /* Shadow for elevation effect */
@@ -117,7 +117,7 @@ body.dark-mode .account-sidebar {
 }
 
 body.dark-mode .sidebar-header {
-    background-color: #c82333; /* Darker red variant for dark theme */
+    background-color: #0f766e; /* Darker red variant for dark theme */
 }
 
 body.dark-mode .list-group-item:not(.active) {

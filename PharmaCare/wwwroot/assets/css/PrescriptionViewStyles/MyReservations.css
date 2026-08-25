@@ -58,7 +58,7 @@ body.dark-mode .alert-success {
 
 body.dark-mode .alert-danger {
     background-color: #721c24 !important; /* Dark red background for danger alerts */
-    border-color: #dc3545 !important;
+    border-color: #0d9488 !important;
     color: white !important;
 }
 
@@ -73,15 +73,15 @@ body.dark-mode .text-muted {
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #dc3545; /* Red background for active pagination item */
-    border-color: #dc3545;
+    background-color: #0d9488; /* Red background for active pagination item */
+    border-color: #0d9488;
     color: white;
 }
 
 .pagination .page-link:hover {
     background-color: #f8f9fa; /* Light gray background on hover */
-    color: #dc3545; /* Red text on hover */
-    border-color: #dc3545;
+    color: #0d9488; /* Red text on hover */
+    border-color: #0d9488;
 }
 
 .pagination .page-item.disabled .page-link {
@@ -97,15 +97,15 @@ body.dark-mode .pagination .page-link {
 }
 
 body.dark-mode .pagination .page-item.active .page-link {
-    background-color: #dc3545; /* Red background for active page in dark mode */
-    border-color: #dc3545;
+    background-color: #0d9488; /* Red background for active page in dark mode */
+    border-color: #0d9488;
     color: white;
 }
 
 body.dark-mode .pagination .page-link:hover {
     background-color: #3a3a3a; /* Darker background on hover in dark mode */
     color: #fff;
-    border-color: #dc3545;
+    border-color: #0d9488;
 }
 
 body.dark-mode .pagination .page-item.disabled .page-link {

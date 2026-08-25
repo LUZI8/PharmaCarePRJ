@@ -1,52 +1,136 @@
 ﻿.product-card {
-    border: 1px solid var(--border-color, #e9ecef); /* Uses CSS variable with fallback */
-    border-radius: 8px;
-    padding: 20px;
-    transition: all 0.3s ease; /* Smooth animation for all property changes */
-    height: 100%; /* Ensures equal height for all product cards */
+    border: 1px solid var(--border-color, #eef0f3);
+    border-radius: 16px;
+    padding: 16px;
+    transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .28s ease;
+    height: 100%;
     position: relative;
-    background-color: var(--card-bg, white);
+    background-color: var(--card-bg, #fff);
+    display: flex;
+    flex-direction: column;
+    /* Subtle entrance so a freshly loaded grid feels alive */
+    animation: pc-fade-up .45s ease both;
 }
 
     .product-card:hover {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Shadow effect on hover */
-        transform: translateY(-5px); /* Lifts card slightly on hover */
+        box-shadow: 0 16px 34px rgba(17, 24, 39, 0.12);
+        transform: translateY(-8px);
+        border-color: #f3b7bd; /* soft brand tint on hover */
     }
 
+/* Card entrance animation + a small stagger across the first row */
+@keyframes pc-fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.product-item:nth-child(2) .product-card { animation-delay: .06s; }
+.product-item:nth-child(3) .product-card { animation-delay: .12s; }
+.product-item:nth-child(4) .product-card { animation-delay: .18s; }
+.product-item:nth-child(5) .product-card { animation-delay: .24s; }
+.product-item:nth-child(6) .product-card { animation-delay: .30s; }
+
+/* Image sits in a soft panel and zooms gently on hover */
+.product-card a:has(> img) {
+    display: block;
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+    .product-card a:has(> img) img {
+        transition: transform .4s cubic-bezier(.2,.8,.2,1);
+        mix-blend-mode: multiply; /* blends white product backgrounds into the panel */
+    }
+
+.product-card:hover a:has(> img) img {
+    transform: scale(1.07);
+}
+
+/* Product title */
+.product-card h3 {
+    font-size: 1.05rem;
+    line-height: 1.35;
+    font-weight: 600;
+    margin-bottom: 6px;
+    min-height: 2.7em; /* keeps prices aligned across cards */
+}
+
+    .product-card h3 a {
+        color: #1f2937;
+        text-decoration: none;
+        transition: color .2s ease;
+    }
+
+        .product-card h3 a:hover {
+            color: var(--primary-color, #0d9488);
+        }
+
+/* Price */
+.product-card .price {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--primary-color, #0d9488);
+    margin: 0 0 12px;
+    letter-spacing: -.5px;
+}
+
 .tag {
-    position: absolute; /* Positions tag relative to product card */
-    top: 10px;
-    right: 10px;
-    background-color: var(--primary-color, #ff6767); /* Uses CSS variable for theme color */
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background-color: var(--primary-color, #2dd4bf);
     color: white;
-    padding: 4px 8px;
-    font-size: 12px;
-    border-radius: 4px;
-    z-index: 2; /* Ensures tag appears above other content */
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    border-radius: 50rem; /* pill */
+    z-index: 3;
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
 }
 
 .medication-badges {
-    margin-top: 10px;
+    margin: 4px 0 16px;
     display: flex;
-    flex-wrap: wrap; /* Allows badges to wrap to next line */
-    justify-content: center; /* Centers badges horizontally */
-    gap: 5px; /* Consistent spacing between badges */
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 6px;
 }
 
-.badge {
-    padding: 5px 8px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    font-weight: 500;
+/* Soft, modern pill badges instead of loud solid colors */
+.medication-badges .badge {
+    padding: .42em .8em;
+    border-radius: 50rem;
+    margin-bottom: 0;
+    font-weight: 600;
     font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid transparent;
 }
 
-    .badge i {
-        margin-right: 4px; /* Spacing between icon and badge text */
+    .medication-badges .badge i {
+        font-size: 10px;
     }
 
+.medication-badges .badge-success { background: #e8f7ef; color: #1a7f4b; }
+.medication-badges .badge-info    { background: #e6f4f8; color: #0c7489; }
+.medication-badges .badge-warning { background: #fff5e1; color: #9a6700; }
+.medication-badges .badge-primary { background: #ecebfb; color: #4b3fb0; }
+.medication-badges .badge-danger  { background: #fdeaec; color: #b02a37; }
+
+/* Push the action button to the bottom so all cards line up */
+.product-card .btn:last-child,
+.product-card > a.btn {
+    margin-top: auto;
+}
+
 .prescription-notice {
-    border-left: 4px solid var(--primary-color, #ff6767); /* Colored left border for emphasis */
+    border-left: 4px solid var(--primary-color, #2dd4bf); /* Colored left border for emphasis */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -60,9 +144,9 @@
 
 .btn-group .btn-outline-danger.active,
 .btn-group .btn-outline-danger:active {
-    background-color: var(--danger, #dc3545) !important; /* Red background for active filter buttons */
+    background-color: var(--danger, #0d9488) !important; /* Red background for active filter buttons */
     color: white !important;
-    border-color: var(--danger, #dc3545) !important;
+    border-color: var(--danger, #0d9488) !important;
 }
 
 /* On small screens let the "Sort by" button group wrap instead of overflowing.
@@ -89,14 +173,54 @@
     }
 
         .prescription-filter .btn-outline-danger.active {
-            background-color: var(--danger, #dc3545) !important; /* Red background for active prescription filter */
+            background-color: var(--danger, #0d9488) !important; /* Red background for active prescription filter */
             color: white !important;
-            border-color: var(--danger, #dc3545) !important;
+            border-color: var(--danger, #0d9488) !important;
         }
 
-.btn-add-to-cart {
-    margin-top: 10px;
-    width: 100%; /* Full width button within product card */
+/* Product-card action buttons: full width, pill, lively hover */
+.product-card .btn {
+    width: 100%;
+    border-radius: 50rem;
+    padding: 11px 14px;
+    font-weight: 600;
+    font-size: .92rem;
+    letter-spacing: .2px;
+    border: none;
+    transition: transform .18s ease, box-shadow .22s ease, filter .18s ease;
+}
+
+    .product-card .btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+
+.product-card .btn-add-to-cart {
+    width: 100%;
+    background: var(--primary-color, #0d9488);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(220, 53, 69, .28);
+}
+
+    .product-card .btn-add-to-cart:hover:not(:disabled) {
+        background: #0f766e;
+        box-shadow: 0 10px 22px rgba(220, 53, 69, .36);
+    }
+
+.product-card .btn-info {
+    background: #17a2b8;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(23, 162, 184, .28);
+}
+
+    .product-card .btn-info:hover {
+        background: #128294;
+        box-shadow: 0 10px 22px rgba(23, 162, 184, .36);
+    }
+
+.product-card .btn:disabled {
+    background: #e9ecef;
+    color: #98a2b3;
+    box-shadow: none;
 }
 
 .site-block-27 ul {
@@ -123,9 +247,9 @@
         }
 
         .site-block-27 ul li.active span {
-            background: #dc3545; /* Red background for active pagination number */
+            background: #0d9488; /* Red background for active pagination number */
             color: #fff;
-            border-color: #dc3545;
+            border-color: #0d9488;
         }
 
         .site-block-27 ul li.disabled a {

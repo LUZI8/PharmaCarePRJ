@@ -26,7 +26,7 @@
 
 .category-icon {
     font-size: 3rem; /* Large icon size for category representation */
-    color: #dc3545; /* Red color to match theme */
+    color: #0d9488; /* Red color to match theme */
     padding: 20px;
     background-color: #f8f9fc; /* Light background for icon container */
     border-radius: 50%; /* Creates circular icon background */
@@ -43,14 +43,14 @@
     }
 
 .btn-edit-instead {
-    background-color: #dc3545; /* Red background for edit button */
-    border-color: #dc3545;
+    background-color: #0d9488; /* Red background for edit button */
+    border-color: #0d9488;
     color: #fff !important;
 }
 
     .btn-edit-instead:hover {
-        background-color: #dc3545; /* Maintains red color on hover */
-        border-color: #dc3545;
+        background-color: #0d9488; /* Maintains red color on hover */
+        border-color: #0d9488;
         color: #fff !important;
     }
 
@@ -98,7 +98,7 @@ body.dark-mode .alert-warning {
 }
 
 .validation-summary-errors {
-    color: #dc3545; /* Red text for validation errors */
+    color: #0d9488; /* Red text for validation errors */
     background-color: #f8d7da; /* Light red background for error container */
     border: 1px solid #f5c6cb;
     border-radius: 0.35rem;

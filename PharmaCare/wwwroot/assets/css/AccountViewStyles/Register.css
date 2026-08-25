@@ -1,13 +1,13 @@
 ﻿/* CSS custom properties for consistent theming across components */
 :root {
-    --primary-color: #dc3545; /* Main brand color - red */
+    --primary-color: #0d9488; /* Main brand color - red */
     --text-color: #fff; /* Default text color for dark theme */
     --bg-color: #1e1e1e; /* Dark background color */
     --card-bg: #2d2d2d; /* Card/form container background */
     --input-bg: #333; /* Input field background color */
     --border-color: #444; /* Border color for form elements */
     --success-color: #28a745; /* Green color for success states */
-    --error-color: #dc3545; /* Red color for error states */
+    --error-color: #dc3545; /* Red color for error states (kept red, not brand) */
 }
 
 /* Global body styling with flexbox layout structure */
@@ -89,7 +89,7 @@ body {
 .error-message {
     background-color: var(--error-color); /* Red background for errors */
     color: white;
-    border: 1px solid #c82333;
+    border: 1px solid #b02a37;
     padding: 12px 15px;
     border-radius: 4px;
     margin-bottom: 20px;
@@ -135,7 +135,7 @@ body {
     /* Focus state with brand color accent */
     .form-control:focus {
         border-color: var(--primary-color); /* Brand color border on focus */
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); /* Subtle glow effect */
+        box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.25); /* teal focus glow */
     }
 
 /* Password field container with relative positioning */
@@ -214,7 +214,7 @@ body {
 }
 
     .submit-btn:hover {
-        background-color: #c82333; /* Darker shade on hover */
+        background-color: #0f766e; /* Darker shade on hover */
     }
 
 /* Sign-in link at bottom of form */

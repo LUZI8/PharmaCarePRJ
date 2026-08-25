@@ -74,7 +74,7 @@
 }
 
     .hamburger-menu:hover {
-        color: #dc3545; /* Brand color on hover */
+        color: #0d9488; /* Brand color on hover */
     }
 
 /* Top navigation links and buttons styling */
@@ -102,15 +102,15 @@
 
     .admin-name i {
         margin-right: 5px;
-        color: #dc3545; /* Brand color for admin icon */
+        color: #0d9488; /* Brand color for admin icon */
     }
 
 /* Logout button with outlined style */
 .logout-btn {
     padding: 0.25rem 0.75rem;
     border-radius: 4px;
-    border: 1px solid #dc3545; /* Brand color border */
-    color: #dc3545;
+    border: 1px solid #0d9488; /* Brand color border */
+    color: #0d9488;
     background: transparent;
     transition: all 0.3s; /* Smooth transition for hover effects */
     text-decoration: none;
@@ -120,7 +120,7 @@
 
     /* Logout button hover effect with color inversion */
     .logout-btn:hover {
-        background-color: #dc3545; /* Fill background on hover */
+        background-color: #0d9488; /* Fill background on hover */
         color: white;
     }
 
@@ -207,14 +207,14 @@
 
     /* Active page styling with brand color */
     .admin-pagination .page-item.active .page-link {
-        background-color: #dc3545; /* Brand color for active page */
-        border-color: #dc3545;
+        background-color: #0d9488; /* Brand color for active page */
+        border-color: #0d9488;
     }
 
     /* Pagination hover effect */
     .admin-pagination .page-link:hover {
         background-color: #f8f9fa;
-        color: #dc3545; /* Brand color on hover */
+        color: #0d9488; /* Brand color on hover */
     }
 
 /* Theme toggle button styling */
@@ -399,7 +399,7 @@
 
 /* Dark theme color scheme overrides */
 body.dark-mode {
-    --primary-color: #e63946; /* Slightly different red for dark theme */
+    --primary-color: #14b8a6; /* Slightly different red for dark theme */
     --secondary-color: #343a40;
     --text-color: #f8f9fa; /* Light text for dark backgrounds */
     --bg-color: #212529; /* Dark background color */
@@ -460,7 +460,7 @@ body.dark-mode {
         }
 
         body.dark-mode .nav-link.active {
-            background-color: #dc3545; /* Brand color for active links */
+            background-color: #0d9488; /* Brand color for active links */
             color: white;
         }
 
@@ -548,8 +548,8 @@ body.dark-mode {
     }
 
     body.dark-mode .admin-pagination .page-item.active .page-link {
-        background-color: #dc3545;
-        border-color: #dc3545;
+        background-color: #0d9488;
+        border-color: #0d9488;
     }
 
     body.dark-mode .admin-pagination .page-link:hover {
@@ -575,7 +575,7 @@ body.dark-mode {
     }
 
     body.dark-mode .badge-danger {
-        background-color: #dc3545;
+        background-color: #0d9488;
     }
 
     body.dark-mode .badge-info {
