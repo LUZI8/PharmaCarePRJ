@@ -56,3 +56,19 @@ public class MarketplaceAuditLog
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public User? User { get; set; }
 }
+
+public class MarketplaceDeliveryAssignment
+{
+    public int MarketplaceDeliveryAssignmentId { get; set; }
+    public int MarketplaceOrderId { get; set; }
+    public int DriverUserId { get; set; }
+    [Required, MaxLength(30)] public string Status { get; set; } = "Assigned";
+    public DateTime AssignedAt { get; set; } = DateTime.Now;
+    public DateTime? ArrivedAtPharmacy { get; set; }
+    public DateTime? PickedUpAt { get; set; }
+    public DateTime? StartedDeliveryAt { get; set; }
+    public DateTime? DeliveredAt { get; set; }
+    [MaxLength(500)] public string? ProblemNote { get; set; }
+    public MarketplaceOrder MarketplaceOrder { get; set; } = null!;
+    public User DriverUser { get; set; } = null!;
+}
