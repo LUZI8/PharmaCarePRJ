@@ -30,6 +30,7 @@ namespace PharmaCare.Data
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<MarketplaceNotification> MarketplaceNotifications { get; set; }
         public DbSet<MarketplaceAuditLog> MarketplaceAuditLogs { get; set; }
+        public DbSet<MarketplaceDeliveryAssignment> MarketplaceDeliveryAssignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -119,6 +120,11 @@ namespace PharmaCare.Data
 
             modelBuilder.Entity<MarketplaceAuditLog>().HasIndex(x => new { x.EntityName, x.EntityId, x.CreatedAt });
             modelBuilder.Entity<MarketplaceAuditLog>().HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MarketplaceDeliveryAssignment>().HasIndex(x => x.MarketplaceOrderId).IsUnique();
+            modelBuilder.Entity<MarketplaceDeliveryAssignment>().HasIndex(x => new { x.DriverUserId, x.Status });
+            modelBuilder.Entity<MarketplaceDeliveryAssignment>().HasOne(x => x.MarketplaceOrder).WithMany().HasForeignKey(x => x.MarketplaceOrderId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<MarketplaceDeliveryAssignment>().HasOne(x => x.DriverUser).WithMany().HasForeignKey(x => x.DriverUserId).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
