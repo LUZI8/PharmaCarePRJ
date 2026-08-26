@@ -103,6 +103,7 @@ if (app.Environment.IsDevelopment())
     await DemoCatalogSeeder.SeedAsync(db, loggerFactory.CreateLogger("DemoCatalogSeeder"));
     await RealMedicineImageSeeder.SeedAsync(db, loggerFactory.CreateLogger("RealMedicineImageSeeder"));
     await MarketplaceBootstrapper.EnsureAsync(db, loggerFactory.CreateLogger("MarketplaceBootstrapper"));
+    await MarketplaceOrderBootstrapper.EnsureAsync(db);
 }
 
 if (app.Environment.IsDevelopment())
