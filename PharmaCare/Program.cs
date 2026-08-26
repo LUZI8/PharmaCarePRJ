@@ -26,6 +26,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddSingleton<IFileHelper, FileHelper>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ISmartCartService, SmartCartService>();
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
