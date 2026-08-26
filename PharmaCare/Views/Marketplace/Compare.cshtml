@@ -13,7 +13,7 @@
 <div class="compare-page"><div class="container">
 <div style="margin-bottom:18px"><a href="/Marketplace" style="font-size:10px;font-weight:700;color:var(--cp)">← Back to marketplace</a><a class="basket-link" href="/MarketplaceCart"><i class="fas fa-shopping-basket"></i> Marketplace basket</a></div>
 <div class="compare-shell">
-<aside class="product-panel"><div class="product-image"><img src="@Model.Product.ImageUrl" alt="@Model.Product.ProductName"/></div><div class="category">@Model.Product.Category?.CategoryName</div><h1>@Model.Product.ProductName</h1><p class="description">@Model.Product.Description</p>@if(Model.Product.RequiresPrescription){<div class="rx-note"><i class="fas fa-prescription"></i> <strong>Prescription medicine.</strong><br/>Compare pharmacies first, then continue through prescription verification before pickup.</div>}</aside>
+<aside class="product-panel"><div class="product-image"><img src="@Model.Product.ImageUrl" alt="@Model.Product.ProductName"/></div><div class="category">@Model.Product.Category?.CategoryName</div><h1>@Model.Product.ProductName</h1><p class="description">@Model.Product.Description</p>@if(Model.Product.RequiresPrescription){<div class="rx-note"><i class="fas fa-prescription"></i> <strong>Prescription medicine.</strong><br/>Compare pharmacies first, then continue through pharmacy-specific prescription verification before pickup.</div>}</aside>
 <section class="offers-panel"><h2>Compare pharmacy offers</h2><div class="offers-sub">@Model.Offers.Count pharmacies currently have this product available.</div>
 @if(Model.Offers.Any()){
     for(var i=0;i<Model.Offers.Count;i++){
@@ -23,7 +23,7 @@
             <div class="metric"><strong>@o.DeliveryMinutes min</strong><span>Estimated delivery</span></div>
             <div class="metric"><strong>@(o.DeliveryFee==0?"FREE":"$"+o.DeliveryFee.ToString("0.00"))</strong><span>Delivery fee</span></div>
             <div class="offer-price">$@o.Price.ToString("0.00")</div>
-            @if(o.RequiresPrescription){<a class="offer-action" href="/FrontEnd/ShopSingle/@o.ProductId">Reserve & verify</a>}
+            @if(o.RequiresPrescription){<a class="offer-action" href="/MarketplacePrescription/Confirm?offerId=@o.PharmacyProductId">Reserve & verify</a>}
             else{<form method="post" action="/MarketplaceCart/Add">@Html.AntiForgeryToken()<input type="hidden" name="pharmacyProductId" value="@o.PharmacyProductId"/><input type="hidden" name="quantity" value="1"/><button class="offer-action" type="submit"><i class="fas fa-shopping-basket" style="margin-right:6px"></i>Add from this pharmacy</button></form>}
         </div>
     }
