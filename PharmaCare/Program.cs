@@ -45,7 +45,6 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
-// Per-IP traffic protection. Authentication and AI endpoints receive tighter limits than normal browsing.
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -103,6 +102,7 @@ if (app.Environment.IsDevelopment())
 
     await DemoCatalogSeeder.SeedAsync(db, loggerFactory.CreateLogger("DemoCatalogSeeder"));
     await RealMedicineImageSeeder.SeedAsync(db, loggerFactory.CreateLogger("RealMedicineImageSeeder"));
+    await MarketplaceBootstrapper.EnsureAsync(db, loggerFactory.CreateLogger("MarketplaceBootstrapper"));
 }
 
 if (app.Environment.IsDevelopment())
@@ -133,10 +133,7 @@ app.Use(async (context, next) =>
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=604800";
-    }
+    OnPrepareResponse = ctx => ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=604800"
 });
 
 app.UseRouting();
@@ -158,11 +155,12 @@ app.MapGet("/health", () => Results.Ok(new
 {
     status = "healthy",
     service = "PharmaCare",
+    mode = "multi-pharmacy-marketplace",
     utc = DateTime.UtcNow
 }));
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=FrontEnd}/{action=Index}/{id?}");
+    pattern: "{controller=Marketplace}/{action=Index}/{id?}");
 
 app.Run();
