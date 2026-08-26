@@ -26,6 +26,23 @@ public class MarketplaceOrdersController : Controller
         var order = await _db.MarketplaceOrders.AsNoTracking().Include(x => x.Pharmacy).Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.MarketplaceOrderId == id && x.UserId == userId.Value, ct);
         if (order == null) return NotFound();
-        return View(order);
+
+        var history = await _db.MarketplaceOrderStatusHistory.AsNoTracking()
+            .Where(x => x.MarketplaceOrderId == id)
+            .OrderBy(x => x.ChangedAt)
+            .ToListAsync(ct);
+
+        if (history.Count == 0)
+        {
+            history.Add(new MarketplaceOrderStatusHistory
+            {
+                MarketplaceOrderId = order.MarketplaceOrderId,
+                Status = "Pending",
+                ChangedAt = order.OrderDate,
+                Notes = "Order submitted."
+            });
+        }
+
+        return View(new MarketplaceOrderDetailsViewModel { Order = order, History = history });
     }
 }
