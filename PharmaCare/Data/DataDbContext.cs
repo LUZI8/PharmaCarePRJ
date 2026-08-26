@@ -26,6 +26,7 @@ namespace PharmaCare.Data
         public DbSet<MarketplaceOrder> MarketplaceOrders { get; set; }
         public DbSet<MarketplaceOrderItem> MarketplaceOrderItems { get; set; }
         public DbSet<MarketplacePrescriptionRequest> MarketplacePrescriptionRequests { get; set; }
+        public DbSet<MarketplacePrescriptionFile> MarketplacePrescriptionFiles { get; set; }
         public DbSet<MarketplaceOrderStatusHistory> MarketplaceOrderStatusHistory { get; set; }
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<MarketplaceNotification> MarketplaceNotifications { get; set; }
@@ -105,6 +106,10 @@ namespace PharmaCare.Data
             modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.Pharmacy).WithMany().HasForeignKey(x => x.PharmacyId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.PharmacyProduct).WithMany().HasForeignKey(x => x.PharmacyProductId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MarketplacePrescriptionFile>().ToTable("MarketplacePrescriptionFile");
+            modelBuilder.Entity<MarketplacePrescriptionFile>().HasIndex(x => x.MarketplacePrescriptionRequestId);
+            modelBuilder.Entity<MarketplacePrescriptionFile>().HasOne(x => x.Request).WithMany().HasForeignKey(x => x.MarketplacePrescriptionRequestId).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<MarketplaceOrderStatusHistory>().HasIndex(x => new { x.MarketplaceOrderId, x.ChangedAt });
             modelBuilder.Entity<MarketplaceOrderStatusHistory>().HasOne(x => x.MarketplaceOrder).WithMany().HasForeignKey(x => x.MarketplaceOrderId).OnDelete(DeleteBehavior.Cascade);
