@@ -50,6 +50,14 @@ public class PharmacyPortalController : Controller
             .Include(x => x.User).Include(x => x.Product)
             .Where(x => x.PharmacyId == pharmacy.PharmacyId)
             .OrderByDescending(x => x.RequestedAt).Take(30).ToListAsync(ct);
+        var requestIds = prescriptionRequests.Select(x => x.MarketplacePrescriptionRequestId).ToList();
+        var fileIds = requestIds.Count == 0
+            ? new Dictionary<int, int>()
+            : await _db.MarketplacePrescriptionFiles.AsNoTracking()
+                .Where(x => requestIds.Contains(x.MarketplacePrescriptionRequestId))
+                .GroupBy(x => x.MarketplacePrescriptionRequestId)
+                .Select(g => new { RequestId = g.Key, FileId = g.OrderByDescending(x => x.UploadedAt).Select(x => x.MarketplacePrescriptionFileId).First() })
+                .ToDictionaryAsync(x => x.RequestId, x => x.FileId, ct);
         var low = await _db.PharmacyProducts.AsNoTracking().Include(x => x.Product)
             .Where(x => x.PharmacyId == pharmacy.PharmacyId && x.IsAvailable && x.Stock <= x.ReorderLevel)
             .OrderBy(x => x.Stock).Take(12).ToListAsync(ct);
@@ -59,10 +67,11 @@ public class PharmacyPortalController : Controller
             Pharmacy = pharmacy,
             Orders = orders,
             PrescriptionRequests = prescriptionRequests,
+            PrescriptionFileIds = fileIds,
             LowStock = low,
             PendingOrders = await _db.MarketplaceOrders.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && x.Status == "Pending", ct),
             PreparingOrders = await _db.MarketplaceOrders.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && (x.Status == "Accepted" || x.Status == "Preparing" || x.Status == "Ready for Pickup"), ct),
-            PendingPrescriptionRequests = await _db.MarketplacePrescriptionRequests.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && (x.Status == "Requested" || x.Status == "Approved" || x.Status == "Ready for Pickup"), ct),
+            PendingPrescriptionRequests = await _db.MarketplacePrescriptionRequests.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && (x.Status == "Requested" || x.Status == "Under Review" || x.Status == "Clarification Required" || x.Status == "Approved" || x.Status == "Partially Approved" || x.Status == "Ready for Pickup"), ct),
             RevenueToday = await _db.MarketplaceOrders.Where(x => x.PharmacyId == pharmacy.PharmacyId && x.Status != "Cancelled" && x.OrderDate >= today && x.OrderDate < tomorrow).SumAsync(x => (decimal?)x.TotalAmount, ct) ?? 0m,
             ActiveProducts = await _db.PharmacyProducts.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && x.IsAvailable, ct)
         };
