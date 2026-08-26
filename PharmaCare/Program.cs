@@ -107,6 +107,7 @@ if (app.Environment.IsDevelopment())
     await MarketplaceOrderBootstrapper.EnsureAsync(db);
     await MarketplacePrescriptionBootstrapper.EnsureAsync(db);
     await MarketplaceStaffBootstrapper.EnsureAsync(db);
+    await MarketplaceOperationsBootstrapper.EnsureAsync(db);
 }
 
 if (app.Environment.IsDevelopment())
