@@ -18,6 +18,11 @@ namespace PharmaCare.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<ContactMessage> ContactMessages { get; set; }
         public DbSet<PrescriptionReservation> PrescriptionReservations { get; set; }
+        public DbSet<Pharmacy> Pharmacies { get; set; }
+        public DbSet<PharmacyProduct> PharmacyProducts { get; set; }
+        public DbSet<PharmacyHour> PharmacyHours { get; set; }
+        public DbSet<PharmacyDeliveryZone> PharmacyDeliveryZones { get; set; }
+        public DbSet<PharmacyStaff> PharmacyStaff { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,6 +78,35 @@ namespace PharmaCare.Data
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryID).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Pharmacy>().HasIndex(p => p.Name);
+            modelBuilder.Entity<Pharmacy>().Property(p => p.DeliveryFee).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Pharmacy>().Property(p => p.MinimumOrder).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Pharmacy>().Property(p => p.Rating).HasColumnType("decimal(4,2)");
+            modelBuilder.Entity<Pharmacy>().Property(p => p.Latitude).HasColumnType("decimal(9,6)");
+            modelBuilder.Entity<Pharmacy>().Property(p => p.Longitude).HasColumnType("decimal(9,6)");
+
+            modelBuilder.Entity<PharmacyProduct>().HasIndex(x => new { x.PharmacyId, x.ProductId }).IsUnique();
+            modelBuilder.Entity<PharmacyProduct>().Property(x => x.Price).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<PharmacyProduct>().Property(x => x.CompareAtPrice).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<PharmacyProduct>()
+                .HasOne(x => x.Pharmacy).WithMany(p => p.Products).HasForeignKey(x => x.PharmacyId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<PharmacyProduct>()
+                .HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PharmacyHour>().HasIndex(x => new { x.PharmacyId, x.DayOfWeek }).IsUnique();
+            modelBuilder.Entity<PharmacyHour>()
+                .HasOne(x => x.Pharmacy).WithMany(p => p.Hours).HasForeignKey(x => x.PharmacyId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PharmacyDeliveryZone>().Property(x => x.DeliveryFee).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<PharmacyDeliveryZone>()
+                .HasOne(x => x.Pharmacy).WithMany(p => p.DeliveryZones).HasForeignKey(x => x.PharmacyId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PharmacyStaff>().HasIndex(x => new { x.PharmacyId, x.UserId }).IsUnique();
+            modelBuilder.Entity<PharmacyStaff>()
+                .HasOne(x => x.Pharmacy).WithMany(p => p.Staff).HasForeignKey(x => x.PharmacyId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<PharmacyStaff>()
+                .HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
