@@ -1,6 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Load local overrides explicitly from the project content root.
 var localConfigUpper = Path.Combine(builder.Environment.ContentRootPath, "appsettings.Local.json");
 var localConfigLower = Path.Combine(builder.Environment.ContentRootPath, "appsettings.local.json");
 
@@ -109,6 +108,7 @@ if (app.Environment.IsDevelopment())
     await MarketplacePrescriptionBootstrapper.EnsureAsync(db);
     await MarketplaceStaffBootstrapper.EnsureAsync(db);
     await MarketplaceOperationsBootstrapper.EnsureAsync(db);
+    await MarketplacePrescriptionFileBootstrapper.EnsureAsync(db);
 }
 
 if (app.Environment.IsDevelopment())
