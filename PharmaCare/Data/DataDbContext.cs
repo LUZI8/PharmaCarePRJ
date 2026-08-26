@@ -25,6 +25,7 @@ namespace PharmaCare.Data
         public DbSet<PharmacyStaff> PharmacyStaff { get; set; }
         public DbSet<MarketplaceOrder> MarketplaceOrders { get; set; }
         public DbSet<MarketplaceOrderItem> MarketplaceOrderItems { get; set; }
+        public DbSet<MarketplacePrescriptionRequest> MarketplacePrescriptionRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -92,6 +93,13 @@ namespace PharmaCare.Data
             modelBuilder.Entity<MarketplaceOrderItem>().HasOne(x => x.MarketplaceOrder).WithMany(o => o.Items).HasForeignKey(x => x.MarketplaceOrderId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<MarketplaceOrderItem>().HasOne(x => x.PharmacyProduct).WithMany().HasForeignKey(x => x.PharmacyProductId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<MarketplaceOrderItem>().HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MarketplacePrescriptionRequest>().HasIndex(x => x.RequestNumber).IsUnique();
+            modelBuilder.Entity<MarketplacePrescriptionRequest>().HasIndex(x => new { x.PharmacyId, x.Status });
+            modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.Pharmacy).WithMany().HasForeignKey(x => x.PharmacyId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.PharmacyProduct).WithMany().HasForeignKey(x => x.PharmacyProductId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
