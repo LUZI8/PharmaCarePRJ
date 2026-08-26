@@ -8,8 +8,13 @@ public class MarketplaceCartController : Controller
 {
     private const string SessionKey = "MarketplaceBasket";
     private readonly DataDbContext _db;
+    private readonly IEmailService _email;
 
-    public MarketplaceCartController(DataDbContext db) => _db = db;
+    public MarketplaceCartController(DataDbContext db, IEmailService email)
+    {
+        _db = db;
+        _email = email;
+    }
 
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -30,8 +35,8 @@ public class MarketplaceCartController : Controller
 
         if (offer.Product.RequiresPrescription)
         {
-            TempData["MarketplaceMessage"] = "Prescription medicines use the reservation flow. Choose this pharmacy, then complete prescription verification.";
-            return Redirect($"/FrontEnd/ShopSingle/{offer.ProductId}");
+            TempData["MarketplaceMessage"] = "Prescription medicines use the pharmacy verification flow.";
+            return Redirect($"/MarketplacePrescription/Confirm?offerId={offer.PharmacyProductId}");
         }
 
         var basket = ReadBasket();
@@ -43,8 +48,7 @@ public class MarketplaceCartController : Controller
 
         basket.PharmacyId = offer.PharmacyId;
         var item = basket.Items.FirstOrDefault(x => x.PharmacyProductId == pharmacyProductId);
-        var desired = (item?.Quantity ?? 0) + quantity;
-        if (desired > offer.Stock) desired = offer.Stock;
+        var desired = Math.Min((item?.Quantity ?? 0) + quantity, offer.Stock);
         if (item == null) basket.Items.Add(new MarketplaceBasketItemState { PharmacyProductId = pharmacyProductId, Quantity = desired });
         else item.Quantity = desired;
         SaveBasket(basket);
@@ -109,12 +113,13 @@ public class MarketplaceCartController : Controller
         if (basket.HasPrescriptionItems) ModelState.AddModelError(string.Empty, "Prescription medicines must be reserved through the prescription verification flow.");
         if (!ModelState.IsValid) return View("Checkout", input);
 
+        MarketplaceOrder? order = null;
         await using var transaction = await _db.Database.BeginTransactionAsync(ct);
         try
         {
             var ids = basketState.Items.Select(x => x.PharmacyProductId).ToList();
             var offers = await _db.PharmacyProducts.Include(x => x.Product).Where(x => ids.Contains(x.PharmacyProductId)).ToDictionaryAsync(x => x.PharmacyProductId, ct);
-            var order = new MarketplaceOrder
+            order = new MarketplaceOrder
             {
                 OrderNumber = $"MKT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}",
                 UserId = userId.Value,
@@ -137,7 +142,7 @@ public class MarketplaceCartController : Controller
                 {
                     PharmacyProductId = offer.PharmacyProductId, ProductId = offer.ProductId, ProductName = offer.Product.ProductName,
                     Quantity = state.Quantity, UnitPrice = offer.Price, LineTotal = offer.Price * state.Quantity,
-                    RequiresPrescription = offer.Product.RequiresPrescription
+                    RequiresPrescription = false
                 });
             }
 
@@ -147,7 +152,6 @@ public class MarketplaceCartController : Controller
             await _db.SaveChangesAsync(ct);
             await transaction.CommitAsync(ct);
             HttpContext.Session.Remove(SessionKey);
-            return RedirectToAction(nameof(ThankYou), new { id = order.MarketplaceOrderId });
         }
         catch (Exception ex)
         {
@@ -156,6 +160,15 @@ public class MarketplaceCartController : Controller
             input.Basket = await BuildBasketAsync(ct);
             return View("Checkout", input);
         }
+
+        if (order != null)
+        {
+            try { await SendOrderEmailsAsync(order, basket, userId.Value, ct); }
+            catch { /* Email failure must not invalidate a confirmed marketplace order. */ }
+            return RedirectToAction(nameof(ThankYou), new { id = order.MarketplaceOrderId });
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
@@ -174,6 +187,23 @@ public class MarketplaceCartController : Controller
     {
         var basket = ReadBasket();
         return Json(new { success = true, count = basket.Items.Sum(x => x.Quantity), pharmacyId = basket.PharmacyId });
+    }
+
+    private async Task SendOrderEmailsAsync(MarketplaceOrder order, MarketplaceBasketViewModel basket, int userId, CancellationToken ct)
+    {
+        var customer = await _db.User.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId, ct);
+        var pharmacy = basket.Pharmacy ?? await _db.Pharmacies.AsNoTracking().FirstAsync(x => x.PharmacyId == order.PharmacyId, ct);
+        var rows = string.Join("", basket.Items.Select(x => $"<tr><td style='padding:10px'><img src='{x.ImageUrl}' width='56' height='56' style='object-fit:contain'/></td><td>{x.ProductName}</td><td>{x.Quantity}</td><td>${x.LineTotal:0.00}</td></tr>"));
+        var body = $"<div style='font-family:Arial,sans-serif;max-width:650px;margin:auto'><h2>Order received</h2><p>Your order <strong>{order.OrderNumber}</strong> was sent to <strong>{pharmacy.Name}</strong>.</p><table style='width:100%;border-collapse:collapse'>{rows}</table><p>Delivery: {(order.DeliveryFee == 0 ? "FREE" : "$" + order.DeliveryFee.ToString("0.00"))}<br/><strong>Total: ${order.TotalAmount:0.00}</strong></p><p>The pharmacy will review and prepare your order. You can track it from Marketplace Orders.</p></div>";
+        if (customer != null && !string.IsNullOrWhiteSpace(customer.Email))
+            await _email.SendEmailAsync(customer.Email, $"PharmaCare order received - {order.OrderNumber}", body);
+
+        var staffEmails = await _db.PharmacyStaff.AsNoTracking().Where(x => x.PharmacyId == order.PharmacyId && x.IsActive)
+            .Select(x => x.User.Email).Distinct().ToListAsync(ct);
+        var adminEmails = await _db.User.AsNoTracking().Where(x => x.IsActive && x.Role == "Admin").Select(x => x.Email).ToListAsync(ct);
+        var staffBody = $"<div style='font-family:Arial,sans-serif'><h2>New marketplace order</h2><p><strong>{order.OrderNumber}</strong> · {pharmacy.Name}</p>{body}<p>Customer phone: {order.PhoneNumber}<br/>Delivery address: {order.ShippingAddress}, {order.City}</p></div>";
+        foreach (var email in staffEmails.Concat(adminEmails).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct())
+            await _email.SendEmailAsync(email, $"New marketplace order - {order.OrderNumber}", staffBody);
     }
 
     private MarketplaceBasketState ReadBasket()
