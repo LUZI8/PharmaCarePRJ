@@ -1,0 +1,81 @@
+namespace PharmaCare.Models;
+
+public class Pharmacy
+{
+    public int PharmacyId { get; set; }
+    [Required, MaxLength(150)] public string Name { get; set; } = string.Empty;
+    [MaxLength(500)] public string? LogoUrl { get; set; }
+    [MaxLength(220)] public string Address { get; set; } = string.Empty;
+    [MaxLength(100)] public string City { get; set; } = "Amman";
+    [MaxLength(30)] public string? Phone { get; set; }
+    [MaxLength(180)] public string? Email { get; set; }
+    [Column(TypeName = "decimal(9,6)")] public decimal? Latitude { get; set; }
+    [Column(TypeName = "decimal(9,6)")] public decimal? Longitude { get; set; }
+    [Column(TypeName = "decimal(4,2)")] public decimal Rating { get; set; } = 4.5m;
+    public int RatingCount { get; set; }
+    public int EstimatedDeliveryMinutes { get; set; } = 30;
+    [Column(TypeName = "decimal(18,2)")] public decimal DeliveryFee { get; set; }
+    [Column(TypeName = "decimal(18,2)")] public decimal MinimumOrder { get; set; }
+    public bool IsOpen { get; set; } = true;
+    public bool IsActive { get; set; } = true;
+    public bool IsVerified { get; set; } = true;
+    [MaxLength(1000)] public string? Description { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? UpdatedAt { get; set; }
+
+    public ICollection<PharmacyProduct> Products { get; set; } = new List<PharmacyProduct>();
+    public ICollection<PharmacyHour> Hours { get; set; } = new List<PharmacyHour>();
+    public ICollection<PharmacyDeliveryZone> DeliveryZones { get; set; } = new List<PharmacyDeliveryZone>();
+    public ICollection<PharmacyStaff> Staff { get; set; } = new List<PharmacyStaff>();
+}
+
+public class PharmacyProduct
+{
+    public int PharmacyProductId { get; set; }
+    public int PharmacyId { get; set; }
+    public int ProductId { get; set; }
+    [Column(TypeName = "decimal(18,2)")] public decimal Price { get; set; }
+    [Column(TypeName = "decimal(18,2)")] public decimal? CompareAtPrice { get; set; }
+    public int Stock { get; set; }
+    public int ReorderLevel { get; set; } = 10;
+    public bool IsAvailable { get; set; } = true;
+    public bool IsFeatured { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+    public Pharmacy Pharmacy { get; set; } = null!;
+    public Product Product { get; set; } = null!;
+}
+
+public class PharmacyHour
+{
+    public int PharmacyHourId { get; set; }
+    public int PharmacyId { get; set; }
+    public DayOfWeek DayOfWeek { get; set; }
+    public TimeSpan OpensAt { get; set; }
+    public TimeSpan ClosesAt { get; set; }
+    public bool IsClosed { get; set; }
+    public Pharmacy Pharmacy { get; set; } = null!;
+}
+
+public class PharmacyDeliveryZone
+{
+    public int PharmacyDeliveryZoneId { get; set; }
+    public int PharmacyId { get; set; }
+    [Required, MaxLength(120)] public string ZoneName { get; set; } = string.Empty;
+    [Column(TypeName = "decimal(18,2)")] public decimal DeliveryFee { get; set; }
+    public int EstimatedMinutes { get; set; } = 30;
+    public bool IsActive { get; set; } = true;
+    public Pharmacy Pharmacy { get; set; } = null!;
+}
+
+public class PharmacyStaff
+{
+    public int PharmacyStaffId { get; set; }
+    public int PharmacyId { get; set; }
+    public int UserId { get; set; }
+    [Required, MaxLength(40)] public string Role { get; set; } = "Pharmacist";
+    public bool IsActive { get; set; } = true;
+    public Pharmacy Pharmacy { get; set; } = null!;
+    public User User { get; set; } = null!;
+}
