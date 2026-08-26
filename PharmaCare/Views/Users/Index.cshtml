@@ -2,162 +2,76 @@
 @{
     ViewData["Title"] = "Users";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var users = Model?.ToList() ?? new List<PharmaCare.Models.User>();
+    var activeCount = users.Count(u => u.IsActive);
+    var adminCount = users.Count(u => u.Role == "Admin");
+    var pharmacistCount = users.Count(u => u.Role == "Pharmacist");
+    var customerCount = users.Count(u => u.Role == "Customer");
 }
 
-<!-- Import user management specific styling -->
-<link rel="stylesheet" href="~/assets/css/UsersViewStyles/Index.css" />
+@section Styles {
+<style>
+.users-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:28px 0 18px}.users-head h2{font-weight:750;margin:0}.users-head p{margin:5px 0 0;color:#6c757d}.metric-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);height:100%}.metric-card .card-body{padding:17px 18px}.metric-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:#6c757d}.metric-value{font-size:24px;font-weight:750;margin-top:3px}.users-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);overflow:hidden}.users-card .card-header{background:transparent;padding:16px 18px}.filter-bar{display:flex;gap:8px;flex-wrap:wrap}.filter-bar .form-control{min-width:175px}.avatar-sm{width:38px;height:38px;border-radius:10px;background:#edf8f7;color:#0d9488;display:flex;align-items:center;justify-content:center;font-weight:750;flex:0 0 auto}.name-cell{display:flex;align-items:center;gap:10px}.user-name{font-weight:700;color:inherit;text-decoration:none!important}.subtle{font-size:12px;color:#7a838b}.role-chip,.status-chip{font-size:11px;padding:5px 8px;border-radius:8px}.user-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.user-action{display:inline-flex;align-items:center;gap:6px;height:33px;padding:0 10px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none!important}.table thead th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#59616a;border-top:0}.table td,.table th{vertical-align:middle}.empty-state{padding:55px 20px;text-align:center;color:#6c757d}.dark-mode .metric-card,.dark-mode .users-card{background:#1f1f1f}.dark-mode .avatar-sm{background:#173634;color:#33c6b8}.dark-mode .table thead th{color:#c9c9c9}.dark-mode .form-control{background:#262626;color:#eee;border-color:#444}@@media(max-width:768px){.users-head{align-items:flex-start;flex-direction:column}.filter-bar>*{width:100%!important}.user-actions{justify-content:flex-start}}
+</style>
+}
 
-<!-- Page header with title and primary action controls -->
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2 page-title">Users</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2">
-            <!-- Add new user button with custom PharmaCare styling -->
-            <a href="@Url.Action("Create", "Users")" class="btn btn-sm btn-primary" style="background-color: #0d9488 !important; border-color: #0d9488 !important; color: white !important;">
-                <i class="fas fa-plus"></i> Add New User
-            </a>
-        </div>
-    </div>
+<div class="users-head">
+    <div><h2>User Management</h2><p>Manage customer accounts, staff access, roles and account status.</p></div>
+    <a href="@Url.Action("Create","Users")" class="btn btn-success"><i class="fas fa-user-plus mr-1"></i> Add User</a>
 </div>
 
-<!-- Users management table with search and filtering capabilities -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="m-0 font-weight-bold">User Management</h5>
-        <div class="d-flex">
-            <!-- Search functionality for finding specific users -->
-            <div class="input-group mr-2" style="width: 250px;">
-                <input type="text" class="form-control form-control-sm" placeholder="Search users..." id="searchInput">
-                <div class="input-group-append">
-                    <button class="btn btn-sm btn-outline-secondary" type="button" id="searchBtn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
+@if (TempData["SuccessMessage"] != null){<div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle mr-2"></i>@TempData["SuccessMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>}
+@if (TempData["ErrorMessage"] != null){<div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle mr-2"></i>@TempData["ErrorMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>}
 
-            <!-- Role-based filtering dropdown -->
-            <select class="form-control form-control-sm" style="width: 150px;" id="roleFilter">
-                <option value="all">All Roles</option>
-                <option value="Admin">Admin</option>
-                <option value="Customer">Customer</option>
-                <option value="Pharmacist">Pharmacist</option>
-            </select>
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <!-- User data table with comprehensive user information -->
-            <table class="table table-hover admin-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Phone</th>
-                        <th>City</th>
-                        <th>Date Created</th>
-                        <th>Status</th>
-                        <th style="width: 130px;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <!-- User name with link to details page -->
-                                <td>
-                                    <a href="@Url.Action("Details", "Users", new { id = item.UserId })" class="font-weight-bold text-dark">
-                                        @item.FirstName @item.LastName
-                                    </a>
-                                </td>
-
-                                <!-- Email address display -->
-                                <td>@item.Email</td>
-
-                                <!-- Role badge with conditional styling based on role type -->
-                                <td>
-                                    @if (item.Role == "Admin")
-                                    {
-                                        <span class="badge badge-danger">Admin</span>
-                                    }
-                                    else if (item.Role == "Pharmacist")
-                                    {
-                                        <span class="badge badge-warning">Pharmacist</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-primary">Customer</span>
-                                    }
-                                </td>
-
-                                <!-- Contact information -->
-                                <td>@item.PhoneNumber</td>
-                                <td>@item.City</td>
-
-                                <!-- Account creation date -->
-                                <td>@item.DateCreated.ToString("MM/dd/yyyy")</td>
-
-                                <!-- Account status with conditional badge styling -->
-                                <td>
-                                    @if (item.IsActive)
-                                    {
-                                        <span class="badge badge-success">Active</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-secondary">Inactive</span>
-                                    }
-                                </td>
-
-                                <!-- Action buttons for user management operations -->
-                                <td class="action-btns">
-                                    <!-- Edit user information -->
-                                    <a href="@Url.Action("Edit", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-
-                                    <!-- View detailed user information -->
-                                    <a href="@Url.Action("Details", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Details">
-                                        <i class="fas fa-info-circle"></i>
-                                    </a>
-
-                                    <!-- Reset user password -->
-                                    <a href="@Url.Action("ResetPassword", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Reset Password">
-                                        <i class="fas fa-key"></i>
-                                    </a>
-
-                                    <!-- Delete user account -->
-                                    <a href="@Url.Action("Delete", "Users", new { id = item.UserId })" data-toggle="tooltip" title="Delete">
-                                        <i class="fas fa-trash-alt text-danger"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <!-- Empty state display when no users exist -->
-                        <tr>
-                            <td colspan="8" class="text-center py-4">
-                                <div class="empty-state">
-                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                    <h5>No users available</h5>
-                                    <p class="text-muted">Add your first user to get started.</p>
-                                    <!-- Call-to-action button for adding first user -->
-                                    <a href="@Url.Action("Create", "Users")" class="btn btn-primary" style="background-color: #0d9488 !important; border-color: #0d9488 !important; color: white !important;">
-                                        <i class="fas fa-plus"></i> Add User
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="row mb-3">
+    <div class="col-xl-3 col-sm-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Total Users</div><div class="metric-value">@users.Count</div><div class="subtle">All registered accounts</div></div></div></div>
+    <div class="col-xl-3 col-sm-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-success">Active</div><div class="metric-value">@activeCount</div><div class="subtle">Currently enabled</div></div></div></div>
+    <div class="col-xl-3 col-sm-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-danger">Admins / Pharmacists</div><div class="metric-value">@(adminCount + pharmacistCount)</div><div class="subtle">@adminCount admin · @pharmacistCount pharmacist</div></div></div></div>
+    <div class="col-xl-3 col-sm-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-info">Customers</div><div class="metric-value">@customerCount</div><div class="subtle">Customer accounts</div></div></div></div>
 </div>
 
-<!-- Import user management JavaScript functionality -->
-<script src="~/assets/js/UsersViewScripts"></script>
+<div class="card users-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+        <div><strong>Accounts</strong><div class="subtle"><span id="visibleUsers">@users.Count</span> user(s) shown</div></div>
+        <div class="filter-bar mt-2 mt-md-0">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search name, email, phone or city..." />
+            <select id="roleFilter" class="form-control form-control-sm"><option value="all">All roles</option><option>Admin</option><option>Pharmacist</option><option>Customer</option></select>
+            <select id="statusFilter" class="form-control form-control-sm"><option value="all">All statuses</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>User</th><th>Role</th><th>Phone</th><th>Location</th><th>Joined</th><th>Status</th><th class="text-right">Actions</th></tr></thead>
+            <tbody>
+            @foreach(var item in users)
+            {
+                var initials = $"{(string.IsNullOrWhiteSpace(item.FirstName) ? "U" : item.FirstName.Substring(0,1))}{(string.IsNullOrWhiteSpace(item.LastName) ? "" : item.LastName.Substring(0,1))}".ToUpper();
+                var roleClass = item.Role == "Admin" ? "danger" : item.Role == "Pharmacist" ? "warning" : "info";
+                var accountStatus = item.IsActive ? "Active" : "Inactive";
+                var search = $"{item.FirstName} {item.LastName} {item.Email} {item.PhoneNumber} {item.City}".ToLower();
+                <tr class="user-row" data-role="@item.Role" data-status="@accountStatus" data-search="@search">
+                    <td><div class="name-cell"><div class="avatar-sm">@initials</div><div><a class="user-name" href="@Url.Action("Details","Users",new{id=item.UserId})">@item.FirstName @item.LastName</a><div class="subtle">@item.Email · ID #@item.UserId</div></div></div></td>
+                    <td><span class="badge badge-@roleClass role-chip">@item.Role</span></td>
+                    <td>@item.PhoneNumber</td>
+                    <td>@item.City</td>
+                    <td>@item.DateCreated.ToString("MMM dd, yyyy")</td>
+                    <td><span class="badge badge-@(item.IsActive ? "success" : "secondary") status-chip">@accountStatus</span></td>
+                    <td><div class="user-actions">
+                        <a class="btn btn-outline-info btn-sm user-action" href="@Url.Action("Details","Users",new{id=item.UserId})"><i class="fas fa-eye"></i> View</a>
+                        <a class="btn btn-outline-primary btn-sm user-action" href="@Url.Action("Edit","Users",new{id=item.UserId})"><i class="fas fa-edit"></i> Edit</a>
+                        <a class="btn btn-outline-warning btn-sm user-action" href="@Url.Action("ResetPassword","Users",new{id=item.UserId})"><i class="fas fa-key"></i> Password</a>
+                    </div></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    @if(!users.Any()){<div class="empty-state"><i class="fas fa-users fa-2x mb-3"></i><div class="font-weight-bold">No users available</div><div class="subtle mt-1">Create an account to get started.</div></div>}
+    <div id="noMatches" class="empty-state" style="display:none"><i class="fas fa-search fa-2x mb-3"></i><div>No users match these filters.</div></div>
+</div>
+
+@section Scripts {
+<script>
+(function(){const rows=[...document.querySelectorAll('.user-row')],search=document.getElementById('searchInput'),role=document.getElementById('roleFilter'),status=document.getElementById('statusFilter'),count=document.getElementById('visibleUsers'),empty=document.getElementById('noMatches');function apply(){const q=search.value.toLowerCase().trim();let shown=0;rows.forEach(r=>{const ok=(!q||r.dataset.search.includes(q))&&(role.value==='all'||r.dataset.role===role.value)&&(status.value==='all'||r.dataset.status===status.value);r.style.display=ok?'':'none';if(ok)shown++;});count.textContent=shown;empty.style.display=(rows.length&&shown===0)?'block':'none';}search.addEventListener('input',apply);role.addEventListener('change',apply);status.addEventListener('change',apply);})();
+</script>
+}

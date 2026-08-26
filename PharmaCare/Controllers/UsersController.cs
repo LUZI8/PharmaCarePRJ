@@ -50,7 +50,6 @@
                         ModelState.AddModelError("Email", "Email already exists");
                         return View(user);
                     }
-
                     if (string.IsNullOrEmpty(user.Role)) user.Role = "Customer";
                     if (user.DateCreated == DateTime.MinValue) user.DateCreated = DateTime.UtcNow;
                     user.IsActive = true;
@@ -83,10 +82,8 @@
                 ViewBag.AdminName = HttpContext.Session.GetString("UserName") ?? "Admin";
                 var existingUser = await _userRepository.GetByIdAsync(id);
                 if (existingUser == null) return NotFound();
-
                 user.Password = existingUser.Password;
                 ModelState.Remove("Password");
-
                 if (ModelState.IsValid)
                 {
                     user.UserId = id;
@@ -132,17 +129,38 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null) return Json(new { success = false, message = "User not found" });
-
-            user.IsActive = !user.IsActive;
-            var result = await _userRepository.UpdateAsync(user);
-            if (result != null)
+            try
             {
-                string statusText = user.IsActive ? "activated" : "deactivated";
-                return Json(new { success = true, message = $"User {statusText} successfully", isActive = user.IsActive });
+                var user = await _userRepository.GetByIdAsync(id);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var currentUserId = HttpContext.Session.GetInt32("UserId");
+                if (currentUserId == id)
+                {
+                    TempData["ErrorMessage"] = "You cannot deactivate your own administrator account.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                user.IsActive = !user.IsActive;
+                var result = await _userRepository.UpdateAsync(user);
+                if (result == null)
+                {
+                    TempData["ErrorMessage"] = "Unable to update account status.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                TempData["SuccessMessage"] = result.IsActive ? "User activated successfully." : "User deactivated successfully.";
+                return RedirectToAction(nameof(Details), new { id });
             }
-            return Json(new { success = false, message = "Failed to update user status" });
+            catch
+            {
+                TempData["ErrorMessage"] = "Unable to update account status. Please try again.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
         }
 
         [HttpGet]
@@ -150,20 +168,12 @@
         {
             ViewBag.AdminName = HttpContext.Session.GetString("UserName") ?? "Admin";
             var usersList = (await _userRepository.GetAllAsync()).ToList();
-
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 searchTerm = searchTerm.ToLower();
-                usersList = usersList.Where(u =>
-                    u.FirstName?.ToLower().Contains(searchTerm) == true ||
-                    u.LastName?.ToLower().Contains(searchTerm) == true ||
-                    u.Email?.ToLower().Contains(searchTerm) == true ||
-                    u.PhoneNumber?.ToLower().Contains(searchTerm) == true).ToList();
+                usersList = usersList.Where(u => u.FirstName?.ToLower().Contains(searchTerm) == true || u.LastName?.ToLower().Contains(searchTerm) == true || u.Email?.ToLower().Contains(searchTerm) == true || u.PhoneNumber?.ToLower().Contains(searchTerm) == true).ToList();
             }
-
-            if (!string.IsNullOrEmpty(role) && role != "all")
-                usersList = usersList.Where(u => u.Role == role).ToList();
-
+            if (!string.IsNullOrEmpty(role) && role != "all") usersList = usersList.Where(u => u.Role == role).ToList();
             return PartialView("_UserList", usersList);
         }
 
@@ -196,13 +206,11 @@
                     TempData["ErrorMessage"] = "Password must be at least 8 characters and include an uppercase letter and a special character.";
                     return RedirectToAction(nameof(ResetPassword), new { id });
                 }
-
                 if (!await _userRepository.SetPasswordAsync(id, newPassword))
                 {
                     TempData["ErrorMessage"] = "Failed to reset password. Please try again.";
                     return RedirectToAction(nameof(ResetPassword), new { id });
                 }
-
                 TempData["SuccessMessage"] = "Password reset successfully!";
                 return RedirectToAction(nameof(Index));
             }

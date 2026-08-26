@@ -1,520 +1,125 @@
 ﻿@model IEnumerable<PharmaCare.Models.Order>
-
 @{
-    ViewData["Title"] = "Manage Orders";
+    ViewData["Title"] = "Order Management";
     Layout = "~/Views/Shared/_Adminlayout.cshtml";
+    var orders = Model?.ToList() ?? new List<PharmaCare.Models.Order>();
+    var totalRevenue = orders.Where(o => !string.Equals(o.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).Sum(o => o.TotalAmount);
 }
-<link rel="stylesheet" href="~/assets/css/OrderViewStyles/ManageOrders.css" />
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Order Management</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2">
-            <a href="@Url.Action("Index", "Admin")" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
-        </div>
+@section Styles {
+<style>
+.orders-head{display:flex;justify-content:space-between;align-items:flex-end;margin:28px 0 18px}.orders-head h2{font-weight:700;margin:0}.orders-head p{margin:5px 0 0;color:#6c757d}.metric-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06);height:100%}.metric-card .card-body{padding:17px 18px}.metric-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:#6c757d}.metric-value{font-size:24px;font-weight:700;margin-top:3px}.orders-card,.filters-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06)}.orders-card .card-header,.filters-card .card-header{background:transparent;padding:16px 18px}.filter-grid{display:grid;grid-template-columns:180px 180px minmax(240px,1fr) auto;gap:10px;align-items:end}.table thead th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#59616a;border-top:0}.table td,.table th{vertical-align:middle}.order-number{font-weight:700}.muted{font-size:12px;color:#7a838b}.status-chip{font-size:11px;padding:5px 8px;border-radius:8px}.order-actions{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}.order-action-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:7px 11px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none!important;border:1px solid transparent;transition:.15s ease;white-space:nowrap}.order-action-btn.view{background:#e8f7fa;color:#138496;border-color:#bfe8ee}.order-action-btn.view:hover{background:#d7f0f5;color:#0f6674}.order-action-btn.update{background:#edf3ff;color:#2f6fed;border-color:#cfdcff}.order-action-btn.update:hover{background:#dfe9ff;color:#2457bd}.toggle-details{cursor:pointer;width:42px;text-align:center}.toggle-pill{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;background:#f3f5f7;color:#69727a}.toggle-details:hover .toggle-pill{background:#e9ecef;color:#343a40}.detail-panel{display:none;background:#fafbfc}.detail-box{border:1px solid #edf0f2;border-radius:10px;padding:14px;height:100%}.detail-label{font-size:11px;color:#7a838b;text-transform:uppercase;font-weight:700;letter-spacing:.4px}.detail-value{font-weight:600;margin-top:3px;word-break:break-word}.empty-state{padding:50px 20px;text-align:center;color:#6c757d}.modal-content{border:0;border-radius:12px;overflow:hidden}.status-note{font-size:12px;color:#6c757d;margin-top:8px}.primary-cta{display:inline-flex;align-items:center;gap:7px;font-weight:700}.dark-mode .metric-card,.dark-mode .orders-card,.dark-mode .filters-card,.dark-mode .modal-content{background:#1f1f1f}.dark-mode .detail-panel{background:#1b1b1b}.dark-mode .detail-box{border-color:#383838}.dark-mode .table thead th{color:#c9c9c9}.dark-mode .form-control{background:#262626;color:#eee;border-color:#444}.dark-mode .order-action-btn.view{background:#17373c;color:#67d6e7;border-color:#28535a}.dark-mode .order-action-btn.update{background:#1e2d4c;color:#8fb0ff;border-color:#324a78}.dark-mode .toggle-pill{background:#2c2c2c;color:#c9c9c9}@@media(max-width:992px){.filter-grid{grid-template-columns:1fr 1fr}.filter-grid .search-col{grid-column:1 / -1}.filter-grid .filter-btn{grid-column:1 / -1}}@@media(max-width:576px){.orders-head{align-items:flex-start;flex-direction:column;gap:12px}.filter-grid{grid-template-columns:1fr}.order-actions{justify-content:flex-start}.order-action-btn{width:100%}}
+</style>
+}
+
+<div class="orders-head">
+    <div>
+        <h2>Order Management</h2>
+        <p>Track customer orders, payment status and fulfilment progress.</p>
     </div>
+    <a href="@Url.Action("Index", "Admin")" class="btn btn-outline-secondary btn-sm primary-cta"><i class="fas fa-arrow-left"></i> Dashboard</a>
 </div>
 
-<!-- Statistics cards displaying order counts by status with Bootstrap grid system -->
-<div class="row mb-4">
-    <div class="col-xl-2 col-md-4 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Orders</div>
-                        <!-- ViewBag dictionary lookup to display total order count from controller -->
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Total"]</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-shopping-bag fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle mr-2"></i>@TempData["SuccessMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle mr-2"></i>@TempData["ErrorMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+}
 
-    <div class="col-xl-2 col-md-4 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Pending"]</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-clock fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-2 col-md-4 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Processing</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Processing"]</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-spinner fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-2 col-md-4 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Shipped</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Shipped"]</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-truck fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-2 col-md-4 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Delivered</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Delivered"]</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-2 col-md-4 mb-4">
-        <div class="card border-left-danger shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Cancelled</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.OrderStatistics["Cancelled"]</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-times-circle fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row mb-3">
+    <div class="col-xl-2 col-md-4 col-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Total Orders</div><div class="metric-value">@ViewBag.OrderStatistics["Total"]</div></div></div></div>
+    <div class="col-xl-2 col-md-4 col-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-warning">Pending</div><div class="metric-value">@ViewBag.OrderStatistics["Pending"]</div></div></div></div>
+    <div class="col-xl-2 col-md-4 col-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-info">Processing</div><div class="metric-value">@ViewBag.OrderStatistics["Processing"]</div></div></div></div>
+    <div class="col-xl-2 col-md-4 col-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-primary">Shipped</div><div class="metric-value">@ViewBag.OrderStatistics["Shipped"]</div></div></div></div>
+    <div class="col-xl-2 col-md-4 col-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-success">Delivered</div><div class="metric-value">@ViewBag.OrderStatistics["Delivered"]</div></div></div></div>
+    <div class="col-xl-2 col-md-4 col-6 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Revenue</div><div class="metric-value">$@totalRevenue.ToString("N2")</div></div></div></div>
 </div>
 
-<!-- Filter panel for searching and filtering orders by status, date, and text search -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold">Order Filters</h6>
-    </div>
+<div class="card filters-card mb-4">
+    <div class="card-header"><strong><i class="fas fa-filter mr-2 text-muted"></i>Filters</strong></div>
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="orderStatus">Status</label>
-                    <!-- Dropdown for filtering orders by status -->
-                    <select id="orderStatus" class="form-control">
-                        <option value="">All Statuses</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="dateRange">Date Range</label>
-                    <!-- Predefined date range options for filtering orders -->
-                    <select id="dateRange" class="form-control">
-                        <option value="">All Time</option>
-                        <option value="today">Today</option>
-                        <option value="yesterday">Yesterday</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="year">This Year</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="searchOrder">Search</label>
-                    <!-- Text input for searching orders by order number, customer name, or email -->
-                    <input type="text" id="searchOrder" class="form-control" placeholder="Order #, Customer Name or Email">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>&nbsp;</label>
-                    <!-- Button to trigger client-side filtering functionality -->
-                    <button id="filterOrders" class="btn btn-danger btn-block">Filter</button>
-                </div>
-            </div>
+        <div class="filter-grid">
+            <div><label class="small font-weight-bold" for="orderStatus">Status</label><select id="orderStatus" class="form-control form-control-sm"><option value="">All statuses</option><option>Pending</option><option>Processing</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select></div>
+            <div><label class="small font-weight-bold" for="dateRange">Date</label><select id="dateRange" class="form-control form-control-sm"><option value="">All time</option><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option></select></div>
+            <div class="search-col"><label class="small font-weight-bold" for="searchOrder">Search</label><input id="searchOrder" class="form-control form-control-sm" placeholder="Order number, customer or email" /></div>
+            <div class="filter-btn"><button id="filterOrders" class="btn btn-success btn-sm btn-block primary-cta"><i class="fas fa-search"></i> Apply Filters</button></div>
         </div>
     </div>
 </div>
 
-<!-- Main orders table displaying order information in a responsive table format -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold">Orders</h6>
-        <div>
-            <!-- Badge indicator showing when filters are active -->
-            <span id="activeFilters" class="badge badge-info mr-2" style="display: none;">Filters Active</span>
-        </div>
+<div class="card orders-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center"><strong>Orders</strong><span class="muted"><span id="visibleOrders">@orders.Count</span> shown</span></div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0" id="ordersTable">
+            <thead><tr><th></th><th>Order</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th class="text-right">Actions</th></tr></thead>
+            <tbody>
+            @foreach (var order in orders)
+            {
+                var statusClass = order.Status?.ToLower() switch { "pending" => "warning", "processing" => "info", "shipped" => "primary", "delivered" => "success", "cancelled" => "danger", _ => "secondary" };
+                var paymentClass = order.IsPaid ? "success" : "warning";
+                <tr class="order-row" data-order-id="@order.OrderId" data-status="@order.Status" data-date="@order.OrderDate.ToString("yyyy-MM-dd")" data-search="@($"{order.OrderNumber} {order.User?.FirstName} {order.User?.LastName} {order.User?.Email}".ToLower())">
+                    <td class="toggle-details" title="Expand order summary"><span class="toggle-pill"><i class="fas fa-chevron-down"></i></span></td>
+                    <td><div class="order-number">#@order.OrderNumber</div><div class="muted">ID @order.OrderId</div></td>
+                    <td><div class="font-weight-bold">@order.User?.FirstName @order.User?.LastName</div><div class="muted">@order.User?.Email</div></td>
+                    <td>@order.OrderDate.ToString("MMM dd, yyyy")<div class="muted">@order.OrderDate.ToString("HH:mm")</div></td>
+                    <td>@order.OrderItems.Count</td>
+                    <td><strong>$@order.TotalAmount.ToString("0.00")</strong></td>
+                    <td><span class="badge badge-@paymentClass status-chip">@(order.IsPaid ? "Paid" : "Not paid")</span></td>
+                    <td><span class="badge badge-@statusClass status-chip status-badge">@order.Status</span></td>
+                    <td>
+                        <div class="order-actions">
+                            <a class="order-action-btn view" href="@Url.Action("Details","Order",new{id=order.OrderId})"><i class="fas fa-eye"></i><span>View</span></a>
+                            @if (!string.Equals(order.Status, "Delivered", StringComparison.OrdinalIgnoreCase) && !string.Equals(order.Status, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <a href="#" class="order-action-btn update update-status-btn" data-order-id="@order.OrderId" data-current-status="@order.Status" data-toggle="modal" data-target="#updateStatusModal"><i class="fas fa-sync-alt"></i><span>Update</span></a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr class="detail-panel" id="details-@order.OrderId">
+                    <td colspan="9">
+                        <div class="row py-2">
+                            <div class="col-lg-4 mb-3"><div class="detail-box"><div class="detail-label">Shipping</div><div class="detail-value">@order.ShippingAddress</div><div class="muted mt-1">@order.City · @order.PhoneNumber</div></div></div>
+                            <div class="col-lg-4 mb-3"><div class="detail-box"><div class="detail-label">Payment</div><div class="detail-value">@order.PaymentMethod</div><div class="muted mt-1">@(order.IsPaid ? "Payment completed" : "Awaiting payment")</div></div></div>
+                            <div class="col-lg-4 mb-3"><div class="detail-box"><div class="detail-label">Items</div>@foreach(var item in order.OrderItems.Take(3)){<div class="d-flex justify-content-between mt-2"><span>@item.ProductName</span><strong>x@item.Quantity</strong></div>}@if(order.OrderItems.Count>3){<div class="muted mt-2">+ @(order.OrderItems.Count-3) more item(s)</div>}</div></div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered admin-table" id="ordersTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Order Details</th>
-                        <th>Order #</th>
-                        <th>Date</th>
-                        <th>Customer</th>
-                        <th>Items</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Loop through each order in the model collection -->
-                    @foreach (var order in Model)
-                    {
-                        <!-- Each row contains data-order-id attribute for JavaScript targeting -->
-                        <tr data-order-id="@order.OrderId">
-                            <!-- Clickable cell to toggle detailed order information -->
-                            <td class="text-center toggle-details">
-                                <i class="fas fa-chevron-down"></i>
-                            </td>
-                            <td>@order.OrderNumber</td>
-                            <!-- Format order date to readable format -->
-                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
-                            <!-- Display customer full name by concatenating first and last name -->
-                            <td>@order.User.FirstName @order.User.LastName</td>
-                            <!-- Count total items in the order -->
-                            <td>@order.OrderItems.Count</td>
-                            <!-- Format total amount with 2 decimal places -->
-                            <td>$@order.TotalAmount.ToString("0.00")</td>
-                            <td>
-                                @{
-                                    /* Switch expression to determine badge color class based on order status */
-                                    var statusClass = order.Status.ToLower() switch
-                                    {
-                                        "pending" => "warning",
-                                        "processing" => "info",
-                                        "shipped" => "primary",
-                                        "delivered" => "success",
-                                        "cancelled" => "danger",
-                                        _ => "secondary"
-                                    };
-                                }
-                                <!-- Status badge with dynamically assigned color class -->
-                                <span class="badge badge-@statusClass status-badge">@order.Status</span>
-                            </td>
-                            <td class="action-btns">
-                                <!-- Link to view detailed order information -->
-                                <a href="@Url.Action("Details", "Order", new { id = order.OrderId })" data-toggle="tooltip" title="View">
-                                    <i class="fas fa-info-circle"></i>
-                                </a>
-                                <!-- Button to trigger status update modal with order ID -->
-                                <a href="#" class="update-status-btn" data-order-id="@order.OrderId" data-toggle="modal" data-target="#updateStatusModal" title="Update Status">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <div id="ordersEmpty" class="empty-state" style="display:none"><i class="fas fa-clipboard-list fa-2x mb-3"></i><div>No orders match these filters.</div></div>
 </div>
 
-<!-- Container for expandable order details cards -->
-<div id="orderDetailsContainer">
-    @foreach (var order in Model)
-    {
-        <!-- Hidden order details card that expands when toggle is clicked -->
-        <div class="card shadow mb-4 order-details-card" id="details-@order.OrderId" style="display: none;">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold">Order #@order.OrderNumber Details</h6>
+<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content">
+        <div class="modal-header"><div><h5 class="modal-title mb-1">Update Order Status</h5><div class="muted">Move the order through the fulfilment workflow.</div></div><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+        <form asp-controller="Order" asp-action="UpdateStatus" method="post">
+            @Html.AntiForgeryToken()
+            <div class="modal-body">
+                <input type="hidden" id="modalOrderId" name="orderId" />
+                <input type="hidden" name="returnUrl" value="ManageOrders" />
+                <div class="form-group"><label for="modalOrderStatus">New status</label><select id="modalOrderStatus" name="status" class="form-control"></select><div class="status-note" id="statusNote"></div></div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>Shipping Details</h5>
-                        <p><strong>Address:</strong> @order.ShippingAddress</p>
-                        <p><strong>City:</strong> @order.City</p>
-                        <p><strong>Phone:</strong> @order.PhoneNumber</p>
-                        <p><strong>Payment Method:</strong> @order.PaymentMethod</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h5>Items</h5>
-                        <!-- Table displaying individual order items with pricing -->
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in order.OrderItems)
-                                {
-                                    <tr>
-                                        <td>@item.ProductName</td>
-                                        <td>@item.Quantity</td>
-                                        <td>$@item.Price.ToString("0.00")</td>
-                                        <!-- Calculate and display line total -->
-                                        <td>$@((item.Price * item.Quantity).ToString("0.00"))</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+            <div class="modal-footer"><button type="button" class="btn btn-outline-secondary primary-cta" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button><button type="submit" class="btn btn-success primary-cta"><i class="fas fa-check"></i> Confirm Status Change</button></div>
+        </form>
+    </div></div>
 </div>
 
-<!-- Bootstrap modal for updating order status -->
-<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="updateStatusModalLabel">Update Order Status</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <!-- Form targeting OrderController UpdateStatus action with anti-forgery token -->
-            <form asp-controller="Order" asp-action="UpdateStatus" method="post">
-                @Html.AntiForgeryToken()
-                <div class="modal-body">
-                    <!-- Hidden input to store selected order ID -->
-                    <input type="hidden" id="modalOrderId" name="orderId" value="">
-                    <div class="form-group">
-                        <label for="modalOrderStatus">Status</label>
-                        <!-- Status dropdown with all available order statuses -->
-                        <select id="modalOrderStatus" name="status" class="form-control">
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-update-status">Update Status</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            /* Toggle order details visibility when chevron icon is clicked */
-            $('.toggle-details').click(function() {
-                var orderId = $(this).closest('tr').data('order-id');
-                $('#details-' + orderId).toggle();
-
-                /* Switch between down and up chevron icons */
-                var icon = $(this).find('i');
-                if (icon.hasClass('fa-chevron-down')) {
-                    icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-                } else {
-                    icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-                }
-            });
-
-            /* Populate modal with current order data when edit button is clicked */
-            $('.update-status-btn').click(function() {
-                var orderId = $(this).data('order-id');
-                var currentStatus = $(this).closest('tr').find('.status-badge').text().trim();
-
-                $('#modalOrderId').val(orderId);
-                $('#modalOrderStatus').val(currentStatus);
-            });
-
-            /* Handle form submission via AJAX to update order status without page reload */
-            $('#updateStatusModal form').on('submit', function(e) {
-                e.preventDefault();
-
-                var form = $(this);
-                var orderId = $('#modalOrderId').val();
-                var newStatus = $('#modalOrderStatus').val();
-                var formData = form.serialize();
-
-                /* Set AJAX header for proper request identification */
-                $.ajaxSetup({
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                    }
-                });
-
-                /* Send POST request to update order status */
-                $.post(form.attr('action'), formData)
-                    .done(function(response) {
-                        if (response.success) {
-                            /* Find the table row and update the status badge */
-                            var row = $('tr[data-order-id="' + orderId + '"]');
-                            var statusBadge = row.find('.status-badge');
-
-                            /* Remove all existing badge classes and add new one */
-                            statusBadge.removeClass('badge-warning badge-info badge-primary badge-success badge-danger badge-secondary');
-                            statusBadge.addClass('badge-' + response.statusClass);
-                            statusBadge.text(response.newStatus);
-
-                            $('#updateStatusModal').modal('hide');
-
-                            showAlert('success', response.message);
-                        } else {
-                            showAlert('danger', response.message);
-                        }
-                    })
-                    .fail(function(xhr, status, error) {
-                        showAlert('danger', 'An error occurred while updating the order status.');
-                        console.error('Error:', error);
-                    });
-            });
-
-            /* Filter orders based on status, date range, and search criteria */
-            $('#filterOrders').click(function() {
-                var status = $('#orderStatus').val();
-                var dateRange = $('#dateRange').val();
-                var search = $('#searchOrder').val().toLowerCase();
-
-                /* Show/hide active filters indicator */
-                if (status || dateRange || search) {
-                    $('#activeFilters').show();
-                } else {
-                    $('#activeFilters').hide();
-                }
-
-                /* Iterate through each table row to apply filters */
-                $('#ordersTable tbody tr').each(function() {
-                    var $row = $(this);
-                    var rowStatus = $row.find('.status-badge').text();
-                    var rowDate = new Date($row.find('td:eq(2)').text());
-                    var rowOrderNum = $row.find('td:eq(1)').text().toLowerCase();
-                    var rowCustomer = $row.find('td:eq(3)').text().toLowerCase();
-
-                    var showRow = true;
-
-                    /* Apply status filter */
-                    if (status && rowStatus !== status) {
-                        showRow = false;
-                    }
-
-                    /* Apply date range filter with various time periods */
-                    if (dateRange) {
-                        var today = new Date();
-                        var yesterday = new Date();
-                        yesterday.setDate(yesterday.getDate() - 1);
-
-                        if (dateRange === 'today') {
-                            if (rowDate.toDateString() !== today.toDateString()) {
-                                showRow = false;
-                            }
-                        } else if (dateRange === 'yesterday') {
-                            if (rowDate.toDateString() !== yesterday.toDateString()) {
-                                showRow = false;
-                            }
-                        } else if (dateRange === 'week') {
-                            /* Calculate start of current week */
-                            var weekStart = new Date();
-                            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-
-                            if (rowDate < weekStart) {
-                                showRow = false;
-                            }
-                        } else if (dateRange === 'month') {
-                            if (rowDate.getMonth() !== today.getMonth() ||
-                                rowDate.getFullYear() !== today.getFullYear()) {
-                                showRow = false;
-                            }
-                        } else if (dateRange === 'year') {
-                            if (rowDate.getFullYear() !== today.getFullYear()) {
-                                showRow = false;
-                            }
-                        }
-                    }
-
-                    /* Apply text search filter on order number and customer name */
-                    if (search) {
-                        if (!rowOrderNum.includes(search) && !rowCustomer.includes(search)) {
-                            showRow = false;
-                        }
-                    }
-
-                    /* Show or hide the row based on filter results */
-                    $row.toggle(showRow);
-
-                    /* Hide order details if parent row is hidden */
-                    var orderId = $row.data('order-id');
-                    if (!showRow) {
-                        $('#details-' + orderId).hide();
-                    }
-                });
-
-                refreshPagination();
-            });
-
-            /* Refresh pagination after filtering to maintain proper page structure */
-            function refreshPagination() {
-                $('.admin-pagination').closest('.d-flex.justify-content-between').remove();
-
-                if (typeof initializePagination === 'function') {
-                    initializePagination('.admin-table', 10);
-                }
-            }
-
-            /* Display Bootstrap alert messages with auto-dismiss for success messages */
-            function showAlert(type, message) {
-                var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
-                    message +
-                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                    '<span aria-hidden="true">&times;</span>' +
-                    '</button>' +
-                    '</div>';
-
-                $('.alert').remove();
-
-                $('.d-flex.justify-content-between.flex-wrap').after(alertHtml);
-
-                /* Auto-hide success alerts after 3 seconds */
-                if (type === 'success') {
-                    setTimeout(function() {
-                        $('.alert-success').fadeOut();
-                    }, 3000);
-                }
-            }
-
-            /* Initialize Bootstrap tooltips for action buttons */
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
+<script>
+(function(){
+    const rows=[...document.querySelectorAll('.order-row')], status=document.getElementById('orderStatus'), date=document.getElementById('dateRange'), search=document.getElementById('searchOrder'), visible=document.getElementById('visibleOrders'), empty=document.getElementById('ordersEmpty');
+    function dateMatches(value,mode){if(!mode)return true;const d=new Date(value+'T00:00:00'),now=new Date();if(mode==='today')return d.toDateString()===now.toDateString();if(mode==='week'){const start=new Date(now);start.setDate(now.getDate()-now.getDay());start.setHours(0,0,0,0);return d>=start;}if(mode==='month')return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();if(mode==='year')return d.getFullYear()===now.getFullYear();return true;}
+    function apply(){const q=search.value.toLowerCase().trim();let shown=0;rows.forEach(r=>{const ok=(!status.value||r.dataset.status===status.value)&&dateMatches(r.dataset.date,date.value)&&(!q||r.dataset.search.includes(q));r.style.display=ok?'':'none';const detail=document.getElementById('details-'+r.dataset.orderId);if(detail&&!ok)detail.style.display='none';if(ok)shown++;});visible.textContent=shown;empty.style.display=shown?'none':'block';}
+    document.getElementById('filterOrders').addEventListener('click',apply);search.addEventListener('input',apply);status.addEventListener('change',apply);date.addEventListener('change',apply);
+    document.querySelectorAll('.toggle-details').forEach(cell=>cell.addEventListener('click',function(){const row=this.closest('.order-row'),detail=document.getElementById('details-'+row.dataset.orderId),icon=this.querySelector('i');const open=detail.style.display==='table-row';detail.style.display=open?'none':'table-row';icon.className=open?'fas fa-chevron-down':'fas fa-chevron-up';}));
+    const workflow={Pending:['Processing','Cancelled'],Processing:['Shipped','Cancelled'],Shipped:['Delivered']};
+    document.querySelectorAll('.update-status-btn').forEach(btn=>btn.addEventListener('click',function(){const current=this.dataset.currentStatus,select=document.getElementById('modalOrderStatus'),next=workflow[current]||[];document.getElementById('modalOrderId').value=this.dataset.orderId;select.innerHTML='';next.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;select.appendChild(o);});document.getElementById('statusNote').textContent=next.length?'Current status: '+current+'. Available next step'+(next.length>1?'s':'')+': '+next.join(' or ')+'.':'This order is final and cannot be changed.';}));
+})();
+</script>
 }

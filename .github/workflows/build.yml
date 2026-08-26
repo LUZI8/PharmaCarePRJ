@@ -1,0 +1,27 @@
+name: PharmaCare CI
+
+on:
+  push:
+    branches: [ main, admin-dashboard-upgrade ]
+  pull_request:
+    branches: [ main, admin-dashboard-upgrade ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore PharmaCare/PharmaCare.csproj
+
+      - name: Build
+        run: dotnet build PharmaCare/PharmaCare.csproj --configuration Release --no-restore

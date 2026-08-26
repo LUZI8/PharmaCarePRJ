@@ -7,19 +7,22 @@
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IEmailService _emailService;
 
         public OrderController(
             IOrderRepository orderRepository,
             ICartRepository cartRepository,
             IUserRepository userRepository,
             ICategoryRepository categoryRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IEmailService emailService)
         {
             _orderRepository = orderRepository;
             _cartRepository = cartRepository;
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
+            _emailService = emailService;
         }
 
         private void LoadCategories()
@@ -32,7 +35,6 @@
         {
             base.OnActionExecuting(context);
 
-            // Set cache control headers to prevent browser caching of sensitive order information
             context.HttpContext.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
             context.HttpContext.Response.Headers["Pragma"] = "no-cache";
             context.HttpContext.Response.Headers["Expires"] = "0";
@@ -50,18 +52,14 @@
             var userRole = HttpContext.Session.GetString("UserRole");
 
             if (userId == null)
-            {
                 return RedirectToAction("Login", "Account");
-            }
 
             LoadCategories();
-
             ViewBag.IsLoggedIn = true;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = userRole;
             ViewBag.HideCategories = false;
 
-            // Fetch orders based on user role - admins see all orders, regular users see only their own
             var orders = userRole == "Admin"
                 ? await _orderRepository.GetAllOrdersAsync()
                 : await _orderRepository.GetUserOrdersAsync(userId.Value);
@@ -75,20 +73,12 @@
             var userRole = HttpContext.Session.GetString("UserRole");
 
             if (userId == null)
-            {
                 return RedirectToAction("Login", "Account");
-            }
 
             LoadCategories();
-
             var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null) return NotFound();
 
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            // Implement security check to ensure only authorized users can view order details
             if (userRole != "Admin" && userRole != "Pharmacist" && order.UserId != userId)
             {
                 TempData["ErrorMessage"] = "You are not authorized to view this order.";
@@ -99,7 +89,6 @@
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = userRole;
             ViewBag.HideCategories = false;
-
             return View(order);
         }
 
@@ -107,12 +96,9 @@
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
-            {
                 return RedirectToAction("Login", "Account");
-            }
 
             LoadCategories();
-
             var cartViewModel = await _cartRepository.GetCartViewModelAsync(userId.Value);
 
             if (cartViewModel.ItemCount == 0)
@@ -122,15 +108,12 @@
             }
 
             var user = await _userRepository.GetByIdAsync(userId.Value);
-
             ViewBag.IsLoggedIn = true;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
             ViewBag.HideCategories = false;
-
             ViewBag.User = user;
             ViewBag.Cart = cartViewModel;
-
             return View();
         }
 
@@ -140,9 +123,7 @@
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
-            {
                 return RedirectToAction("Login", "Account");
-            }
 
             if (string.IsNullOrEmpty(shippingAddress) || string.IsNullOrEmpty(city) ||
                 string.IsNullOrEmpty(phoneNumber) || string.IsNullOrEmpty(paymentMethod))
@@ -154,7 +135,6 @@
             try
             {
                 var cartViewModel = await _cartRepository.GetCartViewModelAsync(userId.Value);
-
                 if (cartViewModel.ItemCount == 0)
                 {
                     TempData["ErrorMessage"] = "Your cart is empty!";
@@ -170,9 +150,27 @@
                     return RedirectToAction("Index", "Cart");
                 }
 
+                // Email is intentionally post-commit: an SMTP problem must never undo a valid order.
+                try
+                {
+                    var customer = await _userRepository.GetByIdAsync(userId.Value);
+                    var completeOrder = await _orderRepository.GetOrderByIdAsync(order.OrderId) ?? order;
+                    if (customer != null && customer.IsEmailVerified && !string.IsNullOrWhiteSpace(customer.Email))
+                    {
+                        var staff = (await _userRepository.GetAllAsync())
+                            .Where(u => u.IsActive && (u.Role == "Admin" || u.Role == "Pharmacist"))
+                            .ToList();
+
+                        await _emailService.SendOrderPlacedNotificationsAsync(completeOrder, customer, staff);
+                    }
+                }
+                catch
+                {
+                    // Order remains successful even if a notification provider is temporarily unavailable.
+                }
+
                 TempData["OrderSuccessMessage"] = "Order placed successfully!";
                 TempData["OrderNumber"] = order.OrderNumber;
-
                 return RedirectToAction("ThankYou", new { id = order.OrderId });
             }
             catch (Exception ex)
@@ -189,14 +187,8 @@
                 var product = _productRepository.Find(item.ProductId);
                 if (product != null)
                 {
-                    // Decrease product stock by ordered quantity and prevent negative stock values
                     product.Stock -= item.Quantity;
-
-                    if (product.Stock < 0)
-                    {
-                        product.Stock = 0;
-                    }
-
+                    if (product.Stock < 0) product.Stock = 0;
                     _productRepository.Update(product.ProductId, product);
                 }
             }
@@ -206,26 +198,17 @@
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
-            {
                 return RedirectToAction("Login", "Account");
-            }
 
             LoadCategories();
-
             var order = await _orderRepository.GetOrderByIdAsync(id);
-
-            if (order == null)
-            {
-                return NotFound();
-            }
+            if (order == null) return NotFound();
 
             ViewBag.IsLoggedIn = true;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
             ViewBag.HideCategories = false;
-
             ViewBag.OrderSuccessMessage = TempData["OrderSuccessMessage"];
-
             return View(order);
         }
 
@@ -233,14 +216,12 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(int orderId, string status, string returnUrl = null)
         {
-            // Restrict order status updates to Admin and Pharmacist roles only
             var userRole = HttpContext.Session.GetString("UserRole");
             if (userRole != "Admin" && userRole != "Pharmacist")
             {
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
                     return Json(new { success = false, message = "You are not authorized to update order status." });
-                }
+
                 TempData["ErrorMessage"] = "You are not authorized to update order status.";
                 return RedirectToAction("Details", new { id = orderId });
             }
@@ -251,14 +232,12 @@
                 if (order == null)
                 {
                     if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    {
                         return Json(new { success = false, message = "Order not found." });
-                    }
+
                     TempData["ErrorMessage"] = "Order not found.";
                     return RedirectToAction("Details", new { id = orderId });
                 }
 
-                // Automatically set payment status and delivery timestamps based on order status
                 bool isPaid = false;
                 DateTime? paidAt = null;
                 DateTime? deliveredAt = null;
@@ -269,16 +248,9 @@
                     paidAt = DateTime.Now;
                     deliveredAt = DateTime.Now;
                 }
-                else
-                {
-                    isPaid = false;
-                    paidAt = null;
-                    deliveredAt = null;
-                }
 
                 await _orderRepository.UpdateOrderStatusAndPaymentAsync(orderId, status, isPaid, paidAt, deliveredAt);
 
-                // Handle both AJAX and regular form submissions with appropriate response formats
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     var statusClass = status.ToLower() switch
@@ -296,25 +268,20 @@
                         success = true,
                         message = "Order status updated successfully!",
                         newStatus = status,
-                        statusClass = statusClass
+                        statusClass
                     });
                 }
 
                 TempData["SuccessMessage"] = "Order status updated successfully!";
-
                 if (!string.IsNullOrEmpty(returnUrl) && returnUrl.Contains("ManageOrders"))
-                {
                     return RedirectToAction("ManageOrders");
-                }
 
                 return RedirectToAction("Details", new { id = orderId });
             }
             catch (Exception ex)
             {
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
                     return Json(new { success = false, message = $"Error updating order status: {ex.Message}" });
-                }
 
                 TempData["ErrorMessage"] = $"Error updating order status: {ex.Message}";
                 return RedirectToAction("Details", new { id = orderId });
@@ -323,7 +290,6 @@
 
         public async Task<IActionResult> ManageOrders()
         {
-            // Restrict access to order management for Admin and Pharmacist roles only
             var userRole = HttpContext.Session.GetString("UserRole");
             if (userRole != "Admin" && userRole != "Pharmacist")
             {
@@ -332,15 +298,12 @@
             }
 
             LoadCategories();
-
             var orders = await _orderRepository.GetAllOrdersAsync();
             var orderStatistics = await _orderRepository.GetOrderStatisticsAsync();
-
             ViewBag.AdminName = HttpContext.Session.GetString("UserName") ?? "Admin";
             ViewBag.UserRole = userRole;
             ViewBag.OrderStatistics = orderStatistics;
             ViewBag.HideCategories = false;
-
             return View(orders);
         }
 

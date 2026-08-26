@@ -1,209 +1,240 @@
-﻿@model PharmaCare.ViewModels.ProductViewModel
+@model PharmaCare.ViewModels.ProductViewModel
 @{
     ViewData["Title"] = "Create Product";
     Layout = "~/Views/Shared/_Adminlayout.cshtml";
 }
 
-<!-- Page header with title and navigation controls -->
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2 page-title">Create New Product</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2">
-            <!-- Back to product list navigation link -->
-            <a href="@Url.Action("Index", "Product")" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Back to List
-            </a>
+@section Styles{
+<style>
+:root{--pc:#0d9488;--pc-dark:#0f766e;--pc-soft:#ecfdf8;--ink:#17212b;--muted:#6b7785;--line:#e5eaf0;--surface:#fff;--surface-soft:#f8fafc;--danger:#dc3545;--shadow:0 10px 30px rgba(15,23,42,.07)}
+.product-create-page{max-width:1440px;margin:0 auto;padding:24px 4px 44px}.page-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}.page-title h1{font-size:28px;font-weight:800;color:var(--ink);margin:0 0 5px}.page-title p{margin:0;color:var(--muted);font-size:14px}.back-btn{border-radius:10px;font-weight:700;padding:9px 14px}
+.pc-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(330px,.8fr);gap:20px;align-items:start}.pc-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}.pc-card-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.pc-card-head h3{font-size:17px;font-weight:800;color:var(--ink);margin:0}.pc-card-head p{font-size:12px;color:var(--muted);margin:4px 0 0}.pc-card-body{padding:20px}.section-kicker{font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--pc);font-weight:800;margin-bottom:14px}.required:after{content:" *";color:var(--danger)}.form-control{border-radius:10px;min-height:44px;border-color:#d9e0e6}.form-control:focus{border-color:var(--pc);box-shadow:0 0 0 3px rgba(13,148,136,.12)}textarea.form-control{min-height:150px;resize:vertical}.field-help{font-size:11px;color:#87929d;margin-top:5px}.input-group-text{border-color:#d9e0e6;background:#f3f6f8;color:#5f6b76}.divider{height:1px;background:var(--line);margin:20px 0}
+.core-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.price-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.product-description{min-height:190px}
+.switch-row{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--surface-soft);margin-bottom:12px}.switch-copy strong{display:block;color:var(--ink)}.switch-copy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}.switch{position:relative;display:inline-block;width:48px;height:26px;flex:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#cbd3d9;border-radius:999px;cursor:pointer;transition:.2s}.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}.switch input:checked+.slider{background:var(--pc)}.switch input:checked+.slider:before{transform:translateX(22px)}.rx-note{display:none;margin-top:12px}.rx-note.show{display:block}
+.gallery-card{position:sticky;top:88px}.image-drop{border:2px dashed #cfd8df;border-radius:16px;padding:18px;min-height:285px;background:linear-gradient(180deg,#fff,#fbfdfe);transition:.2s}.image-drop.dragover{border-color:var(--pc);background:rgba(13,148,136,.04)}.drop-intro{text-align:center;padding:8px 5px 12px}.drop-icon{width:52px;height:52px;border-radius:14px;background:var(--pc-soft);color:var(--pc);display:inline-flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px}.drop-intro h4{font-size:15px;font-weight:800;margin:0 0 5px;color:var(--ink)}.drop-intro p{font-size:12px;color:var(--muted);margin:0 0 10px}.gallery-count{font-size:12px;color:var(--muted);font-weight:700}.file-picker-wrap{text-align:center}.file-picker{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #cbd5dc;border-radius:10px;background:#fff;cursor:pointer;font-weight:750;font-size:13px;color:var(--ink);transition:.18s}.file-picker:hover{border-color:var(--pc);color:var(--pc);transform:translateY(-1px)}.file-picker input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}.gallery-note{font-size:11px;color:#7b8792;text-align:center;margin-top:10px}.gallery-previews{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}.gallery-preview-item{position:relative;border:1px solid var(--line);border-radius:13px;background:#fff;padding:8px;min-height:165px;display:flex;flex-direction:column;justify-content:center;transition:.18s}.gallery-preview-item:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(15,23,42,.08)}.gallery-preview-item.primary{border-color:var(--pc);box-shadow:0 0 0 2px rgba(13,148,136,.08)}.gallery-preview-item img{width:100%;height:105px;object-fit:contain;border-radius:8px;background:#f8fafc}.primary-badge{position:absolute;left:8px;top:8px;background:var(--pc);color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:999px;z-index:2}.remove-image{position:absolute;right:8px;top:8px;width:28px;height:28px;border:0;border-radius:50%;background:#fff;color:var(--danger);box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}.remove-image:hover{background:var(--danger);color:#fff}.gallery-preview-actions{display:flex;gap:6px;margin-top:8px}.gallery-preview-actions .btn{flex:1;font-size:10px;padding:6px;border-radius:8px;font-weight:700}
+.advanced-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface)}.advanced-toggle{width:100%;border:0;background:transparent;padding:17px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;color:var(--ink);cursor:pointer}.advanced-toggle:hover{background:#fafcfd}.advanced-title{display:flex;align-items:center;gap:10px;font-weight:800}.advanced-title i{color:var(--pc)}.advanced-meta{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}.advanced-chevron{transition:.22s;color:#6b7785}.advanced-toggle[aria-expanded="true"] .advanced-chevron{transform:rotate(180deg)}.advanced-body{display:none;border-top:1px solid var(--line);padding:18px}.advanced-body.show{display:block}.advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.advanced-callout{margin-top:14px;padding:12px 14px;border-radius:10px;background:#f3f8f7;border-left:3px solid var(--pc);font-size:12px;color:#5d6975}
+.action-panel{display:grid;gap:10px;margin-top:16px}.create-btn{border:0;border-radius:11px;background:var(--pc);color:#fff;font-weight:800;min-height:46px;transition:.18s}.create-btn:hover{background:var(--pc-dark);transform:translateY(-1px);box-shadow:0 8px 20px rgba(13,148,136,.2);color:#fff}.cancel-btn{border-radius:11px;font-weight:750;min-height:44px;display:flex;align-items:center;justify-content:center}.summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.summary-pill{border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center;background:#fafcfd}.summary-pill strong{display:block;font-size:11px;color:var(--ink)}.summary-pill span{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+.dark-mode{--ink:#eef2f4;--muted:#9aa6b2;--line:#343b42;--surface:#1c1f22;--surface-soft:#24282c;--shadow:none}.dark-mode .pc-card,.dark-mode .advanced-card{background:var(--surface)}.dark-mode .form-control,.dark-mode .file-picker{background:#24282c;color:#eef2f4;border-color:#3b434a}.dark-mode .input-group-text{background:#2a2f33;color:#c6cdd3;border-color:#3b434a}.dark-mode .image-drop{background:#202428;border-color:#424b52}.dark-mode .gallery-preview-item{background:#24282c;border-color:#3b434a}.dark-mode .gallery-preview-item img{background:#1b1e21}.dark-mode .advanced-toggle:hover{background:#23272a}.dark-mode .advanced-callout{background:#202b29}.dark-mode .summary-pill{background:#23272a}
+@@media(max-width:1100px){.pc-grid{grid-template-columns:1fr}.gallery-card{position:static}.gallery-previews{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@@media(max-width:767px){.product-create-page{padding:15px 0 28px}.page-head{align-items:flex-start;flex-direction:column}.page-title h1{font-size:24px}.core-row,.price-row,.advanced-grid{grid-template-columns:1fr}.pc-card{border-radius:14px}.pc-card-body{padding:16px}.gallery-previews{grid-template-columns:1fr 1fr}.summary-strip{grid-template-columns:1fr}.back-btn{width:100%}}
+@@media(max-width:480px){.gallery-previews{grid-template-columns:1fr}.switch-row{align-items:flex-start}.image-drop{padding:13px}.pc-card-head{padding:15px 16px}}
+</style>
+}
+
+<div class="product-create-page">
+    <div class="page-head">
+        <div class="page-title">
+            <h1>Create Product</h1>
+            <p>Add the customer-facing product first, then configure internal pharmacy settings only when needed.</p>
         </div>
+        <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary back-btn js-inventory-back"><i class="fas fa-arrow-left mr-1"></i> Back to Inventory</a>
     </div>
-</div>
 
-<!-- Main content layout with product form and help sidebar -->
-<div class="row">
-    <div class="col-lg-8">
-        <div class="form-card">
-            <!-- Product creation form with file upload support for images -->
-            <form asp-action="Create" enctype="multipart/form-data" method="post">
-                <!-- Display model-level validation errors -->
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="productForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="primaryImageIndex" id="primaryImageIndex" value="0" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                <!-- Product name field - main identifier for customers -->
-                <div class="form-group">
-                    <label asp-for="ProductName" class="control-label">Product Name</label>
-                    <input asp-for="ProductName" class="form-control" name="ProductName" />
-                    <span asp-validation-for="ProductName" class="text-danger"></span>
-                </div>
-
-                <!-- Product description field for detailed product information -->
-                <div class="form-group">
-                    <label asp-for="Description" class="control-label">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="4" name="Description"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-
-                <!-- Price and stock fields arranged in two-column layout for space efficiency -->
-                <div class="row">
-                    <div class="col-md-6">
+        <div class="pc-grid">
+            <div>
+                <section class="pc-card">
+                    <div class="pc-card-head">
+                        <div><h3>Product Details</h3><p>The information customers need to understand and buy the product.</p></div>
+                        <i class="fas fa-box-open text-muted"></i>
+                    </div>
+                    <div class="pc-card-body">
+                        <div class="section-kicker">Core information</div>
                         <div class="form-group">
-                            <label asp-for="Price" class="control-label">Price</label>
-                            <!-- Price input with validation to prevent invalid characters (e, +, -) and multiple decimals -->
-                            <input asp-for="Price" class="form-control" name="Price" type="number" step="0.01" min="0"
-                                   onkeydown="return event.keyCode !== 69 && event.keyCode !== 187 && event.keyCode !== 189"
-                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')" />
-                            <span asp-validation-for="Price" class="text-danger"></span>
+                            <label asp-for="ProductName" class="required">Product Name</label>
+                            <input asp-for="ProductName" class="form-control" placeholder="e.g. Paracetamol 500mg Tablets" />
+                            <span asp-validation-for="ProductName" class="text-danger small"></span>
+                        </div>
+                        <div class="core-row">
+                            <div class="form-group">
+                                <label asp-for="CategoryID" class="required">Category</label>
+                                <select asp-for="CategoryID" asp-items="Model.ListOfCategories" class="form-control"><option value="">Select category</option></select>
+                                <span asp-validation-for="CategoryID" class="text-danger small"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Manufacturer">Manufacturer</label>
+                                <input asp-for="Manufacturer" class="form-control" placeholder="e.g. Hikma Pharmaceuticals" />
+                                <span asp-validation-for="Manufacturer" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label asp-for="Description">Product Description</label>
+                            <textarea asp-for="Description" class="form-control product-description" placeholder="Describe the product clearly: strength, dosage form, pack size, intended use and customer-relevant information."></textarea>
+                            <div class="field-help">This description appears on the storefront product page.</div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Stock" class="control-label">Stock</label>
-                            <!-- Stock input with validation to allow only positive integers -->
-                            <input asp-for="Stock" class="form-control" name="Stock" type="number" min="0"
-                                   onkeydown="return event.keyCode !== 69 && event.keyCode !== 187 && event.keyCode !== 189"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
-                            <span asp-validation-for="Stock" class="text-danger"></span>
+                </section>
+
+                <section class="pc-card">
+                    <div class="pc-card-head">
+                        <div><h3>Price, Stock & Availability</h3><p>Keep selling information simple and operational.</p></div>
+                        <i class="fas fa-cubes text-muted"></i>
+                    </div>
+                    <div class="pc-card-body">
+                        <div class="price-row">
+                            <div class="form-group">
+                                <label asp-for="Price" class="required">Unit Price</label>
+                                <div class="input-group"><div class="input-group-prepend"><span class="input-group-text">$</span></div><input asp-for="Price" type="number" min="0.01" step="0.01" class="form-control" /></div>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Stock" class="required">Starting Stock</label>
+                                <div class="input-group"><input asp-for="Stock" type="number" min="0" class="form-control" /><div class="input-group-append"><span class="input-group-text">units</span></div></div>
+                                <span asp-validation-for="Stock" class="text-danger small"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ExpiryDate" class="required">Expiry Date</label>
+                                <input asp-for="ExpiryDate" type="date" class="form-control" />
+                                <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="field-help"><i class="fas fa-shield-alt text-warning mr-1"></i>Always verify expiry directly from manufacturer packaging.</div>
+                        <div class="divider"></div>
+                        <div class="switch-row">
+                            <div class="switch-copy"><strong>Active Product</strong><span>Visible to customers when stock and expiry rules allow it.</span></div>
+                            <label class="switch"><input type="checkbox" name="IsActive" value="true" checked /><span class="slider"></span></label>
+                        </div>
+                        <div class="switch-row mb-0">
+                            <div class="switch-copy"><strong>Requires Prescription</strong><span>Enable this only for prescription-controlled medicines.</span></div>
+                            <label class="switch"><input type="checkbox" name="RequiresPrescription" value="true" id="rxToggle" /><span class="slider"></span></label>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <!-- CRITICAL: Expiry date field for pharmaceutical safety -->
-                <div class="form-group">
-                    <label asp-for="ExpiryDate" class="control-label">Expiry Date</label>
-                    <input asp-for="ExpiryDate" class="form-control" name="ExpiryDate" type="date"
-                           min="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                    <span asp-validation-for="ExpiryDate" class="text-danger"></span>
-                    <small class="form-text text-muted">
-                        <i class="fas fa-exclamation-triangle text-warning"></i>
-                        This is critical for pharmaceutical products. Ensure the expiry date is accurate.
-                    </small>
-                </div>
-
-                <!-- Product image upload field with custom file input styling -->
-                <div class="form-group">
-                    <label for="File" class="control-label">Product Image</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="customFile" name="File" />
-                        <label class="custom-file-label" for="customFile">Choose file</label>
-                    </div>
-                </div>
-
-                <!-- Product visibility toggle - determines if product appears to customers -->
-                <div class="form-group">
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input" id="activeSwitch" name="IsActive" checked />
-                        <label class="custom-control-label" for="activeSwitch">Is Active</label>
-                    </div>
-                </div>
-
-                <!-- Prescription requirement toggle for pharmacy regulations -->
-                <div class="form-group">
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input" id="prescriptionSwitch" name="RequiresPrescription" />
-                        <label class="custom-control-label" for="prescriptionSwitch">Requires Prescription</label>
-                    </div>
-                    <small class="form-text text-muted">Enable this for medications that require a prescription to purchase.</small>
-                </div>
-
-                <!-- Conditional prescription note field - only shown when prescription is required -->
-                <div class="form-group prescription-note" style="display: none;">
-                    <label for="PrescriptionNote" class="control-label">Prescription Note</label>
-                    <textarea class="form-control" id="PrescriptionNote" name="PrescriptionNote" rows="3"
-                              placeholder="Example: This item requires a valid prescription. You can reserve online but must visit the pharmacy with your prescription to complete the purchase."></textarea>
-                </div>
-
-                <!-- Category selection dropdown for product organization -->
-                <div class="form-group">
-                    <label for="CategoryID" class="control-label">Category</label>
-                    <select class="form-control" id="CategoryID" name="CategoryID" asp-items="Model.ListOfCategories">
-                        <option value="">-- Select Category --</option>
-                    </select>
-                    <span asp-validation-for="CategoryID" class="text-danger"></span>
-                </div>
-
-                <!-- Form submission and cancellation controls -->
-                <div class="form-group mt-4">
-                    <!-- Create button with custom PharmaCare styling -->
-                    <button type="submit" class="btn btn-primary" style="color: white !important; background-color: #0d9488 !important; border-color: #0d9488 !important;">
-                        <i class="fas fa-save"></i> Create Product
+                <section class="advanced-card mb-4">
+                    <button type="button" class="advanced-toggle" id="advancedToggle" aria-expanded="false">
+                        <span class="advanced-title"><i class="fas fa-sliders-h"></i><span>Advanced Settings<span class="advanced-meta">Internal stock identifiers, alerts and prescription instructions.</span></span></span>
+                        <i class="fas fa-chevron-down advanced-chevron"></i>
                     </button>
-                    <a href="@Url.Action("Index", "Product")" class="btn btn-outline-secondary ml-2">Cancel</a>
-                </div>
-            </form>
-        </div>
-    </div>
+                    <div class="advanced-body" id="advancedBody">
+                        <div class="section-kicker">Internal inventory controls</div>
+                        <div class="advanced-grid">
+                            <div class="form-group">
+                                <label asp-for="SKU">SKU</label>
+                                <input asp-for="SKU" class="form-control" placeholder="e.g. MED-PARA-500-001" />
+                                <div class="field-help">Internal unique stock code. Not shown to customers.</div>
+                                <span asp-validation-for="SKU" class="text-danger small"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Barcode">Barcode / GTIN</label>
+                                <div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-barcode"></i></span></div><input asp-for="Barcode" class="form-control" placeholder="Scan or enter barcode" /></div>
+                                <div class="field-help">Internal identifier. Not shown to customers.</div>
+                                <span asp-validation-for="Barcode" class="text-danger small"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ReorderLevel">Low Stock Alert</label>
+                                <div class="input-group"><input asp-for="ReorderLevel" type="number" min="0" class="form-control" /><div class="input-group-append"><span class="input-group-text">units</span></div></div>
+                                <div class="field-help">Admin warning threshold only.</div>
+                                <span asp-validation-for="ReorderLevel" class="text-danger small"></span>
+                            </div>
+                            <div class="form-group rx-note" id="rxNote">
+                                <label asp-for="PrescriptionNote">Prescription Instructions</label>
+                                <textarea asp-for="PrescriptionNote" class="form-control" rows="3" placeholder="Optional instructions shown only when prescription is required."></textarea>
+                                <span asp-validation-for="PrescriptionNote" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="advanced-callout"><i class="fas fa-info-circle mr-1"></i>These settings are operational. Customers do not need to see SKU, barcode or reorder thresholds.</div>
+                    </div>
+                </section>
+            </div>
 
-    <!-- Help sidebar with field descriptions and guidance for admins -->
-    <div class="col-lg-4">
-        <div class="form-card">
-            <div class="card-header">
-                <h5 class="m-0 font-weight-bold">Help</h5>
-            </div>
-            <div class="p-3">
-                <!-- Field-by-field explanation for creating products -->
-                <p><strong>Product Name:</strong> Enter the name of the product as it will appear to customers.</p>
-                <p><strong>Description:</strong> Provide a detailed information about the product and how to used it.</p>
-                <p><strong>Price:</strong> Set the retail price for this product.</p>
-                <p><strong>Stock:</strong> Enter the current inventory quantity.</p>
-                <p><strong>Expiry Date:</strong> <span class="text-danger">CRITICAL</span> - Set the expiration date for pharmaceutical safety. Products past expiry cannot be sold.</p>
-                <p><strong>Image:</strong> Upload a high-quality image (recommended size: 800x800px).</p>
-                <p><strong>Is Active:</strong> Toggle to make the product visible to customers.</p>
-                <p><strong>Requires Prescription:</strong> Enable for medications that can only be sold with a valid prescription.</p>
-                <p><strong>Prescription Note:</strong> Message shown to customers explaining the prescription requirement.</p>
-                <p><strong>Category:</strong> Select the appropriate category for this product.</p>
-            </div>
-        </div>
+            <aside>
+                <section class="pc-card gallery-card">
+                    <div class="pc-card-head">
+                        <div><h3>Product Gallery</h3><p>Build the storefront gallery before publishing.</p></div>
+                        <i class="fas fa-images text-muted"></i>
+                    </div>
+                    <div class="pc-card-body">
+                        <div class="image-drop" id="imageDrop">
+                            <div class="drop-intro">
+                                <div class="drop-icon"><i class="fas fa-image"></i></div>
+                                <h4>Upload up to 5 images</h4>
+                                <p>Choose several at once or keep adding them one by one. JPG or PNG.</p>
+                                <div class="gallery-count"><span id="imageCount">0</span>/5 selected</div>
+                            </div>
+                            <div class="file-picker-wrap">
+                                <label class="file-picker"><i class="fas fa-plus"></i> Add image(s)<input name="galleryFiles" id="galleryInput" type="file" accept="image/png,image/jpeg" multiple /></label>
+                            </div>
+                            <div class="gallery-note">Set any image as Primary. Remove mistakes before saving.</div>
+                            <div id="galleryPreviews" class="gallery-previews"></div>
+                        </div>
 
-        <!-- Expiry Date Guidelines -->
-        <div class="form-card mt-3">
-            <div class="card-header bg-warning">
-                <h6 class="m-0 font-weight-bold text-dark">
-                    <i class="fas fa-calendar-times"></i> Expiry Date Guidelines
-                </h6>
-            </div>
-            <div class="p-3">
-                <ul class="mb-0 small">
-                    <li><strong>Medications:</strong> Usually 1-3 years from manufacture</li>
-                    <li><strong>Vitamins/Supplements:</strong> Typically 2-3 years</li>
-                    <li><strong>Topical products:</strong> Usually 1-2 years</li>
-                    <li><strong>Liquid medicines:</strong> Often shorter shelf life</li>
-                </ul>
-                <p class="mt-2 mb-0 small text-muted">
-                    <i class="fas fa-info-circle"></i>
-                    Always verify expiry dates with manufacturer specifications.
-                </p>
-            </div>
+                        <div class="summary-strip">
+                            <div class="summary-pill"><strong>5 max</strong><span>Gallery images</span></div>
+                            <div class="summary-pill"><strong>Primary</strong><span>Choose anytime</span></div>
+                            <div class="summary-pill"><strong>Storefront</strong><span>Ready gallery</span></div>
+                        </div>
+
+                        <div class="action-panel">
+                            <button type="submit" class="btn create-btn"><i class="fas fa-save mr-1"></i> Create Product</button>
+                            <a href="@Url.Action("Index","Product")" class="btn btn-outline-secondary cancel-btn js-inventory-back">Cancel</a>
+                        </div>
+                    </div>
+                </section>
+            </aside>
         </div>
-    </div>
+    </form>
 </div>
 
-@section Scripts {
-    <script>
-        // File input display functionality - shows selected filename
-        $(".custom-file-input").on("change", function() {
-            var fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-        });
-
-        // Prescription note field toggle based on prescription requirement
-        $(document).ready(function() {
-            $('#prescriptionSwitch').change(function() {
-                if($(this).is(':checked')) {
-                    $('.prescription-note').show();
-                } else {
-                    $('.prescription-note').hide();
-                    $('#PrescriptionNote').val('');
-                }
-            });
-
-            // Initial state check for prescription note field visibility
-            if($('#prescriptionSwitch').is(':checked')) {
-                $('.prescription-note').show();
-            } else {
-                $('.prescription-note').hide();
-                $('#PrescriptionNote').val('');
-            }
-        });
-    </script>
-    @{
-        /* Include client-side validation scripts for form validation */
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+@section Scripts{
+<partial name="_ValidationScriptsPartial" />
+<script>
+(function(){
+    const inventoryUrl='@Url.Action("Index","Product")';
+    const editorUrl=window.location.href;
+    if(!history.state || history.state.page!=='product-editor'){
+        history.replaceState({page:'product-inventory-fallback'},'',inventoryUrl);
+        history.pushState({page:'product-editor'},'',editorUrl);
     }
+    window.addEventListener('popstate',()=>window.location.replace(inventoryUrl));
+    document.querySelectorAll('.js-inventory-back').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();history.back();}));
+
+    const rx=document.getElementById('rxToggle'), note=document.getElementById('rxNote'), input=document.getElementById('galleryInput'), previews=document.getElementById('galleryPreviews'), count=document.getElementById('imageCount'), drop=document.getElementById('imageDrop'), primaryField=document.getElementById('primaryImageIndex'), advancedToggle=document.getElementById('advancedToggle'), advancedBody=document.getElementById('advancedBody');
+    let selectedFiles=[]; let primaryIndex=0;
+
+    function syncRx(){
+        note.classList.toggle('show',rx.checked);
+        if(rx.checked){advancedBody.classList.add('show');advancedToggle.setAttribute('aria-expanded','true');}
+    }
+    rx.addEventListener('change',syncRx); syncRx();
+
+    advancedToggle.addEventListener('click',()=>{
+        const open=advancedToggle.getAttribute('aria-expanded')==='true';
+        advancedToggle.setAttribute('aria-expanded',String(!open));
+        advancedBody.classList.toggle('show',!open);
+    });
+
+    function keyFor(file){return file.name+'|'+file.size+'|'+file.lastModified;}
+    function syncInput(){const dt=new DataTransfer();selectedFiles.forEach(f=>dt.items.add(f));input.files=dt.files;primaryField.value=selectedFiles.length?primaryIndex:0;}
+    function addFiles(files){
+        const allowed=Array.from(files||[]).filter(f=>f.type==='image/png'||f.type==='image/jpeg');
+        allowed.forEach(file=>{if(selectedFiles.length>=5)return;if(!selectedFiles.some(x=>keyFor(x)===keyFor(file)))selectedFiles.push(file);});
+        if(selectedFiles.length===1)primaryIndex=0; syncInput(); render();
+    }
+    function removeFile(index){selectedFiles.splice(index,1);if(!selectedFiles.length){primaryIndex=0;}else if(index===primaryIndex){primaryIndex=0;}else if(index<primaryIndex){primaryIndex--;}syncInput();render();}
+    function setPrimary(index){primaryIndex=index;syncInput();render();}
+    function render(){
+        previews.innerHTML=''; count.textContent=selectedFiles.length;
+        selectedFiles.forEach((file,index)=>{
+            const wrap=document.createElement('div'); wrap.className='gallery-preview-item'+(index===primaryIndex?' primary':'');
+            if(index===primaryIndex){const badge=document.createElement('span');badge.className='primary-badge';badge.textContent='Primary';wrap.appendChild(badge);}
+            const remove=document.createElement('button');remove.type='button';remove.className='remove-image';remove.title='Remove image';remove.innerHTML='<i class="fas fa-times"></i>';remove.addEventListener('click',()=>removeFile(index));wrap.appendChild(remove);
+            const img=document.createElement('img');img.alt='Product image '+(index+1);wrap.appendChild(img);const reader=new FileReader();reader.onload=e=>img.src=e.target.result;reader.readAsDataURL(file);
+            const actions=document.createElement('div');actions.className='gallery-preview-actions';
+            const primaryBtn=document.createElement('button');primaryBtn.type='button';primaryBtn.className=index===primaryIndex?'btn btn-success':'btn btn-outline-success';primaryBtn.innerHTML=index===primaryIndex?'<i class="fas fa-star mr-1"></i> Primary':'<i class="far fa-star mr-1"></i> Set Primary';primaryBtn.disabled=index===primaryIndex;primaryBtn.addEventListener('click',()=>setPrimary(index));
+            const removeBtn=document.createElement('button');removeBtn.type='button';removeBtn.className='btn btn-outline-danger';removeBtn.innerHTML='<i class="fas fa-trash mr-1"></i> Remove';removeBtn.addEventListener('click',()=>removeFile(index));
+            actions.appendChild(primaryBtn);actions.appendChild(removeBtn);wrap.appendChild(actions);previews.appendChild(wrap);
+        });
+    }
+    input.addEventListener('change',()=>addFiles(input.files));
+    ['dragenter','dragover'].forEach(evt=>drop.addEventListener(evt,e=>{e.preventDefault();drop.classList.add('dragover');}));
+    ['dragleave','drop'].forEach(evt=>drop.addEventListener(evt,e=>{e.preventDefault();drop.classList.remove('dragover');}));
+    drop.addEventListener('drop',e=>{if(e.dataTransfer.files.length)addFiles(e.dataTransfer.files);});
+    document.getElementById('productForm').addEventListener('submit',syncInput);
+})();
+</script>
 }

@@ -1,229 +1,109 @@
-﻿@model PharmaCare.Models.User
+@model PharmaCare.Models.User
 @{
-    ViewData["Title"] = "Sign Up - PharmaCare";
-    /* Standalone page without shared layout */
+    ViewData["Title"] = "Create Account - PharmaCare";
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <!-- External dependencies and stylesheets -->
-    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/assets/css/AccountViewStyles/Register.css">
-    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,600,700" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png" />
+    <style>
+        :root{--accent:#0f9f92;--accent-2:#0b7f75;--ink:#132129;--muted:#70808b;--line:#e6ecef;--surface:#fff;--page:#f3f7f8;--soft:#eef8f6;--danger:#d9534f;--shadow:0 28px 70px rgba(22,45,54,.14)}
+        *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:'Rubik',sans-serif;color:var(--ink)}body{background:var(--page);transition:.25s ease;color-scheme:light}
+        body.dark-mode{--ink:#eef4f5;--muted:#91a0a8;--line:#303a3f;--surface:#20262a;--page:#111719;--soft:#18302d;--shadow:0 30px 90px rgba(0,0,0,.35);color-scheme:dark}
+        a{text-decoration:none}.auth-shell{min-height:100vh;display:grid;grid-template-columns:minmax(420px,.82fr) minmax(0,1.18fr);position:relative;overflow:hidden;background:var(--page)}
+        .brand-panel{position:relative;padding:40px 52px 48px;background:linear-gradient(150deg,#102f34,#0b756e 72%,#0d8f84);color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.brand-panel:before,.brand-panel:after{content:"";position:absolute;border-radius:50%;opacity:.14;animation:floatBlob 10s ease-in-out infinite}.brand-panel:before{width:430px;height:430px;background:#fff;left:-210px;top:-150px}.brand-panel:after{width:340px;height:340px;background:#6de7db;right:-150px;bottom:-110px;animation-delay:-5s}
+        @@keyframes floatBlob{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-18px) scale(1.07)}}
+        .brand-top,.brand-copy,.brand-foot{position:relative;z-index:2}.brand-logo{display:flex;align-items:center;gap:12px;color:#fff;font-size:20px;font-weight:700;letter-spacing:.4px}.brand-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}.brand-copy{max-width:520px;animation:rise .7s ease both}.eyebrow{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.75;margin-bottom:18px}.brand-copy h1{font-size:clamp(38px,4.5vw,58px);line-height:1.06;margin:0 0 20px;letter-spacing:-1.4px}.brand-copy p{font-size:16px;line-height:1.75;color:rgba(255,255,255,.8);margin:0}
+        .steps{margin-top:34px;display:grid;gap:12px}.step{display:flex;gap:13px;align-items:flex-start;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.12)}.step:last-child{border-bottom:0}.step-num{width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.13);display:grid;place-items:center;font-size:11px;font-weight:700;flex:0 0 auto}.step strong{display:block;font-size:13px;margin-bottom:3px}.step span{font-size:11px;line-height:1.45;color:rgba(255,255,255,.68)}.brand-foot{font-size:11px;color:rgba(255,255,255,.6)}
+        .form-panel{padding:28px 40px;display:flex;flex-direction:column;min-height:100vh}.form-header{display:flex;justify-content:flex-end;align-items:center;gap:12px}.home-link,.theme-btn{height:42px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;transition:.2s}.home-link{padding:0 14px;gap:8px;font-size:12px;font-weight:600}.theme-btn{width:42px;cursor:pointer}.home-link:hover,.theme-btn:hover{border-color:rgba(15,159,146,.45);color:var(--accent);transform:translateY(-1px)}
+        .form-wrap{width:100%;max-width:760px;margin:auto;animation:rise .6s .08s ease both}.welcome-chip{display:inline-flex;align-items:center;gap:8px;background:var(--soft);color:var(--accent);font-size:11px;font-weight:700;padding:8px 11px;border-radius:999px;margin-bottom:16px}.form-wrap h2{font-size:34px;letter-spacing:-.7px;margin:0 0 7px}.lead{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 24px}.notice{padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:12px;line-height:1.5;background:rgba(217,83,79,.09);color:var(--danger);border:1px solid rgba(217,83,79,.18)}.notice ul{margin:0;padding-left:18px}
+        .section-label{font-size:10px;text-transform:uppercase;letter-spacing:1.1px;color:var(--muted);font-weight:700;margin:22px 0 11px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.full{grid-column:1/-1}.field label{display:block;font-size:11px;font-weight:600;margin:0 0 7px}.input-wrap{position:relative}.field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#92a0a8;font-size:13px}.control{width:100%;height:48px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:0 40px;outline:none;font:inherit;font-size:13px;transition:.2s}.control::placeholder{color:#a1acb2}.control:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(15,159,146,.1);transform:translateY(-1px)}.toggle-password{position:absolute;right:11px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#8b989f;cursor:pointer;padding:5px}.field-error{font-size:10px;color:var(--danger);margin-top:5px}
+        .password-meter{margin-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.meter-seg{height:4px;border-radius:99px;background:var(--line);transition:.2s}.meter-seg.on{background:var(--accent)}.requirements{display:flex;gap:12px;flex-wrap:wrap;margin-top:9px}.req{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px}.req i{font-size:8px}.req.ok{color:#198754}
+        .terms{margin:20px 0 16px;display:flex;align-items:flex-start;gap:9px;font-size:11px;line-height:1.5;color:var(--muted)}.terms input{margin-top:2px;accent-color:var(--accent)}.primary-btn{width:100%;height:52px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-weight:700;cursor:pointer;box-shadow:0 12px 26px rgba(15,159,146,.24);transition:.22s}.primary-btn:hover{transform:translateY(-2px);box-shadow:0 16px 30px rgba(15,159,146,.29)}.signin-row{text-align:center;margin-top:18px;color:var(--muted);font-size:12px}.text-link{color:var(--accent);font-weight:700}.text-link:hover{color:var(--accent-2)}.security-note{margin-top:18px;padding-top:15px;border-top:1px solid var(--line);display:flex;gap:9px;color:var(--muted);font-size:10px;line-height:1.45}.security-note i{color:var(--accent);margin-top:2px}.form-footer{text-align:center;color:var(--muted);font-size:10px;padding-top:14px}
+        @@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        @@media(max-width:1100px){.auth-shell{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:24px}.form-wrap{max-width:760px}.form-header{margin-bottom:18px}}
+        @@media(max-width:680px){.form-panel{padding:20px 15px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.form-wrap h2{font-size:29px}.home-link span{display:none}.requirements{display:grid;gap:6px}}
+    </style>
 </head>
-<!-- Default dark mode styling -->
-<body class="dark-mode">
-    <div class="header">
-        <div class="logo">
-            <a href="/">PHARMACARE</a>
-        </div>
-        <div class="theme-toggle">
-            <!-- Theme toggle with icon switching functionality -->
-            <button id="theme-toggle-btn">
-                <span class="sun-icon">☀️</span>
-                <span class="moon-icon" style="display: none;">🌙</span>
-            </button>
-        </div>
-    </div>
-
-    <div class="signup-container">
-        <h2 class="form-title">Create Your Account</h2>
-
-        <!-- Display all validation errors from ModelState -->
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error-message">
-                <ul>
-                    @foreach (var modelState in ViewData.ModelState.Values)
-                    {
-                        foreach (var error in modelState.Errors)
-                        {
-                            <li>@error.ErrorMessage</li>
-                        }
-                    }
-                </ul>
-            </div>
-        }
-        <!-- Registration form with ASP.NET Core tag helpers -->
-        <form id="registration-form" asp-controller="Account" asp-action="Register" method="post">
-            @Html.AntiForgeryToken()
-            <!-- Two-column layout for name fields -->
-            <div class="form-row">
-                <div class="form-group">
-                    <!-- First name input with value preservation -->
-                    <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="First Name"
-                           value="@Model?.FirstName" required>
-                    <!-- Hidden error container for JavaScript validation -->
-                    <div id="firstName-error" class="field-error" style="display: none;">First name is required</div>
-                    <!-- Server-side validation error display -->
-                    @if (ViewData.ModelState.ContainsKey("FirstName") && ViewData.ModelState["FirstName"].Errors.Count > 0)
-                    {
-                        <div class="field-error">@ViewData.ModelState["FirstName"].Errors[0].ErrorMessage</div>
-                    }
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Last Name"
-                           value="@Model?.LastName" required>
-                    <div id="lastName-error" class="field-error" style="display: none;">Last name is required</div>
-                    @if (ViewData.ModelState.ContainsKey("LastName") && ViewData.ModelState["LastName"].Errors.Count > 0)
-                    {
-                        <div class="field-error">@ViewData.ModelState["LastName"].Errors[0].ErrorMessage</div>
-                    }
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-bottom: 20px;">
-                <!-- Email input with HTML5 validation -->
-                <input type="email" class="form-control" id="Email" name="Email" placeholder="youremail@mail.com"
-                       value="@Model?.Email" required>
-                <div id="email-error" class="field-error" style="display: none;">Email is required</div>
-                @if (ViewData.ModelState.ContainsKey("Email") && ViewData.ModelState["Email"].Errors.Count > 0)
-                {
-                    <div class="field-error">@ViewData.ModelState["Email"].Errors[0].ErrorMessage</div>
-                }
-            </div>
-
-            <!-- Phone number with validation pattern and JavaScript number restriction -->
-            <div class="form-group" style="margin-bottom: 20px;">
-                <input type="tel" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Phone Number"
-                       pattern="[0-9]{10,15}" minlength="10" maxlength="15"
-                       title="Phone number must be between 10 and 15 digits"
-                       value="@Model?.PhoneNumber" required onkeypress="return isNumberKey(event)">
-                <div id="phone-error" class="field-error" style="display: none;">Phone number must be between 10 and 15 digits</div>
-                @if (ViewData.ModelState.ContainsKey("PhoneNumber") && ViewData.ModelState["PhoneNumber"].Errors.Count > 0)
-                {
-                    <div class="field-error">@ViewData.ModelState["PhoneNumber"].Errors[0].ErrorMessage</div>
-                }
-            </div>
-
-            <div class="form-group" style="margin-bottom: 20px;">
-                <input type="text" class="form-control" id="Address" name="Address" placeholder="Address"
-                       value="@Model?.Address" required>
-                <div id="address-error" class="field-error" style="display: none;">Address is required</div>
-                @if (ViewData.ModelState.ContainsKey("Address") && ViewData.ModelState["Address"].Errors.Count > 0)
-                {
-                    <div class="field-error">@ViewData.ModelState["Address"].Errors[0].ErrorMessage</div>
-                }
-            </div>
-
-            <div class="form-group" style="margin-bottom: 20px;">
-                <input type="text" class="form-control" id="City" name="City" placeholder="City"
-                       value="@Model?.City" required>
-                <div id="city-error" class="field-error" style="display: none;">City is required</div>
-                @if (ViewData.ModelState.ContainsKey("City") && ViewData.ModelState["City"].Errors.Count > 0)
-                {
-                    <div class="field-error">@ViewData.ModelState["City"].Errors[0].ErrorMessage</div>
-                }
-            </div>
-
-            <!-- Password fields with requirements and confirmation -->
-            <div class="form-row">
-                <div class="form-group">
-                    <div class="password-container">
-                        <!-- Password input with toggle visibility -->
-                        <input type="password" class="form-control" id="password" name="Password" placeholder="Password" required>
-                        <span class="password-toggle" onclick="togglePasswordVisibility('password')">
-                            <i class="fas fa-eye"></i>
-                        </span>
-                    </div>
-                    <!-- Password requirements display for user guidance -->
-                    <div class="password-requirements">
-                        <p>Password must:</p>
-                        <!-- Requirements list with IDs for JavaScript validation feedback -->
-                        <ul>
-                            <li id="length-req">Be at least 8 characters long</li>
-                            <li id="uppercase-req">Contain at least one uppercase letter</li>
-                            <li id="special-req">Contain at least one special character</li>
-                        </ul>
-                    </div>
-                    @if (ViewData.ModelState.ContainsKey("Password") && ViewData.ModelState["Password"].Errors.Count > 0)
-                    {
-                        <div class="field-error">@ViewData.ModelState["Password"].Errors[0].ErrorMessage</div>
-                    }
-                </div>
-                <div class="form-group">
-                    <div class="password-container">
-                        <!-- Confirm password input with matching validation -->
-                        <input type="password" class="form-control" id="confirm-password" name="confirmPassword" placeholder="Confirm Password" required>
-                        <span class="password-toggle" onclick="togglePasswordVisibility('confirm-password')">
-                            <i class="fas fa-eye"></i>
-                        </span>
-                        <!-- Error container for password confirmation mismatch -->
-                        <div class="password-error" id="confirm-password-error" style="display: none;"></div>
-                    </div>
-                    @if (ViewData.ModelState.ContainsKey("ConfirmPassword") && ViewData.ModelState["ConfirmPassword"].Errors.Count > 0)
-                    {
-                        <div class="field-error">@ViewData.ModelState["ConfirmPassword"].Errors[0].ErrorMessage</div>
-                    }
-                </div>
-            </div>
-            <!-- Hidden field setting default user role -->
-            <input type="hidden" name="Role" value="User" />
-            <button type="submit" class="submit-btn">SIGN UP</button>
-        </form>
-
-        <div class="sign-in-link">
-            <!-- Link to login page for existing users -->
-            I'm already a member! <a href="@Url.Action("Login", "Account")">Sign In</a>
-        </div>
-    </div>
-
-    <!-- Site footer with company information (identical to login page) -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row pt-5 mt-5">
-                <div class="col-md-4 mb-5">
-                    <h3>About Us</h3>
-                    <p>
-                        At PharmaCare, we're committed to providing trusted healthcare solutions to our community. With years of experience in our physical pharmacy, we've now expanded online to bring you the same quality care, convenience, and reliability.
-                    </p>
-                </div>
-                <div class="col-md-4 mb-5">
-                    <h3>Quick Links</h3>
-                    <ul class="list-unstyled footer-link">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/FrontEnd/Shop">Store</a></li>
-                        <li><a href="/FrontEnd/Contact">Get In Touch</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-5">
-                    <h3>Contact Info</h3>
-                    <ul class="list-unstyled contact-info">
-                        <li class="d-flex">
-                            <span class="mr-3"><i class="fas fa-map-marker-alt"></i></span>
-                            <span>Almadina Almonaora St, Amman, Jordan</span>
-                        </li>
-                        <li class="d-flex">
-                            <span class="mr-3"><i class="fas fa-phone"></i></span>
-                            <span>+962 7 9999 8888</span>
-                        </li>
-                        <li class="d-flex">
-                            <span class="mr-3"><i class="fas fa-envelope"></i></span>
-                            <span>pharmacare@info.com</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 text-center copyright">
-                    <p>
-                        <!-- Dynamic copyright year -->
-                        Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare
-                    </p>
-                </div>
+<body>
+<div class="auth-shell">
+    <section class="brand-panel">
+        <div class="brand-top"><a href="/" class="brand-logo"><span class="brand-icon"><i class="fas fa-prescription-bottle-alt"></i></span><span>PHARMACARE</span></a></div>
+        <div class="brand-copy">
+            <div class="eyebrow">Join PharmaCare</div>
+            <h1>Your care starts with one account.</h1>
+            <p>Create a secure profile for faster ordering, prescription reservations and easier access to your pharmacy activity.</p>
+            <div class="steps">
+                <div class="step"><div class="step-num">01</div><div><strong>Create your profile</strong><span>Add your contact and delivery information once.</span></div></div>
+                <div class="step"><div class="step-num">02</div><div><strong>Verify your email</strong><span>We send a six-digit verification code to protect your account.</span></div></div>
+                <div class="step"><div class="step-num">03</div><div><strong>Start using PharmaCare</strong><span>Order products and manage prescription reservations securely.</span></div></div>
             </div>
         </div>
-    </footer>
+        <div class="brand-foot">Secure registration · PharmaCare</div>
+    </section>
 
-    <!-- External JavaScript dependencies -->
-    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
-    <script src="~/assets/js/AccountViewScripts/Register.js"></script>
+    <section class="form-panel">
+        <div class="form-header">
+            <a class="home-link" href="/"><i class="fas fa-arrow-left"></i><span>Back to store</span></a>
+            <button class="theme-btn" id="theme-toggle-btn" type="button" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+        </div>
+        <div class="form-wrap">
+            <div class="welcome-chip"><i class="fas fa-user-plus"></i> New customer account</div>
+            <h2>Create your account</h2>
+            <p class="lead">A few details and you’ll be ready to use PharmaCare.</p>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="notice"><ul>@foreach (var state in ViewData.ModelState.Values){foreach(var error in state.Errors){<li>@error.ErrorMessage</li>}}</ul></div>
+            }
+
+            <form id="registration-form" asp-controller="Account" asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Role" value="User" />
+
+                <div class="section-label">Personal information</div>
+                <div class="form-grid">
+                    <div class="field"><label for="FirstName">First name</label><div class="input-wrap"><i class="fas fa-user field-icon"></i><input class="control" id="FirstName" name="FirstName" type="text" placeholder="First name" value="@Model?.FirstName" autocomplete="given-name" required /></div>@if(ViewData.ModelState.ContainsKey("FirstName")&&ViewData.ModelState["FirstName"].Errors.Count>0){<div class="field-error">@ViewData.ModelState["FirstName"].Errors[0].ErrorMessage</div>}</div>
+                    <div class="field"><label for="LastName">Last name</label><div class="input-wrap"><i class="fas fa-user field-icon"></i><input class="control" id="LastName" name="LastName" type="text" placeholder="Last name" value="@Model?.LastName" autocomplete="family-name" required /></div>@if(ViewData.ModelState.ContainsKey("LastName")&&ViewData.ModelState["LastName"].Errors.Count>0){<div class="field-error">@ViewData.ModelState["LastName"].Errors[0].ErrorMessage</div>}</div>
+                    <div class="field full"><label for="Email">Email address</label><div class="input-wrap"><i class="fas fa-envelope field-icon"></i><input class="control" id="Email" name="Email" type="email" placeholder="name@example.com" value="@Model?.Email" autocomplete="email" required /></div>@if(ViewData.ModelState.ContainsKey("Email")&&ViewData.ModelState["Email"].Errors.Count>0){<div class="field-error">@ViewData.ModelState["Email"].Errors[0].ErrorMessage</div>}</div>
+                    <div class="field"><label for="PhoneNumber">Phone number</label><div class="input-wrap"><i class="fas fa-phone field-icon"></i><input class="control" id="PhoneNumber" name="PhoneNumber" type="tel" placeholder="0791234567" pattern="[0-9]{10,15}" minlength="10" maxlength="15" value="@Model?.PhoneNumber" autocomplete="tel" required /></div>@if(ViewData.ModelState.ContainsKey("PhoneNumber")&&ViewData.ModelState["PhoneNumber"].Errors.Count>0){<div class="field-error">@ViewData.ModelState["PhoneNumber"].Errors[0].ErrorMessage</div>}</div>
+                    <div class="field"><label for="City">City</label><div class="input-wrap"><i class="fas fa-city field-icon"></i><input class="control" id="City" name="City" type="text" placeholder="Amman" value="@Model?.City" autocomplete="address-level2" required /></div>@if(ViewData.ModelState.ContainsKey("City")&&ViewData.ModelState["City"].Errors.Count>0){<div class="field-error">@ViewData.ModelState["City"].Errors[0].ErrorMessage</div>}</div>
+                    <div class="field full"><label for="Address">Full address</label><div class="input-wrap"><i class="fas fa-map-marker-alt field-icon"></i><input class="control" id="Address" name="Address" type="text" placeholder="Street, building, area" value="@Model?.Address" autocomplete="street-address" required /></div>@if(ViewData.ModelState.ContainsKey("Address")&&ViewData.ModelState["Address"].Errors.Count>0){<div class="field-error">@ViewData.ModelState["Address"].Errors[0].ErrorMessage</div>}</div>
+                </div>
+
+                <div class="section-label">Account security</div>
+                <div class="form-grid">
+                    <div class="field"><label for="password">Password</label><div class="input-wrap"><i class="fas fa-key field-icon"></i><input class="control" id="password" name="Password" type="password" placeholder="Create a strong password" autocomplete="new-password" required /><button class="toggle-password" type="button" data-target="password"><i class="fas fa-eye"></i></button></div></div>
+                    <div class="field"><label for="confirm-password">Confirm password</label><div class="input-wrap"><i class="fas fa-check-circle field-icon"></i><input class="control" id="confirm-password" name="confirmPassword" type="password" placeholder="Repeat your password" autocomplete="new-password" required /><button class="toggle-password" type="button" data-target="confirm-password"><i class="fas fa-eye"></i></button></div><div id="confirm-password-error" class="field-error" style="display:none"></div></div>
+                </div>
+                <div class="password-meter"><div class="meter-seg" id="m1"></div><div class="meter-seg" id="m2"></div><div class="meter-seg" id="m3"></div></div>
+                <div class="requirements"><span class="req" id="length-req"><i class="fas fa-circle"></i> 8+ characters</span><span class="req" id="uppercase-req"><i class="fas fa-circle"></i> Uppercase letter</span><span class="req" id="special-req"><i class="fas fa-circle"></i> Special character</span></div>
+
+                <label class="terms"><input type="checkbox" required /><span>I confirm that the information entered is accurate and I agree to use PharmaCare responsibly.</span></label>
+                <button class="primary-btn" type="submit">Create account <i class="fas fa-arrow-right ml-2"></i></button>
+            </form>
+            <div class="signin-row">Already have an account? <a class="text-link" href="@Url.Action("Login","Account")">Sign in</a></div>
+            <div class="security-note"><i class="fas fa-shield-alt"></i><span>Your email will be verified before account activation. Your password is stored using secure password hashing.</span></div>
+        </div>
+        <div class="form-footer">© @DateTime.Now.Year PharmaCare. All rights reserved.</div>
+    </section>
+</div>
+<script>
+(function(){
+ const body=document.body,theme=document.getElementById('theme-toggle-btn'),pwd=document.getElementById('password'),confirm=document.getElementById('confirm-password'),form=document.getElementById('registration-form');
+ const saved=localStorage.getItem('pharmacare-theme');if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches))body.classList.add('dark-mode');
+ function syncTheme(){theme.innerHTML=body.classList.contains('dark-mode')?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';}syncTheme();theme.addEventListener('click',()=>{body.classList.toggle('dark-mode');localStorage.setItem('pharmacare-theme',body.classList.contains('dark-mode')?'dark':'light');syncTheme();});
+ document.querySelectorAll('.toggle-password').forEach(btn=>btn.addEventListener('click',()=>{const el=document.getElementById(btn.dataset.target),show=el.type==='password';el.type=show?'text':'password';btn.innerHTML=show?'<i class="fas fa-eye-slash"></i>':'<i class="fas fa-eye"></i>';}));
+ function validatePwd(){const v=pwd.value,checks=[v.length>=8,/[A-Z]/.test(v),/[^A-Za-z0-9]/.test(v)];['length-req','uppercase-req','special-req'].forEach((id,i)=>document.getElementById(id).classList.toggle('ok',checks[i]));document.getElementById('m1').classList.toggle('on',checks[0]);document.getElementById('m2').classList.toggle('on',checks[0]&&checks[1]);document.getElementById('m3').classList.toggle('on',checks.every(Boolean));}
+ pwd.addEventListener('input',validatePwd);validatePwd();
+ form.addEventListener('submit',e=>{const err=document.getElementById('confirm-password-error');if(pwd.value!==confirm.value){e.preventDefault();err.textContent='Passwords do not match.';err.style.display='block';confirm.focus();}else err.style.display='none';});
+})();
+</script>
 </body>
 </html>
