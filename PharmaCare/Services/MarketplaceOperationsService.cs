@@ -15,9 +15,12 @@ public sealed class MarketplaceOperationsService : IMarketplaceOperationsService
         ["Pending"] = new[] { "Accepted", "Cancelled" },
         ["Accepted"] = new[] { "Preparing", "Cancelled" },
         ["Preparing"] = new[] { "Ready for Pickup", "Out for Delivery", "Cancelled" },
-        ["Ready for Pickup"] = new[] { "Out for Delivery", "Delivered", "Cancelled" },
+        ["Ready for Pickup"] = new[] { "Driver Assigned", "Out for Delivery", "Delivered", "Cancelled" },
+        ["Driver Assigned"] = new[] { "Picked Up", "Cancelled" },
+        ["Picked Up"] = new[] { "On the Way", "Failed Delivery" },
+        ["On the Way"] = new[] { "Delivered", "Failed Delivery" },
         ["Out for Delivery"] = new[] { "Delivered", "Failed Delivery" },
-        ["Failed Delivery"] = new[] { "Out for Delivery", "Cancelled" },
+        ["Failed Delivery"] = new[] { "On the Way", "Out for Delivery", "Cancelled" },
         ["Delivered"] = Array.Empty<string>(),
         ["Cancelled"] = Array.Empty<string>()
     };
@@ -71,7 +74,7 @@ public sealed class MarketplaceOperationsService : IMarketplaceOperationsService
         var previous = order.Status;
         order.Status = newStatus;
         if (newStatus == "Accepted") order.AcceptedAt ??= DateTime.Now;
-        if (newStatus == "Out for Delivery") order.OutForDeliveryAt ??= DateTime.Now;
+        if (newStatus is "On the Way" or "Out for Delivery") order.OutForDeliveryAt ??= DateTime.Now;
         if (newStatus == "Delivered") order.DeliveredAt ??= DateTime.Now;
 
         _db.MarketplaceOrderStatusHistory.Add(new MarketplaceOrderStatusHistory
@@ -112,6 +115,9 @@ public sealed class MarketplaceOperationsService : IMarketplaceOperationsService
         "Accepted" => "The pharmacy confirmed your order.",
         "Preparing" => "The pharmacy is preparing your items.",
         "Ready for Pickup" => "Your order is ready for pickup or driver collection.",
+        "Driver Assigned" => "A driver has been assigned to your order.",
+        "Picked Up" => "Your order was picked up from the pharmacy.",
+        "On the Way" => "Your order is on the way.",
         "Out for Delivery" => "Your order is on the way.",
         "Delivered" => "Your order has been delivered. Thank you for using PharmaCare.",
         "Cancelled" => "Your order was cancelled.",
