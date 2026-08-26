@@ -27,6 +27,7 @@ public class Pharmacy
     public ICollection<PharmacyHour> Hours { get; set; } = new List<PharmacyHour>();
     public ICollection<PharmacyDeliveryZone> DeliveryZones { get; set; } = new List<PharmacyDeliveryZone>();
     public ICollection<PharmacyStaff> Staff { get; set; } = new List<PharmacyStaff>();
+    public ICollection<MarketplaceOrder> MarketplaceOrders { get; set; } = new List<MarketplaceOrder>();
 }
 
 public class PharmacyProduct
@@ -78,4 +79,46 @@ public class PharmacyStaff
     public bool IsActive { get; set; } = true;
     public Pharmacy Pharmacy { get; set; } = null!;
     public User User { get; set; } = null!;
+}
+
+public class MarketplaceOrder
+{
+    public int MarketplaceOrderId { get; set; }
+    [Required, MaxLength(40)] public string OrderNumber { get; set; } = string.Empty;
+    public int UserId { get; set; }
+    public int PharmacyId { get; set; }
+    [Required, MaxLength(220)] public string ShippingAddress { get; set; } = string.Empty;
+    [Required, MaxLength(100)] public string City { get; set; } = string.Empty;
+    [Required, MaxLength(30)] public string PhoneNumber { get; set; } = string.Empty;
+    [MaxLength(500)] public string? DeliveryNotes { get; set; }
+    [MaxLength(30)] public string PaymentMethod { get; set; } = "Cash on Delivery";
+    [MaxLength(30)] public string Status { get; set; } = "Pending";
+    [Column(TypeName = "decimal(18,2)")] public decimal Subtotal { get; set; }
+    [Column(TypeName = "decimal(18,2)")] public decimal DeliveryFee { get; set; }
+    [Column(TypeName = "decimal(18,2)")] public decimal TotalAmount { get; set; }
+    public DateTime OrderDate { get; set; } = DateTime.Now;
+    public DateTime? AcceptedAt { get; set; }
+    public DateTime? OutForDeliveryAt { get; set; }
+    public DateTime? DeliveredAt { get; set; }
+
+    public User User { get; set; } = null!;
+    public Pharmacy Pharmacy { get; set; } = null!;
+    public ICollection<MarketplaceOrderItem> Items { get; set; } = new List<MarketplaceOrderItem>();
+}
+
+public class MarketplaceOrderItem
+{
+    public int MarketplaceOrderItemId { get; set; }
+    public int MarketplaceOrderId { get; set; }
+    public int PharmacyProductId { get; set; }
+    public int ProductId { get; set; }
+    [Required, MaxLength(180)] public string ProductName { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+    [Column(TypeName = "decimal(18,2)")] public decimal UnitPrice { get; set; }
+    [Column(TypeName = "decimal(18,2)")] public decimal LineTotal { get; set; }
+    public bool RequiresPrescription { get; set; }
+
+    public MarketplaceOrder MarketplaceOrder { get; set; } = null!;
+    public PharmacyProduct PharmacyProduct { get; set; } = null!;
+    public Product Product { get; set; } = null!;
 }
