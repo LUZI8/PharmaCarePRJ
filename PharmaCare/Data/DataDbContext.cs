@@ -26,6 +26,10 @@ namespace PharmaCare.Data
         public DbSet<MarketplaceOrder> MarketplaceOrders { get; set; }
         public DbSet<MarketplaceOrderItem> MarketplaceOrderItems { get; set; }
         public DbSet<MarketplacePrescriptionRequest> MarketplacePrescriptionRequests { get; set; }
+        public DbSet<MarketplaceOrderStatusHistory> MarketplaceOrderStatusHistory { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+        public DbSet<MarketplaceNotification> MarketplaceNotifications { get; set; }
+        public DbSet<MarketplaceAuditLog> MarketplaceAuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -100,6 +104,21 @@ namespace PharmaCare.Data
             modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.Pharmacy).WithMany().HasForeignKey(x => x.PharmacyId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.PharmacyProduct).WithMany().HasForeignKey(x => x.PharmacyProductId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<MarketplacePrescriptionRequest>().HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MarketplaceOrderStatusHistory>().HasIndex(x => new { x.MarketplaceOrderId, x.ChangedAt });
+            modelBuilder.Entity<MarketplaceOrderStatusHistory>().HasOne(x => x.MarketplaceOrder).WithMany().HasForeignKey(x => x.MarketplaceOrderId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<MarketplaceOrderStatusHistory>().HasOne(x => x.ChangedByUser).WithMany().HasForeignKey(x => x.ChangedByUserId).OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<CustomerAddress>().HasIndex(x => new { x.UserId, x.IsDefault });
+            modelBuilder.Entity<CustomerAddress>().HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<CustomerAddress>().Property(x => x.Latitude).HasColumnType("decimal(9,6)");
+            modelBuilder.Entity<CustomerAddress>().Property(x => x.Longitude).HasColumnType("decimal(9,6)");
+
+            modelBuilder.Entity<MarketplaceNotification>().HasIndex(x => new { x.UserId, x.IsRead, x.CreatedAt });
+            modelBuilder.Entity<MarketplaceNotification>().HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MarketplaceAuditLog>().HasIndex(x => new { x.EntityName, x.EntityId, x.CreatedAt });
+            modelBuilder.Entity<MarketplaceAuditLog>().HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
