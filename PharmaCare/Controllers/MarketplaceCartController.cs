@@ -9,11 +9,13 @@ public class MarketplaceCartController : Controller
     private const string SessionKey = "MarketplaceBasket";
     private readonly DataDbContext _db;
     private readonly IEmailService _email;
+    private readonly IMarketplaceOperationsService _operations;
 
-    public MarketplaceCartController(DataDbContext db, IEmailService email)
+    public MarketplaceCartController(DataDbContext db, IEmailService email, IMarketplaceOperationsService operations)
     {
         _db = db;
         _email = email;
+        _operations = operations;
     }
 
     [HttpGet]
@@ -150,6 +152,7 @@ public class MarketplaceCartController : Controller
             order.TotalAmount = order.Subtotal + order.DeliveryFee;
             _db.MarketplaceOrders.Add(order);
             await _db.SaveChangesAsync(ct);
+            await _operations.RecordOrderCreatedAsync(order, ct);
             await transaction.CommitAsync(ct);
             HttpContext.Session.Remove(SessionKey);
         }
