@@ -7,11 +7,28 @@
 <style>
 :root{--cp:#0d9488;--ink:#152126;--muted:#718087;--line:#e5edef;--card:#fff;--soft:#eef9f7}.dark-mode{--ink:#edf4f5;--muted:#98a7ac;--line:#303b40;--card:#20272a;--soft:#183531}.compare-page{background:#f7fbfa;color:var(--ink);min-height:100vh;padding:42px 0 70px}.dark-mode .compare-page{background:#151a1d}.compare-shell{display:grid;grid-template-columns:360px 1fr;gap:26px}.product-panel,.offers-panel{background:var(--card);border:1px solid var(--line);border-radius:22px}.product-panel{padding:24px;height:max-content;position:sticky;top:20px}.product-image{height:290px;border-radius:17px;background:#fff;display:grid;place-items:center;padding:22px}.dark-mode .product-image{background:#252d31}.product-image img{max-width:100%;max-height:240px;object-fit:contain}.category{font-size:9px;color:var(--cp);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-top:18px}.product-panel h1{font-size:25px;line-height:1.2;margin:7px 0}.description{font-size:11px;color:var(--muted);line-height:1.7}.rx-note{margin-top:15px;padding:13px;border-radius:12px;background:#fff5d9;color:#805b08;font-size:10px;line-height:1.6}.offers-panel{padding:22px}.offers-panel h2{font-size:22px;margin:0}.offers-sub{font-size:11px;color:var(--muted);margin:5px 0 20px}.offer-row{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr auto;gap:12px;align-items:center;padding:16px 0;border-top:1px solid var(--line)}.offer-row:first-of-type{border-top:0}.store-name{font-size:13px;font-weight:700}.store-meta{font-size:9px;color:var(--muted);margin-top:4px}.metric strong{display:block;font-size:12px}.metric span{font-size:8px;color:var(--muted)}.offer-price{font-size:18px;font-weight:700;color:var(--cp)}.offer-action{height:40px;padding:0 13px;border-radius:10px;background:var(--cp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;white-space:nowrap}.offer-action:hover{color:#fff;background:#0f766e}.best{display:inline-block;margin-left:6px;background:#dff7e8;color:#14824a;font-size:7px;padding:4px 6px;border-radius:999px}.empty{padding:30px;color:var(--muted)}
 @@media(max-width:900px){.compare-shell{grid-template-columns:1fr}.product-panel{position:static}.offer-row{grid-template-columns:1fr 1fr}.offer-action{grid-column:1/-1}.offer-price{text-align:right}}
-@@media(max-width:520px){.compare-page{padding-top:22px}.product-panel,.offers-panel{border-radius:16px}.product-image{height:230px}.product-panel h1{font-size:22px}.offer-row{grid-template-columns:1fr 1fr;gap:10px}.metric:nth-of-type(3){grid-column:1/2}}
+@@media(max-width:520px){.compare-page{padding-top:22px}.product-panel,.offers-panel{border-radius:16px}.product-image{height:230px}.product-panel h1{font-size:22px}.offer-row{grid-template-columns:1fr 1fr;gap:10px}}
 </style>
 }
-<div class="compare-page"><div class="container"><div style="margin-bottom:18px"><a href="/Marketplace" style="font-size:10px;font-weight:700;color:var(--cp)">← Back to marketplace</a></div><div class="compare-shell">
-<aside class="product-panel"><div class="product-image"><img src="@Model.Product.ImageUrl" alt="@Model.Product.ProductName"/></div><div class="category">@Model.Product.Category?.CategoryName</div><h1>@Model.Product.ProductName</h1><p class="description">@Model.Product.Description</p>@if(Model.Product.RequiresPrescription){<div class="rx-note"><i class="fas fa-prescription"></i> <strong>Prescription medicine.</strong><br/>Choose a pharmacy to reserve this item. A valid prescription must be verified before pickup or fulfillment.</div>}</aside>
+<div class="compare-page"><div class="container">
+<div style="margin-bottom:18px"><a href="/Marketplace" style="font-size:10px;font-weight:700;color:var(--cp)">← Back to marketplace</a></div>
+<div class="compare-shell">
+<aside class="product-panel">
+<div class="product-image"><img src="@Model.Product.ImageUrl" alt="@Model.Product.ProductName"/></div>
+<div class="category">@Model.Product.Category?.CategoryName</div><h1>@Model.Product.ProductName</h1><p class="description">@Model.Product.Description</p>
+@if(Model.Product.RequiresPrescription){<div class="rx-note"><i class="fas fa-prescription"></i> <strong>Prescription medicine.</strong><br/>Choose a pharmacy to reserve this item. A valid prescription must be verified before pickup or fulfillment.</div>}
+</aside>
 <section class="offers-panel"><h2>Compare pharmacy offers</h2><div class="offers-sub">@Model.Offers.Count pharmacies currently have this product available.</div>
-@if(Model.Offers.Any()){var first=true; foreach(var o in Model.Offers){<div class="offer-row"><div><div class="store-name">@o.PharmacyName @if(first){<span class="best">BEST PRICE</span>}</div><div class="store-meta">Verified pharmacy · @o.Stock units available</div></div><div class="metric"><strong>@o.DeliveryMinutes min</strong><span>Estimated delivery</span></div><div class="metric"><strong>@(o.DeliveryFee==0?"FREE":"$"+o.DeliveryFee.ToString("0.00"))</strong><span>Delivery fee</span></div><div class="offer-price">$@o.Price.ToString("0.00")</div><a class="offer-action" href="/FrontEnd/ShopSingle/@o.ProductId">@(o.RequiresPrescription?"Reserve medicine":"View & order")</a></div> first=false;}}else{<div class="empty">This medicine is currently unavailable across marketplace pharmacies.</div>}
+@if(Model.Offers.Any()){
+    for(var i=0;i<Model.Offers.Count;i++){
+        var o=Model.Offers[i];
+        <div class="offer-row">
+            <div><div class="store-name">@o.PharmacyName @if(i==0){<span class="best">BEST PRICE</span>}</div><div class="store-meta">Verified pharmacy · @o.Stock units available</div></div>
+            <div class="metric"><strong>@o.DeliveryMinutes min</strong><span>Estimated delivery</span></div>
+            <div class="metric"><strong>@(o.DeliveryFee==0?"FREE":"$"+o.DeliveryFee.ToString("0.00"))</strong><span>Delivery fee</span></div>
+            <div class="offer-price">$@o.Price.ToString("0.00")</div>
+            <a class="offer-action" href="/FrontEnd/ShopSingle/@o.ProductId">@(o.RequiresPrescription?"Reserve medicine":"View & order")</a>
+        </div>
+    }
+}else{<div class="empty">This medicine is currently unavailable across marketplace pharmacies.</div>}
 </section></div></div></div>
