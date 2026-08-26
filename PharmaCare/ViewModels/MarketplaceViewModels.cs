@@ -4,6 +4,7 @@ public sealed class MarketplaceHomeViewModel
 {
     public string City { get; set; } = "Amman";
     public string? Query { get; set; }
+    public string Sort { get; set; } = "recommended";
     public List<PharmacyCardViewModel> Pharmacies { get; set; } = new();
     public List<MarketplaceOfferViewModel> PopularOffers { get; set; } = new();
     public List<Category> Categories { get; set; } = new();
@@ -39,6 +40,7 @@ public sealed class MarketplaceOfferViewModel
     public bool RequiresPrescription { get; set; }
     public int DeliveryMinutes { get; set; }
     public decimal DeliveryFee { get; set; }
+    public decimal Rating { get; set; }
 }
 
 public sealed class PharmacyStoreViewModel
