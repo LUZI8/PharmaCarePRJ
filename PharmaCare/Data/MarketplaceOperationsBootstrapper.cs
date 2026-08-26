@@ -72,6 +72,26 @@ BEGIN
   CONSTRAINT [FK_MarketplaceAuditLogs_User] FOREIGN KEY([UserId]) REFERENCES [User]([UserId])
  );
  CREATE INDEX [IX_MarketplaceAuditLogs_Entity] ON [MarketplaceAuditLogs]([EntityName],[EntityId],[CreatedAt]);
+END;
+
+IF OBJECT_ID(N'[MarketplaceDeliveryAssignments]', N'U') IS NULL
+BEGIN
+ CREATE TABLE [MarketplaceDeliveryAssignments](
+  [MarketplaceDeliveryAssignmentId] int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  [MarketplaceOrderId] int NOT NULL,
+  [DriverUserId] int NOT NULL,
+  [Status] nvarchar(30) NOT NULL,
+  [AssignedAt] datetime2 NOT NULL DEFAULT SYSUTCDATETIME(),
+  [ArrivedAtPharmacy] datetime2 NULL,
+  [PickedUpAt] datetime2 NULL,
+  [StartedDeliveryAt] datetime2 NULL,
+  [DeliveredAt] datetime2 NULL,
+  [ProblemNote] nvarchar(500) NULL,
+  CONSTRAINT [FK_MarketplaceDeliveryAssignments_Order] FOREIGN KEY([MarketplaceOrderId]) REFERENCES [MarketplaceOrders]([MarketplaceOrderId]) ON DELETE CASCADE,
+  CONSTRAINT [FK_MarketplaceDeliveryAssignments_Driver] FOREIGN KEY([DriverUserId]) REFERENCES [User]([UserId])
+ );
+ CREATE UNIQUE INDEX [IX_MarketplaceDeliveryAssignments_Order] ON [MarketplaceDeliveryAssignments]([MarketplaceOrderId]);
+ CREATE INDEX [IX_MarketplaceDeliveryAssignments_Driver_Status] ON [MarketplaceDeliveryAssignments]([DriverUserId],[Status]);
 END;";
 
         await db.Database.ExecuteSqlRawAsync(sql);
