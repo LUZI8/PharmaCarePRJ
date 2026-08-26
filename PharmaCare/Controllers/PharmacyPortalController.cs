@@ -6,7 +6,13 @@ namespace PharmaCare.Controllers;
 public class PharmacyPortalController : Controller
 {
     private readonly DataDbContext _db;
-    public PharmacyPortalController(DataDbContext db) => _db = db;
+    private readonly IMarketplaceOperationsService _operations;
+
+    public PharmacyPortalController(DataDbContext db, IMarketplaceOperationsService operations)
+    {
+        _db = db;
+        _operations = operations;
+    }
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
@@ -55,7 +61,7 @@ public class PharmacyPortalController : Controller
             PrescriptionRequests = prescriptionRequests,
             LowStock = low,
             PendingOrders = await _db.MarketplaceOrders.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && x.Status == "Pending", ct),
-            PreparingOrders = await _db.MarketplaceOrders.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && (x.Status == "Accepted" || x.Status == "Preparing"), ct),
+            PreparingOrders = await _db.MarketplaceOrders.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && (x.Status == "Accepted" || x.Status == "Preparing" || x.Status == "Ready for Pickup"), ct),
             PendingPrescriptionRequests = await _db.MarketplacePrescriptionRequests.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && (x.Status == "Requested" || x.Status == "Approved" || x.Status == "Ready for Pickup"), ct),
             RevenueToday = await _db.MarketplaceOrders.Where(x => x.PharmacyId == pharmacy.PharmacyId && x.Status != "Cancelled" && x.OrderDate >= today && x.OrderDate < tomorrow).SumAsync(x => (decimal?)x.TotalAmount, ct) ?? 0m,
             ActiveProducts = await _db.PharmacyProducts.CountAsync(x => x.PharmacyId == pharmacy.PharmacyId && x.IsAvailable, ct)
@@ -66,19 +72,22 @@ public class PharmacyPortalController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateStatus(int orderId, string status, CancellationToken ct)
+    public async Task<IActionResult> UpdateStatus(int orderId, string status, string? notes, CancellationToken ct)
     {
-        var allowed = new[] { "Pending", "Accepted", "Preparing", "Out for Delivery", "Delivered", "Cancelled" };
-        if (!allowed.Contains(status)) return BadRequest();
-        var order = await _db.MarketplaceOrders.FirstOrDefaultAsync(x => x.MarketplaceOrderId == orderId, ct);
+        var order = await _db.MarketplaceOrders.AsNoTracking().FirstOrDefaultAsync(x => x.MarketplaceOrderId == orderId, ct);
         if (order == null) return NotFound();
         if (!await CanManagePharmacyAsync(order.PharmacyId, ct)) return Forbid();
 
-        order.Status = status;
-        if (status == "Accepted") order.AcceptedAt ??= DateTime.Now;
-        if (status == "Out for Delivery") order.OutForDeliveryAt ??= DateTime.Now;
-        if (status == "Delivered") order.DeliveredAt ??= DateTime.Now;
-        await _db.SaveChangesAsync(ct);
+        try
+        {
+            await _operations.ChangeOrderStatusAsync(orderId, status, HttpContext.Session.GetInt32("UserId"), notes, ct);
+            TempData["PortalMessage"] = $"Order {order.OrderNumber} moved to {status}.";
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["PortalError"] = ex.Message;
+        }
+
         return RedirectToAction(nameof(Index), new { pharmacyId = order.PharmacyId });
     }
 
@@ -86,15 +95,36 @@ public class PharmacyPortalController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdatePrescriptionStatus(int requestId, string status, string? staffNote, CancellationToken ct)
     {
-        var allowed = new[] { "Requested", "Approved", "Ready for Pickup", "Completed", "Rejected", "Cancelled" };
+        var allowed = new[] { "Requested", "Under Review", "Clarification Required", "Approved", "Partially Approved", "Ready for Pickup", "Completed", "Rejected", "Cancelled" };
         if (!allowed.Contains(status)) return BadRequest();
         var request = await _db.MarketplacePrescriptionRequests.FirstOrDefaultAsync(x => x.MarketplacePrescriptionRequestId == requestId, ct);
         if (request == null) return NotFound();
         if (!await CanManagePharmacyAsync(request.PharmacyId, ct)) return Forbid();
 
+        var previous = request.Status;
         request.Status = status;
         request.StaffNote = string.IsNullOrWhiteSpace(staffNote) ? request.StaffNote : staffNote.Trim();
-        if (status is "Approved" or "Ready for Pickup" or "Completed" or "Rejected") request.ReviewedAt ??= DateTime.Now;
+        if (status is "Approved" or "Partially Approved" or "Ready for Pickup" or "Completed" or "Rejected") request.ReviewedAt ??= DateTime.Now;
+
+        _db.MarketplaceNotifications.Add(new MarketplaceNotification
+        {
+            UserId = request.UserId,
+            Type = "Prescription",
+            Title = $"Prescription request {request.RequestNumber}: {status}",
+            Message = string.IsNullOrWhiteSpace(request.StaffNote) ? $"Your prescription request changed from {previous} to {status}." : request.StaffNote,
+            ActionUrl = "/MarketplacePrescription/MyRequests",
+            CreatedAt = DateTime.Now
+        });
+        _db.MarketplaceAuditLogs.Add(new MarketplaceAuditLog
+        {
+            UserId = HttpContext.Session.GetInt32("UserId"),
+            Action = "ChangePrescriptionStatus",
+            EntityName = "MarketplacePrescriptionRequest",
+            EntityId = request.MarketplacePrescriptionRequestId.ToString(),
+            Details = $"{previous} -> {status}. {request.StaffNote}",
+            CreatedAt = DateTime.Now
+        });
+
         await _db.SaveChangesAsync(ct);
         return RedirectToAction(nameof(Index), new { pharmacyId = request.PharmacyId });
     }
@@ -103,14 +133,25 @@ public class PharmacyPortalController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateStock(int pharmacyProductId, int stock, decimal price, CancellationToken ct)
     {
-        var offer = await _db.PharmacyProducts.FirstOrDefaultAsync(x => x.PharmacyProductId == pharmacyProductId, ct);
+        var offer = await _db.PharmacyProducts.Include(x => x.Product).FirstOrDefaultAsync(x => x.PharmacyProductId == pharmacyProductId, ct);
         if (offer == null) return NotFound();
         if (!await CanManagePharmacyAsync(offer.PharmacyId, ct)) return Forbid();
 
+        var previousStock = offer.Stock;
+        var previousPrice = offer.Price;
         offer.Stock = Math.Max(0, stock);
         offer.Price = Math.Max(.01m, price);
         offer.IsAvailable = offer.Stock > 0;
         offer.UpdatedAt = DateTime.Now;
+        _db.MarketplaceAuditLogs.Add(new MarketplaceAuditLog
+        {
+            UserId = HttpContext.Session.GetInt32("UserId"),
+            Action = "UpdateInventory",
+            EntityName = "PharmacyProduct",
+            EntityId = offer.PharmacyProductId.ToString(),
+            Details = $"{offer.Product.ProductName}: stock {previousStock}->{offer.Stock}, price {previousPrice:0.00}->{offer.Price:0.00}",
+            CreatedAt = DateTime.Now
+        });
         await _db.SaveChangesAsync(ct);
         return RedirectToAction(nameof(Index), new { pharmacyId = offer.PharmacyId });
     }
