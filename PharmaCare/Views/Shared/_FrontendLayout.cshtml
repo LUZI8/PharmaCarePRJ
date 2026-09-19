@@ -82,15 +82,15 @@
                     </ul>
                 </nav>
                 <div class="pc-actions">
-                    <div class="pc-search d-none d-lg-block"><input type="text" id="navbar-search-input" placeholder="Search medicines..."><button id="navbar-search-btn"><span class="icon-search"></span></button><div id="navbar-search-results" class="navbar-search-results"></div></div>
+                    <div class="pc-search d-none d-lg-block"><input type="text" id="navbar-search-input" placeholder="@(isArabic ? "ابحث عن دواء أو صيدلية..." : "Search medicines or pharmacies...")"><button id="navbar-search-btn"><span class="icon-search"></span></button><div id="navbar-search-results" class="navbar-search-results"></div></div>
                     <a class="pc-icon-btn" href="@Url.Action("Index","MarketplaceCart")" aria-label="Cart"><span class="icon-shopping-bag"></span><span class="pc-cart-count" id="cart-count">0</span></a>
                     <div class="pc-user">
-                        <button class="pc-user-trigger" type="button"><span class="pc-avatar"><i class="fas fa-user"></i></span><span class="pc-user-name">@(ViewBag.IsLoggedIn==true?"Hi, "+(ViewBag.UserName?.ToString().Split(' ')[0]):"Account")</span><i class="fas fa-chevron-down" style="font-size:8px"></i></button>
+                        <button class="pc-user-trigger" type="button"><span class="pc-avatar"><i class="fas fa-user"></i></span><span class="pc-user-name">@(ViewBag.IsLoggedIn==true ? (isArabic ? "مرحباً، " : "Hi, ") + (ViewBag.UserName?.ToString().Split(' ')[0]) : (isArabic ? "الحساب" : "Account"))</span><i class="fas fa-chevron-down" style="font-size:8px"></i></button>
                         <div class="pc-user-menu">
                             @if(ViewBag.IsLoggedIn==true){
-                                @if(ViewBag.UserRole=="Admin"||ViewBag.UserRole=="Pharmacist"){<a href="@Url.Action("Index","Admin")"><i class="fas fa-columns"></i> Dashboard</a>}
-                                <a href="@Url.Action("Profile","Account")"><i class="fas fa-id-card"></i> My Account</a><a href="@Url.Action("Index","MarketplaceOrders")"><i class="fas fa-box"></i> My Orders</a><a href="@Url.Action("MyRequests","MarketplacePrescription")"><i class="fas fa-prescription"></i> Reservations</a><a href="@Url.Action("Logout","Account")"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
-                            } else {<a href="@Url.Action("Login","Account")"><i class="fas fa-sign-in-alt"></i> Sign In</a><a href="@Url.Action("Register","Account")"><i class="fas fa-user-plus"></i> Create Account</a>}
+                                @if(ViewBag.UserRole=="Admin"||ViewBag.UserRole=="Pharmacist"){<a href="@Url.Action("Index","Admin")"><i class="fas fa-columns"></i> @(isArabic ? "لوحة التحكم" : "Dashboard")</a>}
+                                <a href="@Url.Action("Profile","Account")"><i class="fas fa-id-card"></i> @(isArabic ? "حسابي" : "My Account")</a><a href="@Url.Action("Index","MarketplaceOrders")"><i class="fas fa-box"></i> @(isArabic ? "طلباتي" : "My Orders")</a><a href="@Url.Action("MyRequests","MarketplacePrescription")"><i class="fas fa-prescription"></i> @(isArabic ? "طلبات الوصفات" : "Prescription requests")</a><a href="@Url.Action("Logout","Account")"><i class="fas fa-sign-out-alt"></i> @(isArabic ? "تسجيل الخروج" : "Sign Out")</a>
+                            } else {<a href="@Url.Action("Login","Account")"><i class="fas fa-sign-in-alt"></i> @(isArabic ? "تسجيل الدخول" : "Sign In")</a><a href="@Url.Action("Register","Account")"><i class="fas fa-user-plus"></i> @(isArabic ? "إنشاء حساب" : "Create Account")</a>}
                         </div>
                     </div>
                     <a class="pc-icon-btn" href="@Url.Action("Set","Locale",new{culture=isArabic?"en":"ar",returnUrl=Context.Request.Path+Context.Request.QueryString})" aria-label="@(isArabic?"Switch to English":"التبديل إلى العربية")" title="@(isArabic?"English":"العربية")"><span style="font-size:11px;font-weight:800">@(isArabic?"EN":"ع")</span></a>
@@ -111,19 +111,19 @@
     <a href="#" id="back-to-top" class="btn rounded-circle p-3" style="position:fixed;bottom:92px;right:24px;display:none"><i class="fas fa-arrow-up"></i></a>
     <a href="@Url.Action("Index","MarketplaceCart")" id="pc-global-cart" class="pc-global-cart" aria-label="Open shopping cart">
         <span class="pc-global-cart-icon"><i class="fas fa-shopping-bag"></i></span>
-        <span class="pc-global-cart-copy"><strong>View cart</strong><span>Your basket is ready</span></span>
+        <span class="pc-global-cart-copy"><strong>@(isArabic ? "عرض السلة" : "View cart")</strong><span>@(isArabic ? "سلتك جاهزة" : "Your basket is ready")</span></span>
         <span class="pc-global-cart-badge" id="pc-global-cart-count">0</span>
     </a>
 
     <footer class="pc-footer">
         <div class="container pc-footer-inner">
             <div class="pc-footer-grid">
-                <div><div class="pc-footer-brand"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span> PHARMACARE</div><p>Trusted pharmacy care, convenient ordering and secure prescription services for customers across Amman.</p></div>
-                <div><h4>Explore</h4><ul><li><a href="@Url.Action("Index","Marketplace")">Home</a></li><li><a href="@Url.Action("Index","Marketplace")">Marketplace</a></li><li><a href="@Url.Action("About","FrontEnd")">About us</a></li><li><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li></ul></div>
-                <div><h4>Account</h4><ul><li><a href="@Url.Action("Profile","Account")">My account</a></li><li><a href="@Url.Action("Index","MarketplaceOrders")">My orders</a></li><li><a href="@Url.Action("MyRequests","MarketplacePrescription")">Prescription pickups</a></li><li><a href="@Url.Action("Index","MarketplaceCart")">Shopping cart</a></li></ul></div>
-                <div><h4>Contact</h4><ul class="pc-contact"><li><i class="fas fa-map-marker-alt"></i><span>Almadina Almonaora St, Amman, Jordan</span></li><li><i class="fas fa-phone"></i><span>+962 7 9999 8888</span></li><li><i class="fas fa-envelope"></i><span>pharmacare@info.com</span></li></ul></div>
+                <div><div class="pc-footer-brand"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span> PHARMACARE</div><p>@(isArabic ? "منصة صيدليات موثوقة للبحث والمقارنة والطلب ومراجعة الوصفات للعملاء في الأردن." : "A trusted pharmacy marketplace for search, comparison, ordering and secure prescription review across Jordan.")</p></div>
+                <div><h4>@(isArabic ? "استكشف" : "Explore")</h4><ul><li><a href="@Url.Action("Index","Marketplace")">@(isArabic ? "الرئيسية" : "Home")</a></li><li><a href="@Url.Action("Index","Marketplace")">@(isArabic ? "المتجر" : "Marketplace")</a></li><li><a href="@Url.Action("About","FrontEnd")">@(isArabic ? "من نحن" : "About us")</a></li><li><a href="@Url.Action("Contact","FrontEnd")">@(isArabic ? "تواصل معنا" : "Contact")</a></li></ul></div>
+                <div><h4>@(isArabic ? "الحساب" : "Account")</h4><ul><li><a href="@Url.Action("Profile","Account")">@(isArabic ? "حسابي" : "My account")</a></li><li><a href="@Url.Action("Index","MarketplaceOrders")">@(isArabic ? "طلباتي" : "My orders")</a></li><li><a href="@Url.Action("MyRequests","MarketplacePrescription")">@(isArabic ? "طلبات الوصفات" : "Prescription requests")</a></li><li><a href="@Url.Action("Index","MarketplaceCart")">@(isArabic ? "سلة التسوق" : "Shopping cart")</a></li></ul></div>
+                <div><h4>@(isArabic ? "تواصل معنا" : "Contact")</h4><ul class="pc-contact"><li><i class="fas fa-map-marker-alt"></i><span>Almadina Almonaora St, Amman, Jordan</span></li><li><i class="fas fa-phone"></i><span>+962 7 9999 8888</span></li><li><i class="fas fa-envelope"></i><span>pharmacare@info.com</span></li></ul></div>
             </div>
-            <div class="pc-footer-bottom"><span>© @DateTime.Now.Year PharmaCare. All rights reserved.</span><div class="pc-trust"><span><i class="fas fa-lock"></i> Secure checkout</span><span><i class="fas fa-shield-alt"></i> Trusted pharmacy</span><span><i class="fas fa-prescription"></i> Prescription control</span></div></div>
+            <div class="pc-footer-bottom"><span>© @DateTime.Now.Year PharmaCare. @(isArabic ? "جميع الحقوق محفوظة." : "All rights reserved.")</span><div class="pc-trust"><span><i class="fas fa-lock"></i> @(isArabic ? "دفع آمن" : "Secure checkout")</span><span><i class="fas fa-shield-alt"></i> @(isArabic ? "صيدليات موثوقة" : "Verified pharmacies")</span><span><i class="fas fa-prescription"></i> @(isArabic ? "مراجعة وصفات" : "Prescription review")</span></div></div>
         </div>
     </footer>
 </div>
