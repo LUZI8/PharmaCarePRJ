@@ -3,9 +3,10 @@
     var pageTitle = ViewData["Title"] ?? "PharmaCare";
     var action = ViewContext.RouteData.Values["Action"]?.ToString();
     var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var isArabic = Context.Request.Cookies["pc-culture"] == "ar";
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@(isArabic ? "ar" : "en")" dir="@(isArabic ? "rtl" : "ltr")">
 <head>
     <title>@pageTitle</title>
     <meta charset="utf-8">
@@ -26,6 +27,7 @@
     <link rel="stylesheet" href="~/assets/css/mobilemenu.css">
     <link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/FrontEndLayout.css">
     <style>
+        .pc-rtl{direction:rtl}.pc-rtl .pc-actions{margin-left:0;margin-right:auto}.pc-rtl .pc-user-menu{right:auto;left:0}.pc-rtl .pc-menu .dropdown{left:auto;right:0}.pc-rtl .pc-contact li{direction:rtl}.pc-rtl .pc-global-cart{right:auto;left:24px}
         :root{--pc:#0d9488;--pc2:#0f766e;--pc-dark:#0f1720;--pc-muted:#6b7b86;--pc-line:#e7edef;--pc-surface:#fff;--pc-bg:#f7faf9}
         body{font-family:'Rubik',sans-serif;background:var(--pc-bg);color:#172129}.site-wrap{overflow:hidden;min-height:100vh;display:flex;flex-direction:column}
         .pc-header{position:sticky;top:0;z-index:1050;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(15,23,32,.07);box-shadow:0 6px 28px rgba(16,45,52,.05)}
@@ -62,7 +64,7 @@
     </style>
     @RenderSection("Styles", required:false)
 </head>
-<body>
+<body class="@(isArabic ? "pc-rtl" : "")">
 <input type="hidden" id="pc-antiforgery-token" value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
 <div class="toast-notification" id="toast-notification" aria-live="polite"><i class="fas fa-check-circle"></i><span id="toast-message"></span></div>
 <div class="site-wrap">
@@ -72,11 +74,11 @@
                 <a class="pc-brand" href="@Url.Action("Index","Marketplace")"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span><span>PHARMACARE</span></a>
                 <nav class="d-none d-lg-block site-navigation">
                     <ul class="pc-menu site-menu">
-                        <li class="@((action=="Index"&&controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">Home</a></li>
-                        <li class="@((controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">Marketplace</a></li>
-                        <li class="has-children"><a href="#">Categories <i class="fas fa-chevron-down" style="font-size:8px"></i></a><ul class="dropdown">@if(ViewBag.Categories!=null){foreach(var category in ViewBag.Categories){<li><a href="@Url.Action("Shop","FrontEnd",new{category=category.CategoryID})">@category.CategoryName</a></li>}}</ul></li>
-                        <li class="@(action=="About"?"active":"")"><a href="@Url.Action("About","FrontEnd")">About</a></li>
-                        <li class="@(action=="Contact"?"active":"")"><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li>
+                        <li class="@((action=="Index"&&controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">@(isArabic?"الرئيسية":"Home")</a></li>
+                        <li class="@((controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">@(isArabic?"المتجر":"Marketplace")</a></li>
+                        <li class="has-children"><a href="#">@(isArabic?"الفئات":"Categories") <i class="fas fa-chevron-down" style="font-size:8px"></i></a><ul class="dropdown">@if(ViewBag.Categories!=null){foreach(var category in ViewBag.Categories){<li><a href="@Url.Action("Shop","FrontEnd",new{category=category.CategoryID})">@category.CategoryName</a></li>}}</ul></li>
+                        <li class="@(action=="About"?"active":"")"><a href="@Url.Action("About","FrontEnd")">@(isArabic?"من نحن":"About")</a></li>
+                        <li class="@(action=="Contact"?"active":"")"><a href="@Url.Action("Contact","FrontEnd")">@(isArabic?"تواصل معنا":"Contact")</a></li>
                     </ul>
                 </nav>
                 <div class="pc-actions">
@@ -91,6 +93,7 @@
                             } else {<a href="@Url.Action("Login","Account")"><i class="fas fa-sign-in-alt"></i> Sign In</a><a href="@Url.Action("Register","Account")"><i class="fas fa-user-plus"></i> Create Account</a>}
                         </div>
                     </div>
+                    <a class="pc-icon-btn" href="@Url.Action("Set","Locale",new{culture=isArabic?"en":"ar",returnUrl=Context.Request.Path+Context.Request.QueryString})" aria-label="@(isArabic?"Switch to English":"التبديل إلى العربية")" title="@(isArabic?"English":"العربية")"><span style="font-size:11px;font-weight:800">@(isArabic?"EN":"ع")</span></a>
                     <button id="theme-toggle-btn" class="pc-icon-btn" type="button" aria-label="Toggle theme"><span class="moon-icon">🌙</span><span class="sun-icon" style="display:none">☀️</span></button>
                     <a href="#" class="pc-icon-btn pc-mobile-toggle js-menu-toggle d-lg-none" aria-label="Menu"><span class="icon-menu"></span></a>
                 </div>
