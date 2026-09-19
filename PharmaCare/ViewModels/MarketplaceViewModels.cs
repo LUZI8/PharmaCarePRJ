@@ -5,6 +5,9 @@ public sealed class MarketplaceHomeViewModel
     public string City { get; set; } = "Amman";
     public string? Query { get; set; }
     public string Sort { get; set; } = "recommended";
+    public List<string> Cities { get; set; } = new();
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
     public List<PharmacyCardViewModel> Pharmacies { get; set; } = new();
     public List<MarketplaceOfferViewModel> PopularOffers { get; set; } = new();
     public List<Category> Categories { get; set; } = new();
@@ -23,6 +26,9 @@ public sealed class PharmacyCardViewModel
     public bool IsOpen { get; set; }
     public int AvailableProducts { get; set; }
     public decimal? StartingPrice { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+    public double? DistanceKm { get; set; }
 }
 
 public sealed class MarketplaceOfferViewModel
