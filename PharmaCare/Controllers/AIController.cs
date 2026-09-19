@@ -40,6 +40,7 @@ namespace PharmaCare.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Chat(
             string message,
             string? pagePath,
