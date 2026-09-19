@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace PharmaCare.Controllers;
 
 [SessionAuthorize("Admin", "Pharmacist")]
+[SessionAuthorize("Admin", "Pharmacist")]
 public class PharmacyPortalController : Controller
 {
     private readonly DataDbContext _db;
@@ -13,13 +14,6 @@ public class PharmacyPortalController : Controller
     {
         _db = db;
         _operations = operations;
-    }
-
-    public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        base.OnActionExecuting(context);
-        var role = HttpContext.Session.GetString("UserRole");
-        if (role is not ("Admin" or "Pharmacist")) context.Result = RedirectToAction("Login", "Account");
     }
 
     [HttpGet]
