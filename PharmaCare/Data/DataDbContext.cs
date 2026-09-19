@@ -10,7 +10,6 @@ namespace PharmaCare.Data
         public DbSet<Category> Category { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
-        public DbSet<Order> Order { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
@@ -48,6 +47,7 @@ namespace PharmaCare.Data
             modelBuilder.Entity<Product>().Property(p => p.RequiresPrescription).IsRequired();
             modelBuilder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<CartItem>().Property(ci => ci.Price).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Order>().ToTable("Order");
             modelBuilder.Entity<Order>().Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<OrderItem>().Property(oi => oi.Price).HasColumnType("decimal(18,2)");
 
