@@ -58,10 +58,10 @@ $(document).ready(function () {
         searchResults.html('<div class="navbar-search-results-wrapper"><div class="navbar-search-results-header">Searching...</div></div>');
 
         $.ajax({
-            url: '/FrontEnd/SearchProducts',
+            url: '/api/marketplace/search',
             type: 'GET',
-            data: { query: query, sort: 'relevance' },
-            success: function (data) { displaySearchResults(data, query); },
+            data: { q: query, sort: 'cheapest', pageSize: 8 },
+            success: function (data) { displaySearchResults(data && data.items ? data.items : [], query); },
             error: function (xhr, status, error) {
                 console.error('Search error:', error);
                 searchResults.html('<div class="navbar-search-results-wrapper"><div class="navbar-search-no-results"><p>Search error occurred. Please try again.</p></div></div>');
@@ -75,47 +75,30 @@ $(document).ready(function () {
                 <div class="navbar-search-results-wrapper">
                     <div class="navbar-search-no-results">
                         <p>No medicines found for "${query}"</p>
-                        <p>Try adjusting your search terms</p>
+                        <p>Try another product name or category</p>
                     </div>
                 </div>
             `);
             return;
         }
 
-        let resultsHtml = `
-            <div class="navbar-search-results-wrapper">
-                <div class="navbar-search-results-header">
-                    Found ${products.length} medicine${products.length > 1 ? 's' : ''}
-                </div>
-                <div class="navbar-search-results-list">
-        `;
-
-        products.slice(0, 8).forEach(function (product) {
+        let resultsHtml = '<div class="navbar-search-results-wrapper"><div class="navbar-search-results-header">Marketplace matches</div><div class="navbar-search-results-list">';
+        products.slice(0, 8).forEach(function (item) {
+            const image = item.image || '/images/product_01.png';
+            const price = Number(item.price || 0).toFixed(2) + ' JOD';
             resultsHtml += `
-                <a href="/FrontEnd/ShopSingle/${product.id}" class="navbar-search-result-item">
+                <a href="/Marketplace/Compare/${item.productId}" class="navbar-search-result-item">
                     <div class="navbar-search-result-content">
-                        <img src="${product.image}" alt="${product.name}" class="navbar-search-result-image" onerror="this.src='/assets/images/product_01.png'">
+                        <img src="${image}" alt="${item.product || ''}" class="navbar-search-result-image" onerror="this.src='/images/product_01.png'">
                         <div class="navbar-search-result-info">
-                            <div class="navbar-search-result-name">${product.name}</div>
-                            <div class="navbar-search-result-category">${product.category}</div>
+                            <div class="navbar-search-result-name">${item.product || ''}</div>
+                            <div class="navbar-search-result-category">${item.pharmacy || ''} · ${item.category || ''}</div>
                         </div>
-                        <div class="navbar-search-result-price">$${product.price.toFixed(2)}</div>
+                        <div class="navbar-search-result-price">${price}</div>
                     </div>
-                </a>
-            `;
+                </a>`;
         });
-
-        if (products.length > 8) {
-            resultsHtml += `
-                <div class="view-all-container">
-                    <a href="/FrontEnd/Shop?search=${encodeURIComponent(query)}" class="view-all-link">
-                        View all ${products.length} results
-                    </a>
-                </div>
-            `;
-        }
-
-        resultsHtml += '</div></div>';
+        resultsHtml += `<div class="view-all-container"><a href="/Marketplace?q=${encodeURIComponent(query)}" class="view-all-link">View all marketplace results</a></div></div></div>`;
         searchResults.html(resultsHtml);
     }
 
@@ -139,7 +122,7 @@ $(document).ready(function () {
         if (e.which === 13) {
             e.preventDefault();
             const query = $(this).val().trim();
-            if (query.length >= 2) window.location.href = `/FrontEnd/Shop?search=${encodeURIComponent(query)}`;
+            if (query.length >= 2) window.location.href = `/Marketplace?q=${encodeURIComponent(query)}`;
         }
     });
 
@@ -163,7 +146,7 @@ function handleShopSearch() {
         searchForm.on('submit', function (e) {
             e.preventDefault();
             const query = $('#search-input').val().trim();
-            if (query) window.location.href = `/FrontEnd/Shop?search=${encodeURIComponent(query)}`;
+            if (query) window.location.href = `/Marketplace?q=${encodeURIComponent(query)}`;
         });
     }
 }
@@ -339,7 +322,8 @@ function handleShopSearch() {
                     credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'RequestVerificationToken': (document.getElementById('pc-antiforgery-token') || {}).value || ''
                     },
                     body: JSON.stringify({
                         firstName: firstName,
