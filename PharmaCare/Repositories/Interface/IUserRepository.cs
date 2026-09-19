@@ -17,6 +17,7 @@ namespace PharmaCare.Repositories.Interface
 
         Task SetEmailVerificationCodeAsync(int userId, string code, DateTime expiry);
         Task<bool> ConfirmEmailAsync(int userId, string code);
+        Task<bool> ChangeEmailAndRequireVerificationAsync(int userId, string newEmail, string code, DateTime expiry);
         Task SetPasswordResetCodeAsync(int userId, string code, DateTime expiry);
         Task<bool> ResetPasswordWithCodeAsync(int userId, string code, string newPassword);
     }
