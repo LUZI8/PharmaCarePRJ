@@ -37,13 +37,23 @@ builder.Services.AddHttpClient<IAIService, OpenAIService>();
 builder.Services.AddScoped<IExpiredReservationsService, ExpiredReservationsService>();
 builder.Services.AddHostedService<ExpiredReservationsService>();
 
+builder.Services.Configure<Microsoft.AspNetCore.HttpOverrides.ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
+                               Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.Lax : SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
 });
 
 builder.Services.AddRateLimiter(options =>
@@ -122,6 +132,8 @@ else
     app.UseHttpsRedirection();
 }
 
+app.UseForwardedHeaders();
+
 app.Use(async (context, next) =>
 {
     context.Response.OnStarting(() =>
@@ -130,7 +142,7 @@ app.Use(async (context, next) =>
         headers["X-Content-Type-Options"] = "nosniff";
         headers["X-Frame-Options"] = "SAMEORIGIN";
         headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
-        headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+        headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(self)";
         headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups";
         return Task.CompletedTask;
     });
@@ -145,6 +157,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseRouting();
 app.UseRateLimiter();
 app.UseSession();
+app.UseMiddleware<PharmaCare.Middleware.SessionAccountValidationMiddleware>();
 app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
@@ -162,6 +175,7 @@ app.MapGet("/health", () => Results.Ok(new
     status = "healthy",
     service = "PharmaCare",
     mode = "multi-pharmacy-marketplace",
+    currency = PharmaCare.Services.CurrencyFormatter.CurrencyCode,
     utc = DateTime.UtcNow
 }));
 
