@@ -1,5 +1,6 @@
 namespace PharmaCare.Controllers
 {
+    [SessionAuthorize("Admin", "Pharmacist")]
     public class ProductController : Controller
     {
         private readonly IProductRepository ProductRepository;
