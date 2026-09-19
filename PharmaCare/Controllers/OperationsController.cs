@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace PharmaCare.Controllers;
 
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+[SessionAuthorize("Admin", "Pharmacist")]
 public class OperationsController : Controller
 {
     private readonly DataDbContext _db;
