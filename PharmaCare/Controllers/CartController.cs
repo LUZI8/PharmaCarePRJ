@@ -5,18 +5,20 @@
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
+        private readonly ILogger<CartController> _logger;
 
         /* Constructor with dependency injection for cart and product operations */
-        public CartController(ICartRepository cartRepository, IProductRepository productRepository)
+        public CartController(ICartRepository cartRepository, IProductRepository productRepository, ILogger<CartController> logger)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
+            _logger = logger;
         }
 
         /* Redirect cart index requests to frontend cart page */
         public IActionResult Index()
         {
-            return RedirectToAction("Cart", "FrontEnd");
+            return RedirectToAction("Index", "MarketplaceCart");
         }
 
         /* AJAX endpoint to get current cart count - NEW METHOD */
@@ -36,7 +38,8 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message, count = 0 });
+                _logger.LogError(ex, "Legacy cart count failed for user {UserId}", userId);
+                return Json(new { success = false, message = "Unable to load the cart right now.", count = 0 });
             }
         }
 
@@ -84,7 +87,8 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
         [HttpPost]
@@ -138,7 +142,8 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
 
@@ -177,7 +182,8 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
         /* AJAX endpoint to clear entire cart */
@@ -204,7 +210,8 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
 
@@ -237,8 +244,9 @@
                     return Json(new { inCart = false });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogDebug(ex, "Legacy cart lookup failed for user {UserId}", userId);
                 return Json(new { inCart = false });
             }
         }
