@@ -76,7 +76,7 @@
                     <ul class="pc-menu site-menu">
                         <li class="@((action=="Index"&&controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">@(isArabic?"الرئيسية":"Home")</a></li>
                         <li class="@((controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">@(isArabic?"المتجر":"Marketplace")</a></li>
-                        <li class="has-children"><a href="#">@(isArabic?"الفئات":"Categories") <i class="fas fa-chevron-down" style="font-size:8px"></i></a><ul class="dropdown">@if(ViewBag.Categories!=null){foreach(var category in ViewBag.Categories){<li><a href="@Url.Action("Shop","FrontEnd",new{category=category.CategoryID})">@category.CategoryName</a></li>}}</ul></li>
+                        <li class="has-children"><a href="#">@(isArabic?"الفئات":"Categories") <i class="fas fa-chevron-down" style="font-size:8px"></i></a><ul class="dropdown">@if(ViewBag.Categories!=null){foreach(var category in ViewBag.Categories){<li><a href="/Marketplace?q=@Uri.EscapeDataString(category.CategoryName)">@category.CategoryName</a></li>}}</ul></li>
                         <li class="@(action=="About"?"active":"")"><a href="@Url.Action("About","FrontEnd")">@(isArabic?"من نحن":"About")</a></li>
                         <li class="@(action=="Contact"?"active":"")"><a href="@Url.Action("Contact","FrontEnd")">@(isArabic?"تواصل معنا":"Contact")</a></li>
                     </ul>
@@ -119,7 +119,7 @@
         <div class="container pc-footer-inner">
             <div class="pc-footer-grid">
                 <div><div class="pc-footer-brand"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span> PHARMACARE</div><p>Trusted pharmacy care, convenient ordering and secure prescription services for customers across Amman.</p></div>
-                <div><h4>Explore</h4><ul><li><a href="@Url.Action("Index","Marketplace")">Home</a></li><li><a href="@Url.Action("Index","Marketplace")">Store</a></li><li><a href="@Url.Action("About","FrontEnd")">About us</a></li><li><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li></ul></div>
+                <div><h4>Explore</h4><ul><li><a href="@Url.Action("Index","Marketplace")">Home</a></li><li><a href="@Url.Action("Index","Marketplace")">Marketplace</a></li><li><a href="@Url.Action("About","FrontEnd")">About us</a></li><li><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li></ul></div>
                 <div><h4>Account</h4><ul><li><a href="@Url.Action("Profile","Account")">My account</a></li><li><a href="@Url.Action("Index","MarketplaceOrders")">My orders</a></li><li><a href="@Url.Action("MyRequests","MarketplacePrescription")">Prescription pickups</a></li><li><a href="@Url.Action("Index","MarketplaceCart")">Shopping cart</a></li></ul></div>
                 <div><h4>Contact</h4><ul class="pc-contact"><li><i class="fas fa-map-marker-alt"></i><span>Almadina Almonaora St, Amman, Jordan</span></li><li><i class="fas fa-phone"></i><span>+962 7 9999 8888</span></li><li><i class="fas fa-envelope"></i><span>pharmacare@info.com</span></li></ul></div>
             </div>
