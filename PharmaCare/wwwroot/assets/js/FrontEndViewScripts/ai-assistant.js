@@ -175,7 +175,8 @@
                     credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'RequestVerificationToken': (document.getElementById('pc-antiforgery-token') || {}).value || ''
                     },
                     body: body.toString()
                 });
