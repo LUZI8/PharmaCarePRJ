@@ -1,110 +1,27 @@
-﻿@model IEnumerable<PharmaCare.Models.Category>
-
+@model IEnumerable<PharmaCare.Models.Category>
 @{
     ViewData["Title"] = "Categories";
     Layout = "~/Views/Shared/_Adminlayout.cshtml";
+    var categories = Model?.ToList() ?? new List<PharmaCare.Models.Category>();
+    var totalCategories = categories.Count;
+    var totalProducts = categories.Sum(c => c.Products?.Count ?? 0);
+    var emptyCategories = categories.Count(c => (c.Products?.Count ?? 0) == 0);
 }
-
-<link rel="stylesheet" href="~/assets/css/CategoryViewStyles/CategoryIndex.css" />
-
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom page-header">
-    <h1 class="h2">Categories</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <!-- Primary action button for creating new categories -->
-        <a href="@Url.Action("Create", "Category")" class="btn btn-primary add-new">
-            <i class="fas fa-plus mr-1"></i> ADD NEW CATEGORY
-        </a>
-    </div>
+@section Styles{
+<style>
+.cat-head{display:flex;justify-content:space-between;align-items:flex-end;margin:28px 0 18px}.cat-head h2{font-weight:700;margin:0}.cat-head p{color:#6c757d;margin:5px 0 0}.metric-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06)}.metric-card .card-body{padding:17px 19px}.metric-label{font-size:11px;text-transform:uppercase;font-weight:700;color:#6c757d;letter-spacing:.5px}.metric-value{font-size:24px;font-weight:700;margin-top:3px}.category-card{border:0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.06)}.category-card .card-header{background:transparent;padding:16px 18px}.search-wrap{max-width:340px;width:100%;position:relative}.search-wrap input{padding-left:35px;border-radius:8px}.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8a929a}.category-name{font-weight:700}.category-id{font-size:12px;color:#7a838b}.product-count{display:inline-flex;min-width:34px;height:28px;align-items:center;justify-content:center;border-radius:8px;background:#f1f3f5;font-weight:700}.action-button{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:7px;margin-right:4px;text-decoration:none!important}.action-button:hover{background:#f2f4f6}.empty-state{padding:50px 20px;text-align:center;color:#6c757d}.toast-alert{display:flex;align-items:center;gap:10px;border:0;border-radius:10px;box-shadow:0 3px 12px rgba(0,0,0,.06);padding:13px 16px;margin-bottom:16px}.toast-alert .close{margin-left:auto;font-size:18px;line-height:1}.table td,.table th{vertical-align:middle}.table thead th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#59616a;border-top:0}@@media(max-width:768px){.cat-head{align-items:flex-start;flex-direction:column;gap:12px}.category-card .card-header{align-items:flex-start!important;flex-direction:column}.search-wrap{max-width:none;margin-top:12px}}
+body.dark-mode .metric-card,body.dark-mode .category-card{background:#1f1f1f}.dark-mode .action-button:hover{background:#333}.dark-mode .product-count{background:#303030}.dark-mode .table thead th{color:#c9c9c9}.dark-mode .search-wrap input{background:#262626;color:#eee;border-color:#444}
+</style>}
+<div class="cat-head"><div><h2>Category Management</h2><p>Organize the pharmacy catalog and see how products are distributed.</p></div><a href="@Url.Action("Create","Category")" class="btn btn-success btn-sm"><i class="fas fa-plus mr-1"></i> Add Category</a></div>
+@if(TempData["SuccessMessage"]!=null){<div class="alert alert-success alert-dismissible fade show toast-alert"><i class="fas fa-check-circle"></i><span>@TempData["SuccessMessage"]</span><button type="button" class="close" data-dismiss="alert"><span>&times;</span></button></div>}
+@if(TempData["ErrorMessage"]!=null){<div class="alert alert-danger alert-dismissible fade show toast-alert"><i class="fas fa-exclamation-circle"></i><span>@TempData["ErrorMessage"]</span><button type="button" class="close" data-dismiss="alert"><span>&times;</span></button></div>}
+<div class="row mb-3">
+<div class="col-md-4 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label">Total Categories</div><div class="metric-value">@totalCategories</div></div></div></div>
+<div class="col-md-4 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-info">Products Assigned</div><div class="metric-value">@totalProducts</div></div></div></div>
+<div class="col-md-4 mb-3"><div class="card metric-card"><div class="card-body"><div class="metric-label text-warning">Empty Categories</div><div class="metric-value">@emptyCategories</div></div></div></div>
 </div>
-
-<!-- Success and error message display from TempData -->
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <i class="fas fa-check-circle mr-2"></i> @TempData["SuccessMessage"]
-    </div>
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <i class="fas fa-exclamation-circle mr-2"></i> @TempData["ErrorMessage"]
-    </div>
-}
-
-<!-- Main categories management table -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Category Inventory</h6>
-        <div class="search-box">
-            <!-- Search input with FontAwesome icon -->
-            <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search categories...">
-            <i class="fas fa-search search-icon"></i>
-        </div>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table admin-table categories-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>CATEGORY NAME</th>
-                        <th>PRODUCTS</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Conditional rendering based on categories availability -->
-                    @if (Model.Any())
-                    {
-                        foreach (var item in Model)
-                        {
-                            <tr>
-                                <!-- Data-label attributes for responsive table design -->
-                                <td data-label="ID">@item.CategoryID</td>
-                                <td data-label="Category Name">@item.CategoryName</td>
-                                <!-- Safe navigation and null coalescing for product count -->
-                                <td data-label="Products">@(item.Products?.Count ?? 0)</td>
-                                <td data-label="Actions" class="action-btns">
-                                    <!-- Action buttons with tooltips and route parameters -->
-                                    <a href="@Url.Action("Edit", "Category", new { id = item.CategoryID })" data-toggle="tooltip" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="@Url.Action("Details", "Category", new { id = item.CategoryID })" data-toggle="tooltip" title="Details">
-                                        <i class="fas fa-info-circle"></i>
-                                    </a>
-                                    <a href="@Url.Action("Delete", "Category", new { id = item.CategoryID })" data-toggle="tooltip" title="Delete">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <!-- Empty state display when no categories exist -->
-                        <tr>
-                            <!-- Colspan to span entire table width -->
-                            <td colspan="4" class="text-center py-4">
-                                <div class="empty-state">
-                                    <i class="fas fa-tag fa-3x text-muted mb-3"></i>
-                                    <h5>No Categories Found</h5>
-                                    <p class="text-muted">Start by adding your first category to organize your products.</p>
-                                    <!-- Call-to-action button in empty state -->
-                                    <a href="@Url.Action("Create", "Category")" class="btn btn-primary add-new mt-2">
-                                        <i class="fas fa-plus mr-1"></i> Add New Category
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- External JavaScript file reference for table functionality -->
-<link rel="stylesheet" href="~/assets/css/CategoryViewScripts/CategoryIndex.js" />
+<div class="card category-card"><div class="card-header d-flex justify-content-between align-items-center"><strong>Categories</strong><div class="search-wrap"><i class="fas fa-search"></i><input id="categorySearch" class="form-control form-control-sm" placeholder="Search categories..."/></div></div>
+<div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Category</th><th>Products</th><th class="text-right">Actions</th></tr></thead><tbody id="categoryRows">
+@if(categories.Any()){foreach(var item in categories){<tr class="category-row" data-search="@item.CategoryName.ToLower()"><td><div class="category-name">@item.CategoryName</div><div class="category-id">ID #@item.CategoryID</div></td><td><span class="product-count">@(item.Products?.Count ?? 0)</span></td><td class="text-right"><a class="action-button text-primary" href="@Url.Action("Edit","Category",new{id=item.CategoryID})" title="Edit"><i class="fas fa-edit"></i></a><a class="action-button text-info" href="@Url.Action("Details","Category",new{id=item.CategoryID})" title="Details"><i class="fas fa-info-circle"></i></a><a class="action-button text-danger" href="@Url.Action("Delete","Category",new{id=item.CategoryID})" title="Delete"><i class="fas fa-trash-alt"></i></a></td></tr>}}else{<tr><td colspan="3"><div class="empty-state"><i class="fas fa-tags fa-2x mb-3"></i><h5>No categories yet</h5><p>Create your first category to organize products.</p><a href="@Url.Action("Create","Category")" class="btn btn-success btn-sm">Add Category</a></div></td></tr>}
+</tbody></table></div><div id="categoryNoMatches" class="empty-state" style="display:none"><i class="fas fa-search fa-2x mb-3"></i><div>No categories match your search.</div></div></div>
+@section Scripts{<script>(function(){const input=document.getElementById('categorySearch'),rows=[...document.querySelectorAll('.category-row')],empty=document.getElementById('categoryNoMatches');input.addEventListener('input',function(){const q=this.value.toLowerCase().trim();let shown=0;rows.forEach(r=>{const ok=!q||r.dataset.search.includes(q);r.style.display=ok?'':'none';if(ok)shown++;});empty.style.display=shown||!rows.length?'none':'block';});})();</script>}

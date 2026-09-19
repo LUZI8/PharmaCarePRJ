@@ -15,7 +15,7 @@ namespace PharmaCare.Models
         /* Email address used for login and communication */
         public string Email { get; set; }
 
-        /* Password stored as SHA256 hash for security protection */
+        /* Password stored as a BCrypt hash; plaintext passwords are never persisted. */
         public string Password { get; set; }
 
         /* User role for authorization (Admin, Customer, Pharmacist) */

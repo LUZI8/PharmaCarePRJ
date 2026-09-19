@@ -1,9 +1,10 @@
 ﻿namespace PharmaCare.Repositories.Repository
 {
-    /* Repository implementation for category CRUD operations using raw SQL and Entity Framework */
+    /* Repository implementation for category CRUD operations using Entity Framework */
     public class CategoryRepository : ICategoryRepository
     {
-        private DataDbContext dbContext;
+        private readonly DataDbContext dbContext;
+        private Dictionary<int, Category>? categoryCache;
 
         /* Constructor injection for database context */
         public CategoryRepository(DataDbContext dbContext)
@@ -11,17 +12,36 @@
             this.dbContext = dbContext;
         }
 
-        /* Add new category with exception handling and debug logging */
+        /* Load categories once per repository/request and reuse them. */
+        private Dictionary<int, Category> GetCategoryCache()
+        {
+            if (categoryCache != null)
+            {
+                return categoryCache;
+            }
+
+            categoryCache = dbContext.Category
+                .AsNoTracking()
+                .ToDictionary(c => c.CategoryID);
+
+            return categoryCache;
+        }
+
+        private void InvalidateCache()
+        {
+            categoryCache = null;
+        }
+
         public void Add(Category category)
         {
             try
             {
                 dbContext.Category.Add(category);
                 dbContext.SaveChanges();
+                InvalidateCache();
             }
             catch (Exception ex)
             {
-                /* Debug logging for development troubleshooting */
                 Debug.WriteLine($"Error in CategoryRepository.Add: {ex.Message}");
                 if (ex.InnerException != null)
                 {
@@ -31,14 +51,19 @@
             }
         }
 
-        /* Delete category using raw SQL for reliable execution */
         public void Delete(int Id)
         {
             try
             {
-                /* Use parameterized raw SQL to prevent SQL injection */
-                string sql = "DELETE FROM Category WHERE CategoryID = @p0";
-                dbContext.Database.ExecuteSqlRaw(sql, Id);
+                var category = dbContext.Category.FirstOrDefault(c => c.CategoryID == Id);
+                if (category == null)
+                {
+                    return;
+                }
+
+                dbContext.Category.Remove(category);
+                dbContext.SaveChanges();
+                InvalidateCache();
             }
             catch (Exception ex)
             {
@@ -47,32 +72,35 @@
             }
         }
 
-        /* Find single category by ID using raw SQL query */
+        /* Find from the in-request cache instead of issuing one SQL query per product. */
         public Category Find(int Id)
         {
             try
             {
-                /* Raw SQL query with parameter binding for security */
-                return dbContext.Category.FromSqlRaw(
-                    "SELECT CategoryID, CategoryName FROM Category WHERE CategoryID = {0}", Id)
-                    .FirstOrDefault();
+                return GetCategoryCache().TryGetValue(Id, out var category)
+                    ? category
+                    : null;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error in CategoryRepository.Find: {ex.Message}");
-                /* Return null instead of crashing application */
                 return null;
             }
         }
 
-        /* Update category using parameterized raw SQL */
         public void Update(int id, Category category)
         {
             try
             {
-                /* Parameterized SQL update to prevent injection attacks */
-                string sql = "UPDATE Category SET CategoryName = @p0 WHERE CategoryID = @p1";
-                dbContext.Database.ExecuteSqlRaw(sql, category.CategoryName, id);
+                var existing = dbContext.Category.FirstOrDefault(c => c.CategoryID == id);
+                if (existing == null)
+                {
+                    return;
+                }
+
+                existing.CategoryName = category.CategoryName;
+                dbContext.SaveChanges();
+                InvalidateCache();
             }
             catch (Exception ex)
             {
@@ -81,22 +109,18 @@
             }
         }
 
-        /* Retrieve all categories using raw SQL with graceful error handling */
+        /* Return the same cached category set used by Find(). */
         public List<Category> View()
         {
             try
             {
-                /* Raw SQL query to fetch all categories */
-                var categories = dbContext.Category
-                    .FromSqlRaw("SELECT CategoryID, CategoryName FROM Category")
+                return GetCategoryCache().Values
+                    .OrderBy(c => c.CategoryName)
                     .ToList();
-
-                return categories;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error in CategoryRepository.View: {ex.Message}");
-                /* Return empty list to prevent null reference exceptions */
                 return new List<Category>();
             }
         }

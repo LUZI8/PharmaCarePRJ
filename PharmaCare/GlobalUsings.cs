@@ -13,6 +13,7 @@ global using PharmaCare.ViewModels;
 global using PharmaCare.Services;
 global using PharmaCare.Repositories.Interface;
 global using PharmaCare.Repositories.Repository;
+global using PharmaCare.Helpers;
 global using PharmaCare.Helpers.FileHelper;
 global using Repositories.Repository;
 

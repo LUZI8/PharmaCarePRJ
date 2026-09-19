@@ -1,18 +1,23 @@
 ﻿namespace PharmaCare.Models
 {
-    /* ViewModel aggregating data for the admin dashboard display */
     public class DashboardViewModel
     {
-        /* Collection of products for the products management table with default initialization */
-        public List<Product> Products { get; set; } = new List<Product>();
+        public List<Product> Products { get; set; } = new();
+        public List<OrderViewModel> RecentOrders { get; set; } = new();
+        public List<Product> LowStockProducts { get; set; } = new();
+        public List<Product> ExpiringProducts { get; set; } = new();
 
-        /* Collection of recent orders for the sidebar display with default initialization */
-        public List<OrderViewModel> RecentOrders { get; set; } = new List<OrderViewModel>();
-
-        /* Total count of orders for dashboard statistics card */
         public int OrderCount { get; set; }
-
-        /* Total count of inventory items for dashboard statistics card */
         public int InventoryCount { get; set; }
+        public int CustomerCount { get; set; }
+        public int LowStockCount { get; set; }
+        public int OutOfStockCount { get; set; }
+        public int ExpiringSoonCount { get; set; }
+        public int PendingPickupCount { get; set; }
+        public int FeedbackCount { get; set; }
+        public int OrdersToday { get; set; }
+
+        public decimal TotalRevenue { get; set; }
+        public decimal RevenueToday { get; set; }
     }
 }

@@ -1,253 +1,101 @@
-﻿@model PharmaCare.ViewModels.PrescriptionConfirmViewModel
-
+@model PharmaCare.ViewModels.PrescriptionConfirmViewModel
 @{
     ViewData["Title"] = "Confirm Prescription Reservation";
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    var prescriptionError = TempData["ErrorMessage"]?.ToString();
+    if (string.Equals(prescriptionError, "Your cart is empty!", StringComparison.OrdinalIgnoreCase))
+    {
+        prescriptionError = null;
+    }
 }
 
-<!-- Import prescription confirmation specific styling -->
-<link rel="stylesheet" href="/assets/css/PrescriptionViewStyles/Confirm.css" />
+@section Styles {
+<style>
+.rx-confirm{--a:#0f9d8f;--ad:#0b5a54;--ink:#17212b;--muted:#71808d;--line:#dfe8eb;background:linear-gradient(180deg,#f3fbfa 0,#fff 58%);padding:42px 0 70px;color:var(--ink)}
+.rx-shell{max-width:1120px;margin:auto;padding:0 22px}.rx-head{margin-bottom:24px}.rx-kicker{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:#e7f8f5;color:#08776d;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px}.rx-head h1{font-size:38px;font-weight:900;letter-spacing:-.8px;margin:12px 0 7px}.rx-head p{color:var(--muted);font-size:14px;margin:0}
+.rx-notice{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:18px;border:1px solid #f1d485;background:#fff9e8;border-radius:16px;margin-bottom:22px}.rx-notice i{width:44px;height:44px;border-radius:12px;background:#fff0b5;color:#a36b00;display:grid;place-items:center}.rx-notice h2{font-size:16px;font-weight:900;margin:0 0 5px}.rx-notice p{font-size:12px;color:#7a6750;margin:0 0 8px}.rx-notice ul{margin:0;padding-left:18px;color:#574a3a;font-size:12px;line-height:1.65}
+.rx-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.88fr);gap:22px;align-items:start}.rx-card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 34px rgba(15,23,42,.055);overflow:hidden}.rx-card-head{padding:18px 20px;border-bottom:1px solid var(--line)}.rx-card-head h2{font-size:18px;font-weight:900;margin:0}.rx-card-head span{font-size:11px;color:var(--muted)}.rx-body{padding:20px}.rx-field{margin-bottom:16px}.rx-field:last-child{margin-bottom:0}.rx-field label{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.45px;margin-bottom:7px;color:#54616c}.rx-field input{height:48px;border:1px solid #d6e0e3;border-radius:11px;padding:0 13px;width:100%;background:#fff;color:var(--ink)}.rx-field input[disabled]{background:#f4f7f8;color:#596772}.rx-field small{display:block;color:#87939c;font-size:10px;margin-top:6px}
+.rx-product{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 0;border-bottom:1px solid #edf1f3}.rx-product strong{font-size:14px}.rx-price{font-size:18px;font-weight:900;color:var(--a)}.rx-badge{display:inline-flex;margin-left:7px;padding:4px 7px;border-radius:999px;background:#e6f8fb;color:#0b8090;font-size:9px;font-weight:900;text-transform:uppercase}.rx-info{display:grid;grid-template-columns:40px 1fr;gap:11px;padding:14px;border:1px solid #e5ecef;border-radius:13px;margin-top:13px}.rx-info i{width:40px;height:40px;border-radius:11px;background:#eaf8f6;color:var(--a);display:grid;place-items:center}.rx-info small{display:block;color:#87939c;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.45px;margin-bottom:3px}.rx-info strong{font-size:12px;line-height:1.45}.rx-btn{width:100%;min-height:52px;border:0;border-radius:12px;background:linear-gradient(135deg,#16b5a5,#0f9d8f);color:#fff;font-size:14px;font-weight:900;margin-top:18px;box-shadow:0 10px 24px rgba(15,157,143,.2);transition:.2s}.rx-btn:hover{transform:translateY(-2px);filter:brightness(1.04)}.rx-back{display:flex;justify-content:center;margin-top:10px}.rx-back a{color:#6d7a84;font-size:11px;font-weight:800;text-decoration:none}.rx-back a:hover{color:var(--a)}
+.dark-mode .rx-confirm{--ink:#edf5f4;--muted:#9ca8ad;--line:#2c3b3c;background:#111819}.dark-mode .rx-card{background:#172122}.dark-mode .rx-field input{background:#11191a;border-color:#334344;color:#edf5f4}.dark-mode .rx-field input[disabled]{background:#151e1f}.dark-mode .rx-info{border-color:#2d3c3d}
+@@media(max-width:900px){.rx-grid{grid-template-columns:1fr}}@@media(max-width:600px){.rx-confirm{padding:30px 0 50px}.rx-shell{padding:0 15px}.rx-head h1{font-size:31px}.rx-notice{grid-template-columns:1fr}.rx-notice i{width:38px;height:38px}.rx-body{padding:16px}.rx-card{border-radius:16px}}
+</style>
+}
 
-<!-- Light background header section -->
-<div class="bg-light py-3">
-</div>
-
-<div class="site-section">
-    <div class="container">
-        <!-- Error message display for validation failures -->
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
-            </div>
-        }
-
-        <!-- Important prescription reservation information panel -->
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <div class="border p-4 rounded" role="alert">
-                    <div class="d-flex">
-                        <div class="mr-3">
-                            <!-- Information icon for visual emphasis -->
-                            <i class="fas fa-info-circle fa-2x text-info"></i>
-                        </div>
-                        <div>
-                            <h4 class="alert-heading">Prescription Medication Reservation</h4>
-                            <p>You are about to reserve a prescription medication. Please note that:</p>
-                            <!-- Critical reservation terms and conditions -->
-                            <ul>
-                                <li>You must bring a valid prescription to the pharmacy to pick up this medication.</li>
-                                <li><strong>Your reservation will expire in 3 days</strong> (@Model.ExpiryDate.ToString("MMM dd, yyyy")) if not picked up.</li>
-                                <li>If not picked up before the expiry date, the items will be returned to stock.</li>
-                                <li>Reservations cannot be paid for online - payment will be processed at the pharmacy.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Prescription reservation confirmation form -->
-        <form method="post" action="@Url.Action("ConfirmReservation", "Prescription")">
-            @Html.AntiForgeryToken()
-            <!-- Hidden fields to pass reservation details to server -->
-            <input type="hidden" name="productId" value="@Model.Product.ProductId" />
-            <input type="hidden" name="quantity" value="@Model.Quantity" />
-
-            <div class="row">
-                <!-- Left column: Customer reservation details form -->
-                <div class="col-md-6 mb-5 mb-md-0">
-                    <h2 class="h3 mb-3 text-black">Reservation Details</h2>
-                    <div class="p-3 p-lg-5 border">
-                        <!-- Phone number field with strict validation for contact purposes -->
-                        <div class="form-group">
-                            <label for="phone_number" class="text-black">Contact Phone Number <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" id="phone_number" name="phoneNumber"
-                                   value="@Model.User.PhoneNumber"
-                                   required
-                                   pattern="[0-9]{9,15}"
-                                   maxlength="15"
-                                   minlength="9"
-                                   title="Phone number must be between 9-15 digits only"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);">
-                            <small class="form-text text-muted">We'll use this to contact you about your reservation (9-15 digits only)</small>
-                            <div class="invalid-feedback">
-                                Please enter a valid phone number (9-15 digits only).
-                            </div>
-                        </div>
-
-                        <!-- Read-only customer information fields for confirmation -->
-                        <div class="form-group">
-                            <label for="c_fname" class="text-black">First Name</label>
-                            <input type="text" class="form-control" id="c_fname" name="c_fname" value="@Model.User.FirstName" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="c_lname" class="text-black">Last Name</label>
-                            <input type="text" class="form-control" id="c_lname" name="c_lname" value="@Model.User.LastName" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="c_email" class="text-black">Email Address</label>
-                            <input type="email" class="form-control" id="c_email" name="c_email" value="@Model.User.Email" disabled>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right column: Prescription details and pickup information -->
-                <div class="col-md-6">
-                    <div class="row mb-5">
-                        <div class="col-md-12">
-                            <h2 class="h3 mb-3 text-black">Your Prescription</h2>
-                            <div class="p-3 p-lg-5 border">
-                                <!-- Prescription item summary table -->
-                                <table class="table site-block-order-table mb-5">
-                                    <thead>
-                                    <th>Product</th>
-                                    <th>Total</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                @Model.Product.ProductName <strong class="mx-2">x</strong> @Model.Quantity
-                                                <!-- Prescription indicator badge for clarity -->
-                                                @if (Model.Product.RequiresPrescription)
-                                                {
-                                                    <span class="badge badge-info ml-2">Prescription</span>
-                                                }
-                                            </td>
-                                            <td>$@Model.TotalPrice.ToString("0.00")</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                <!-- Reservation expiry information with clock icon -->
-                                <div class="border p-3 mb-3">
-                                    <h3 class="h6 mb-0"><i class="fas fa-clock mr-2"></i> Reservation Expires</h3>
-                                    <p class="mb-0">@Model.ExpiryDate.ToString("dddd, MMMM dd, yyyy")</p>
-                                </div>
-
-                                <!-- Pickup location information with map icon -->
-                                <div class="border p-3 mb-5">
-                                    <h3 class="h6 mb-0"><i class="fas fa-map-marker-alt mr-2"></i> Pickup Location</h3>
-                                    <p class="mb-0">PharmaCare Main Store<br>Almadina Almonaora St, Amman, Jordan</p>
-                                </div>
-
-                                <!-- Final confirmation button -->
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-info btn-lg py-3 btn-block">Confirm Reservation</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+<section class="rx-confirm">
+<div class="rx-shell">
+    <div class="rx-head">
+        <div class="rx-kicker"><i class="fas fa-prescription-bottle-alt"></i> Prescription pickup</div>
+        <h1>Confirm your reservation.</h1>
+        <p>Review your contact details and pickup information before reserving this medicine.</p>
     </div>
+
+    @if (!string.IsNullOrWhiteSpace(prescriptionError))
+    {
+        <div class="alert alert-danger">@prescriptionError</div>
+    }
+
+    <div class="rx-notice">
+        <i class="fas fa-file-medical"></i>
+        <div>
+            <h2>Bring a valid prescription when you collect your medicine.</h2>
+            <p>This reservation holds the item for you; it does not complete a medicine sale online.</p>
+            <ul>
+                <li>Your reservation expires on <strong>@Model.ExpiryDate.ToString("MMM dd, yyyy")</strong>.</li>
+                <li>If it is not collected in time, the reserved stock returns to inventory.</li>
+                <li>Payment is completed at the pharmacy after prescription verification.</li>
+            </ul>
+        </div>
+    </div>
+
+    <form method="post" action="@Url.Action("ConfirmReservation", "Prescription")" id="reservationForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+        <input type="hidden" name="quantity" value="@Model.Quantity" />
+
+        <div class="rx-grid">
+            <section class="rx-card">
+                <div class="rx-card-head"><h2>Your details</h2><span>Used only to contact you about this pickup</span></div>
+                <div class="rx-body">
+                    <div class="rx-field">
+                        <label for="phone_number">Contact phone number *</label>
+                        <input type="tel" id="phone_number" name="phoneNumber" value="@Model.User.PhoneNumber" required pattern="[0-9]{9,15}" maxlength="15" minlength="9" inputmode="numeric" />
+                        <small>Enter 9–15 digits. We’ll use this number if the pharmacy needs to contact you.</small>
+                        <div class="invalid-feedback">Please enter a valid phone number.</div>
+                    </div>
+                    <div class="rx-field"><label>First name</label><input type="text" value="@Model.User.FirstName" disabled /></div>
+                    <div class="rx-field"><label>Last name</label><input type="text" value="@Model.User.LastName" disabled /></div>
+                    <div class="rx-field"><label>Email address</label><input type="email" value="@Model.User.Email" disabled /></div>
+                </div>
+            </section>
+
+            <aside class="rx-card">
+                <div class="rx-card-head"><h2>Reservation summary</h2><span>Final review before confirmation</span></div>
+                <div class="rx-body">
+                    <div class="rx-product">
+                        <div><strong>@Model.Product.ProductName</strong>@if(Model.Product.RequiresPrescription){<span class="rx-badge">Prescription</span>}<div style="font-size:11px;color:#84919a;margin-top:4px;">Quantity: @Model.Quantity</div></div>
+                        <div class="rx-price">$@Model.TotalPrice.ToString("0.00")</div>
+                    </div>
+                    <div class="rx-info"><i class="far fa-clock"></i><div><small>Reservation expires</small><strong>@Model.ExpiryDate.ToString("dddd, MMMM dd, yyyy")</strong></div></div>
+                    <div class="rx-info"><i class="fas fa-map-marker-alt"></i><div><small>Pickup location</small><strong>PharmaCare Main Store<br />Almadina Almonaora St, Amman, Jordan</strong></div></div>
+                    <div class="rx-info"><i class="fas fa-money-bill-wave"></i><div><small>Payment</small><strong>Pay at the pharmacy after prescription verification</strong></div></div>
+                    <button type="submit" class="rx-btn"><i class="fas fa-check-circle mr-2"></i> Confirm reservation</button>
+                    <div class="rx-back"><a href="@Url.Action("ShopSingle", "FrontEnd", new { id = Model.Product.ProductId })"><i class="fas fa-arrow-left mr-1"></i> Back to medicine</a></div>
+                </div>
+            </aside>
+        </div>
+    </form>
 </div>
+</section>
+
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            var $phoneInput = $('#phone_number');
-
-            // Comprehensive phone number validation - restricts to digits only, 9-15 length
-            $phoneInput.on('input keydown paste', function(e) {
-                var $input = $(this);
-
-                // Allow control keys (backspace, delete, tab, escape, enter, arrows, etc.)
-                if (e.type === 'keydown') {
-                    if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
-                        (e.keyCode === 65 && e.ctrlKey === true) ||
-                        (e.keyCode === 67 && e.ctrlKey === true) ||
-                        (e.keyCode === 86 && e.ctrlKey === true) ||
-                        (e.keyCode === 88 && e.ctrlKey === true) ||
-                        (e.keyCode >= 35 && e.keyCode <= 39)) {
-                        return;
-                    }
-
-                    // Prevent non-numeric characters from being entered
-                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                        e.preventDefault();
-                        return false;
-                    }
-                }
-
-                // Clean and validate input after short delay
-                setTimeout(function() {
-                    var value = $input.val();
-
-                    // Remove any non-numeric characters
-                    var cleanValue = value.replace(/[^0-9]/g, '');
-
-                    // Enforce maximum length of 15 digits
-                    if (cleanValue.length > 15) {
-                        cleanValue = cleanValue.slice(0, 15);
-                    }
-
-                    // Update field if value was modified
-                    if (value !== cleanValue) {
-                        $input.val(cleanValue);
-                    }
-
-                    // Perform real-time validation
-                    validatePhoneNumber($input);
-                }, 10);
-            });
-
-            // Validate on field blur (when user leaves field)
-            $phoneInput.on('blur', function() {
-                validatePhoneNumber($(this));
-            });
-
-            // Prevent form submission if phone validation fails
-            $('form').on('submit', function(e) {
-                var isValid = validatePhoneNumber($phoneInput);
-
-                if (!isValid) {
-                    e.preventDefault();
-                    $phoneInput.focus();
-                    return false;
-                }
-            });
-
-            // Phone number validation function with comprehensive checks
-            function validatePhoneNumber($input) {
-                var value = $input.val();
-                var isValid = true;
-                var errorMessage = '';
-
-                // Clear existing validation classes
-                $input.removeClass('is-valid is-invalid');
-
-                // Validation logic for phone number requirements
-                if (value === '') {
-                    isValid = false;
-                    errorMessage = 'Phone number is required.';
-                } else if (!/^\d+$/.test(value)) {
-                    isValid = false;
-                    errorMessage = 'Phone number must contain only digits.';
-                } else if (value.length < 9) {
-                    isValid = false;
-                    errorMessage = 'Phone number must be at least 9 digits.';
-                } else if (value.length > 15) {
-                    isValid = false;
-                    errorMessage = 'Phone number cannot exceed 15 digits.';
-                }
-
-                // Apply appropriate validation styling and feedback
-                if (isValid) {
-                    $input.addClass('is-valid');
-                    $input.siblings('.invalid-feedback').hide();
-                } else {
-                    $input.addClass('is-invalid');
-                    $input.siblings('.invalid-feedback').text(errorMessage).show();
-                }
-
-                return isValid;
-            }
-
-            // Validate pre-filled phone number on page load
-            if ($phoneInput.val()) {
-                validatePhoneNumber($phoneInput);
-            }
-        });
-    </script>
+<script>
+(function(){
+    var phone=document.getElementById('phone_number');
+    var form=document.getElementById('reservationForm');
+    if(!phone||!form)return;
+    function clean(){phone.value=phone.value.replace(/[^0-9]/g,'').slice(0,15);var ok=/^\d{9,15}$/.test(phone.value);phone.classList.toggle('is-valid',ok);phone.classList.toggle('is-invalid',!ok&&phone.value.length>0);return ok;}
+    phone.addEventListener('input',clean);
+    form.addEventListener('submit',function(e){if(!clean()){e.preventDefault();phone.focus();phone.classList.add('is-invalid');}});
+})();
+</script>
 }

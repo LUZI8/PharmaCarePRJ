@@ -1,159 +1,125 @@
-﻿@model PharmaCare.Models.User
+@model PharmaCare.Models.User
 @{
-    ViewData["Title"] = "Login - PharmaCare";
-    /* No layout specified - standalone page with custom structure */
+    ViewData["Title"] = "Sign In - PharmaCare";
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <!-- External font and icon libraries -->
-    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700|Crimson+Text:400,400i" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/assets/css/AccountViewStyles/Login.css" />
-    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,500,600,700" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="icon" href="~/assets/favicon-32x32.png" type="image/png" />
+    <style>
+        :root{--accent:#0f9f92;--accent-2:#0b7f75;--ink:#132129;--muted:#70808b;--line:#e6ecef;--surface:#fff;--page:#f3f7f8;--soft:#eef8f6;--danger:#d9534f;--shadow:0 28px 70px rgba(22,45,54,.14)}
+        *{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;font-family:'Rubik',sans-serif;color:var(--ink);overflow-x:hidden}body{background:var(--page);transition:.25s ease;color-scheme:light}
+        body.dark-mode{--ink:#eef4f5;--muted:#91a0a8;--line:#303a3f;--surface:#20262a;--page:#111719;--soft:#18302d;--shadow:0 30px 90px rgba(0,0,0,.35);color-scheme:dark}
+        a{text-decoration:none}.auth-shell{width:100%;max-width:100vw;min-height:100vh;display:grid;grid-template-columns:minmax(420px,.82fr) minmax(0,1.18fr);position:relative;overflow:hidden;background:var(--page)}
+        .brand-panel{min-width:0;position:relative;padding:40px 52px 48px;background:linear-gradient(150deg,#102f34,#0b756e 72%,#0d8f84);color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+        .brand-panel:before,.brand-panel:after{content:"";position:absolute;border-radius:50%;opacity:.14;animation:floatBlob 10s ease-in-out infinite}.brand-panel:before{width:430px;height:430px;background:#fff;left:-210px;top:-150px}.brand-panel:after{width:340px;height:340px;background:#6de7db;right:-150px;bottom:-110px;animation-delay:-5s}
+        @@keyframes floatBlob{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-18px) scale(1.07)}}
+        .brand-top,.brand-copy,.brand-foot{position:relative;z-index:2}.brand-logo{display:flex;align-items:center;gap:12px;color:#fff;font-size:20px;font-weight:700;letter-spacing:.4px}.brand-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
+        .brand-copy{max-width:520px;animation:rise .7s ease both}.eyebrow{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.75;margin-bottom:18px}.brand-copy h1{font-size:clamp(38px,4.5vw,58px);line-height:1.06;margin:0 0 20px;letter-spacing:-1.4px}.brand-copy p{font-size:16px;line-height:1.75;color:rgba(255,255,255,.8);margin:0}
+        .benefits{display:grid;grid-template-columns:1fr;gap:12px;margin-top:34px}.benefit{display:flex;gap:13px;align-items:flex-start;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.12)}.benefit:last-child{border-bottom:0}.benefit i{width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.13);display:grid;place-items:center;font-size:13px;flex:0 0 auto;margin:0}.benefit strong{display:block;font-size:13px;margin-bottom:3px}.benefit span{font-size:11px;color:rgba(255,255,255,.68);line-height:1.45}.brand-foot{font-size:11px;color:rgba(255,255,255,.6)}
+        .form-panel{min-width:0;padding:28px 40px;display:flex;flex-direction:column;min-height:100vh;position:relative;background:var(--page)}.form-header{display:flex;justify-content:flex-end;align-items:center;gap:12px}.home-link,.theme-btn{height:42px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;transition:.2s}.home-link{padding:0 14px;gap:8px;font-size:12px;font-weight:600}.theme-btn{width:42px;cursor:pointer}.home-link:hover,.theme-btn:hover{border-color:rgba(15,159,146,.45);color:var(--accent);transform:translateY(-1px)}
+        .form-wrap{width:100%;max-width:560px;margin:auto;animation:rise .6s .08s ease both}.welcome-chip{display:inline-flex;align-items:center;gap:8px;background:var(--soft);color:var(--accent);font-size:11px;font-weight:700;padding:8px 11px;border-radius:999px;margin-bottom:18px}.form-wrap h2{font-size:36px;letter-spacing:-.8px;margin:0 0 8px}.lead{color:var(--muted);font-size:14px;line-height:1.65;margin:0 0 28px}
+        .notice{padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:12px;line-height:1.5}.notice.success{background:rgba(25,135,84,.1);color:#198754;border:1px solid rgba(25,135,84,.18)}.notice.error{background:rgba(217,83,79,.09);color:var(--danger);border:1px solid rgba(217,83,79,.18)}
+        .field{margin-bottom:18px}.field-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;margin-bottom:8px}.input-wrap{position:relative}.input-wrap .field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#92a0a8;font-size:14px}.control{width:100%;height:50px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--ink);padding:0 44px 0 42px;outline:none;font:inherit;font-size:13px;transition:.2s}.control::placeholder{color:#a1acb2}.control:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(15,159,146,.1);transform:translateY(-1px)}.toggle-password{position:absolute;right:13px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#8b989f;cursor:pointer;padding:5px}.field-error{font-size:11px;color:var(--danger);margin-top:6px}
+        .remember-row{display:flex;justify-content:space-between;align-items:center;margin:4px 0 22px;font-size:12px}.remember{display:flex;align-items:center;gap:8px;color:var(--muted)}.remember input{accent-color:var(--accent)}.text-link{color:var(--accent);font-weight:600}.text-link:hover{color:var(--accent-2)}
+        .primary-btn{width:100%;height:52px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-weight:700;letter-spacing:.2px;cursor:pointer;box-shadow:0 12px 26px rgba(15,159,146,.24);transition:.22s}.primary-btn:hover{transform:translateY(-2px);box-shadow:0 16px 30px rgba(15,159,146,.29)}.primary-btn:active{transform:translateY(0)}
+        .divider{display:flex;align-items:center;gap:12px;color:#a0abb1;font-size:11px;margin:22px 0}.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}.secondary-btn{height:50px;width:100%;border:1px solid var(--line);border-radius:13px;color:var(--ink);background:var(--surface);display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:600;transition:.2s}.secondary-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+        .security-note{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:10px;color:var(--muted);font-size:11px;line-height:1.5}.security-note i{color:var(--accent);margin-top:2px}.form-footer{text-align:center;color:var(--muted);font-size:10px;padding-top:18px}
+        @@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        @@media(max-width:1100px){.auth-shell{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{min-height:100vh;padding:24px}.form-wrap{max-width:560px}.form-header{margin-bottom:20px}}
+        @@media(max-width:575px){.form-panel{padding:20px 16px}.form-wrap h2{font-size:30px}.remember-row{align-items:flex-start;gap:12px}.home-link span{display:none}}
+    </style>
 </head>
-<!-- Body with default dark mode class -->
-<body class="dark-mode">
-    <div class="header">
-        <div class="logo">
-            <!-- Home page link in header logo -->
-            <a href="/">PHARMACARE</a>
-        </div>
-        <div class="theme-toggle">
-            <!-- Theme toggle button with sun/moon icons -->
-            <button id="theme-toggle-btn">
-                <span class="sun-icon">☀️</span>
-                <span class="moon-icon" style="display: none;">🌙</span>
-            </button>
-        </div>
-    </div>
-
-    <div class="login-container">
-        <h2 class="form-title">Sign In</h2>
-
-        <!-- Success banner shown after registration verification or a password reset -->
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="error-message" style="background:#1b5e20;">@TempData["SuccessMessage"]</div>
-        }
-
-        <!-- Display validation errors for general model state -->
-        @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""].Errors.Count > 0)
-        {
-            <div class="error-message">
-                @ViewData.ModelState[""].Errors[0].ErrorMessage
-            </div>
-        }
-
-        <!-- Login form with explicit action and controller targeting -->
-        <form method="post" action="@Url.Action("Login", "Account")">
-            @Html.AntiForgeryToken()
-            <!-- Hidden field to preserve return URL for post-login redirection -->
-            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-
-            <div class="form-group">
-                <label class="form-label" for="Email">Email</label>
-                <i class="fas fa-envelope form-icon"></i>
-                <!-- Email input with model value preservation and HTML5 validation -->
-                <input type="email" class="form-control" id="Email" name="Email" placeholder="Type your email"
-                       value="@Model?.Email" required>
-                <!-- Conditional field-specific error display -->
-                @if (ViewData.ModelState.ContainsKey("Email") && ViewData.ModelState["Email"].Errors.Count > 0)
-                {
-                    <div class="field-error">@ViewData.ModelState["Email"].Errors[0].ErrorMessage</div>
-                }
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="Password">Password</label>
-                <i class="fas fa-lock form-icon"></i>
-                <!-- Password input with toggle visibility functionality -->
-                <input type="password" class="form-control" id="password-field" name="Password"
-                       placeholder="Type your password" required>
-                <!-- Password visibility toggle span with JavaScript targeting -->
-                <span class="password-toggle" id="password-toggle">
-                    <i class="fas fa-eye"></i>
-                </span>
-                @if (ViewData.ModelState.ContainsKey("Password") && ViewData.ModelState["Password"].Errors.Count > 0)
-                {
-                    <div class="field-error">@ViewData.ModelState["Password"].Errors[0].ErrorMessage</div>
-                }
-            </div>
-
-            <div class="remember-forgot">
-                <div class="checkbox-container">
-                    <!-- Remember me checkbox for persistent login -->
-                    <input type="checkbox" id="remember-me" name="RememberMe">
-                    <label for="remember-me">Remember me</label>
-                </div>
-                <!-- Password reset link to the email-code reset flow -->
-                <a href="@Url.Action("ForgotPassword", "Account")" class="forgot-password">Forgot Password</a>
-            </div>
-            <!-- Hidden field setting default user role -->
-            <input type="hidden" name="Role" value="User" />
-            <button type="submit" class="btn">LOGIN</button>
-            <!-- Registration link for new users -->
-            <a href="@Url.Action("Register", "Account")" class="btn register-btn">SIGN UP</a>
-        </form>
-    </div>
-
-    <!-- Site footer with company information and links -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row pt-5 mt-5">
-                <div class="col-md-4 mb-5">
-                    <h3>About Us</h3>
-                    <p>
-                        At PharmaCare, we're committed to providing trusted healthcare solutions to our community. With years of experience in our physical pharmacy, we've now expanded online to bring you the same quality care, convenience, and reliability.
-                    </p>
-                </div>
-                <div class="col-md-4 mb-5">
-                    <h3>Quick Links</h3>
-                    <!-- Unstyled list with footer navigation links -->
-                    <ul class="list-unstyled footer-link">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/FrontEnd/Shop">Store</a></li>
-                        <li><a href="/FrontEnd/Contact">Get In Touch</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-5">
-                    <h3>Contact Info</h3>
-                    <!-- Contact information with FontAwesome icons -->
-                    <ul class="list-unstyled contact-info">
-                        <li class="d-flex">
-                            <span class="mr-3"><i class="fas fa-map-marker-alt"></i></span>
-                            <span>Almadina Almonaora St, Amman, Jordan</span>
-                        </li>
-                        <li class="d-flex">
-                            <span class="mr-3"><i class="fas fa-phone"></i></span>
-                            <span>+962 7 9999 8888</span>
-                        </li>
-                        <li class="d-flex">
-                            <span class="mr-3"><i class="fas fa-envelope"></i></span>
-                            <span>pharmacare@info.com</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 text-center copyright">
-                    <p>
-                        <!-- Dynamic copyright year using DateTime.Now -->
-                        Copyright &copy; @DateTime.Now.Year All rights reserved to PharmaCare
-                    </p>
-                </div>
+<body>
+<div class="auth-shell">
+    <section class="brand-panel">
+        <div class="brand-top"><a href="/" class="brand-logo"><span class="brand-icon"><i class="fas fa-prescription-bottle-alt"></i></span><span>PHARMACARE</span></a></div>
+        <div class="brand-copy">
+            <div class="eyebrow">Your pharmacy, connected</div>
+            <h1>Healthcare made simpler.</h1>
+            <p>Sign in to manage orders, prescriptions and pharmacy services in one secure place designed around everyday care.</p>
+            <div class="benefits">
+                <div class="benefit"><i class="fas fa-shield-alt"></i><div><strong>Secure access</strong><span>Your account and pharmacy data stay protected.</span></div></div>
+                <div class="benefit"><i class="fas fa-box-open"></i><div><strong>Easy ordering</strong><span>Track purchases and prescription items quickly.</span></div></div>
+                <div class="benefit"><i class="fas fa-heartbeat"></i><div><strong>Built for care</strong><span>A focused experience for pharmacy customers.</span></div></div>
             </div>
         </div>
-    </footer>
+        <div class="brand-foot">PharmaCare · Amman, Jordan</div>
+    </section>
 
-    <!-- External JavaScript libraries -->
-    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
-    <script src="~/assets/js/AccountViewScripts/Login.js "></script>
+    <section class="form-panel">
+        <div class="form-header">
+            <a class="home-link" href="/"><i class="fas fa-arrow-left"></i><span>Back to store</span></a>
+            <button class="theme-btn" id="theme-toggle-btn" type="button" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+        </div>
+
+        <div class="form-wrap">
+            <div class="welcome-chip"><i class="fas fa-lock"></i> Secure sign in</div>
+            <h2>Welcome back</h2>
+            <p class="lead">Enter your account details to continue to PharmaCare.</p>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="notice success"><i class="fas fa-check-circle mr-1"></i> @TempData["SuccessMessage"]</div>
+            }
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""].Errors.Count > 0)
+            {
+                <div class="notice error"><i class="fas fa-exclamation-circle mr-1"></i> @ViewData.ModelState[""].Errors[0].ErrorMessage</div>
+            }
+
+            <form method="post" action="@Url.Action("Login","Account")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                <input type="hidden" name="Role" value="User" />
+
+                <div class="field">
+                    <div class="field-label"><label for="Email">Email address</label></div>
+                    <div class="input-wrap">
+                        <i class="fas fa-envelope field-icon"></i>
+                        <input class="control" id="Email" name="Email" type="email" placeholder="name@example.com" value="@Model?.Email" autocomplete="email" required />
+                    </div>
+                    @if (ViewData.ModelState.ContainsKey("Email") && ViewData.ModelState["Email"].Errors.Count > 0){<div class="field-error">@ViewData.ModelState["Email"].Errors[0].ErrorMessage</div>}
+                </div>
+
+                <div class="field">
+                    <div class="field-label"><label for="password-field">Password</label></div>
+                    <div class="input-wrap">
+                        <i class="fas fa-key field-icon"></i>
+                        <input class="control" id="password-field" name="Password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+                        <button class="toggle-password" id="password-toggle" type="button" aria-label="Show password"><i class="fas fa-eye"></i></button>
+                    </div>
+                    @if (ViewData.ModelState.ContainsKey("Password") && ViewData.ModelState["Password"].Errors.Count > 0){<div class="field-error">@ViewData.ModelState["Password"].Errors[0].ErrorMessage</div>}
+                </div>
+
+                <div class="remember-row">
+                    <label class="remember"><input id="remember-me" type="checkbox" name="RememberMe" /> Remember me</label>
+                    <a class="text-link" href="@Url.Action("ForgotPassword","Account")">Forgot password?</a>
+                </div>
+
+                <button class="primary-btn" type="submit">Sign in <i class="fas fa-arrow-right ml-2"></i></button>
+                <div class="divider"><span>New to PharmaCare?</span></div>
+                <a class="secondary-btn" href="@Url.Action("Register","Account")"><i class="fas fa-user-plus"></i> Create an account</a>
+            </form>
+
+            <div class="security-note"><i class="fas fa-shield-alt"></i><span>Your password is transmitted securely. PharmaCare never asks you to share verification codes outside the website.</span></div>
+        </div>
+        <div class="form-footer">© @DateTime.Now.Year PharmaCare. All rights reserved.</div>
+    </section>
+</div>
+<script>
+(function(){
+ const body=document.body,btn=document.getElementById('theme-toggle-btn'),pass=document.getElementById('password-field'),toggle=document.getElementById('password-toggle');
+ const saved=localStorage.getItem('pharmacare-theme'); if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)) body.classList.add('dark-mode');
+ function syncTheme(){btn.innerHTML=body.classList.contains('dark-mode')?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';}
+ syncTheme(); btn.addEventListener('click',()=>{body.classList.toggle('dark-mode');localStorage.setItem('pharmacare-theme',body.classList.contains('dark-mode')?'dark':'light');syncTheme();});
+ toggle.addEventListener('click',()=>{const show=pass.type==='password';pass.type=show?'text':'password';toggle.innerHTML=show?'<i class="fas fa-eye-slash"></i>':'<i class="fas fa-eye"></i>';});
+})();
+</script>
 </body>
 </html>

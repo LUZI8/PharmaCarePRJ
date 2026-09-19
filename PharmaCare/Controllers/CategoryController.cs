@@ -1,5 +1,6 @@
 ﻿namespace PharmaCare.Controllers
 {
+    [SessionAuthorize("Admin", "Pharmacist")]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;

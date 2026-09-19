@@ -5,18 +5,20 @@
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
+        private readonly ILogger<CartController> _logger;
 
         /* Constructor with dependency injection for cart and product operations */
-        public CartController(ICartRepository cartRepository, IProductRepository productRepository)
+        public CartController(ICartRepository cartRepository, IProductRepository productRepository, ILogger<CartController> logger)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
+            _logger = logger;
         }
 
         /* Redirect cart index requests to frontend cart page */
         public IActionResult Index()
         {
-            return RedirectToAction("Cart", "FrontEnd");
+            return RedirectToAction("Index", "MarketplaceCart");
         }
 
         /* AJAX endpoint to get current cart count - NEW METHOD */
@@ -36,12 +38,14 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message, count = 0 });
+                _logger.LogError(ex, "Legacy cart count failed for user {UserId}", userId);
+                return Json(new { success = false, message = "Unable to load the cart right now.", count = 0 });
             }
         }
 
         /* AJAX endpoint to add products to cart with stock validation */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
             /* Authentication check for cart operations */
@@ -83,10 +87,12 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCart(int productId, int quantity)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -136,11 +142,13 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromCart(int productId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -174,11 +182,13 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
         /* AJAX endpoint to clear entire cart */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -200,7 +210,8 @@
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message });
+                _logger.LogError(ex, "Legacy cart operation failed for user {UserId}", userId);
+                return Json(new { success = false, message = "The cart operation could not be completed. Please try again." });
             }
         }
 
@@ -233,8 +244,9 @@
                     return Json(new { inCart = false });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogDebug(ex, "Legacy cart lookup failed for user {UserId}", userId);
                 return Json(new { inCart = false });
             }
         }
