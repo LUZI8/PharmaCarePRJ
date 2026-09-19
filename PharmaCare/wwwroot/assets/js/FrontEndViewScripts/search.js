@@ -254,7 +254,8 @@ function handleShopSearch() {
                 const response = await fetch('/Support/Context', {
                     method: 'GET',
                     credentials: 'same-origin',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: { 'X-Requested-With': 'XMLHttpRequest',
+                        'RequestVerificationToken': (document.getElementById('pc-antiforgery-token') || {}).value || '' }
                 });
 
                 if (!response.ok) return;
