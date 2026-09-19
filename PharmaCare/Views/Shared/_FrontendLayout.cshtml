@@ -1,3 +1,4 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
     var pageTitle = ViewData["Title"] ?? "PharmaCare";
     var action = ViewContext.RouteData.Values["Action"]?.ToString();
@@ -26,7 +27,7 @@
     <link rel="stylesheet" href="~/assets/css/FrontEndViewStyles/FrontEndLayout.css">
     <style>
         :root{--pc:#0d9488;--pc2:#0f766e;--pc-dark:#0f1720;--pc-muted:#6b7b86;--pc-line:#e7edef;--pc-surface:#fff;--pc-bg:#f7faf9}
-        body{font-family:'Rubik',sans-serif;background:var(--pc-bg);color:#172129}.site-wrap{overflow:hidden}
+        body{font-family:'Rubik',sans-serif;background:var(--pc-bg);color:#172129}.site-wrap{overflow:hidden;min-height:100vh;display:flex;flex-direction:column}
         .pc-header{position:sticky;top:0;z-index:1050;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(15,23,32,.07);box-shadow:0 6px 28px rgba(16,45,52,.05)}
         body.dark-mode .pc-header{background:rgba(24,29,32,.94);border-bottom-color:#333b3f}.pc-nav{height:78px;display:flex;align-items:center;gap:28px}.pc-brand{display:flex;align-items:center;gap:11px;color:#172129!important;font-weight:700;font-size:22px;letter-spacing:.3px}.pc-brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--pc),var(--pc2));color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(13,148,136,.22)}
         body.dark-mode .pc-brand{color:#fff!important}.pc-menu{display:flex;align-items:center;gap:7px;margin:0;padding:0;list-style:none}.pc-menu>li{position:relative}.pc-menu>li>a{display:flex;align-items:center;gap:5px;padding:10px 12px;border-radius:10px;color:#42515a;font-size:13px;font-weight:600;letter-spacing:.2px;transition:.2s}.pc-menu>li>a:hover,.pc-menu>li.active>a{color:var(--pc);background:#edf9f7}.pc-menu .dropdown{position:absolute;top:46px;left:0;min-width:220px;background:#fff;border:1px solid var(--pc-line);border-radius:14px;padding:8px;box-shadow:0 20px 50px rgba(17,44,51,.14);opacity:0;visibility:hidden;transform:translateY(8px);transition:.2s}.pc-menu .has-children:hover .dropdown{opacity:1;visibility:visible;transform:translateY(0)}.pc-menu .dropdown a{display:block;padding:10px 12px;border-radius:9px;color:#42515a;font-size:12px}.pc-menu .dropdown a:hover{background:#edf9f7;color:var(--pc)}
@@ -35,7 +36,8 @@
         .pc-user{position:relative}.pc-user-trigger{height:42px;border:1px solid var(--pc-line);border-radius:12px;background:#fff;padding:0 12px;display:flex;align-items:center;gap:9px;color:#2e3b42;font-size:12px;white-space:nowrap}.pc-avatar{width:27px;height:27px;border-radius:9px;background:#edf9f7;color:var(--pc);display:grid;place-items:center}.pc-user-menu{position:absolute;right:0;top:50px;width:220px;background:#fff;border:1px solid var(--pc-line);border-radius:14px;padding:8px;box-shadow:0 20px 50px rgba(17,44,51,.14);opacity:0;visibility:hidden;transform:translateY(7px);transition:.2s}.pc-user:hover .pc-user-menu{opacity:1;visibility:visible;transform:translateY(0)}.pc-user-menu a{display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:9px;color:#42515a;font-size:12px}.pc-user-menu a:hover{background:#edf9f7;color:var(--pc)}
         body.dark-mode{background:#151a1d;color:#edf3f4}body.dark-mode .pc-search input,body.dark-mode .pc-icon-btn,body.dark-mode .pc-user-trigger,body.dark-mode .pc-user-menu{background:#232a2e;border-color:#364046;color:#eef3f4}body.dark-mode .pc-user-menu a{color:#e6edef}body.dark-mode .pc-user-menu a:hover{background:#173833;color:#7ee0d5}
 
-        .pc-footer{background:linear-gradient(145deg,#0a2529,#0d3032);color:#d8e3e5;margin-top:0;position:relative;overflow:hidden}.pc-footer:before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:rgba(45,212,191,.07);right:-120px;top:-170px}.pc-footer-inner{position:relative;padding:58px 0 26px}.pc-footer-grid{display:grid;grid-template-columns:1.35fr .8fr .9fr 1fr;gap:42px}.pc-footer-brand{color:#fff;font-weight:700;font-size:22px;margin-bottom:14px;display:flex;align-items:center;gap:10px}.pc-footer p{font-size:12px;line-height:1.8;color:#a9bbc0;margin:0}.pc-footer h4{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#fff;margin:5px 0 15px}.pc-footer ul{list-style:none;padding:0;margin:0}.pc-footer li{margin:9px 0;color:#bfd0d4;font-size:12px}.pc-footer a{color:#bfd0d4;transition:.2s}.pc-footer a:hover{color:#66e2d6;text-decoration:none}.pc-contact li{display:flex;gap:10px;align-items:flex-start}.pc-contact i{color:#43cdbf;margin-top:3px;width:15px}.pc-footer-bottom{margin-top:38px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;gap:20px;color:#8da3a8;font-size:10px}.pc-trust{display:flex;gap:13px;flex-wrap:wrap}.pc-trust span{display:inline-flex;align-items:center;gap:6px}.pc-trust i{color:#69d8cd}
+        .pc-footer{background:linear-gradient(145deg,#0a2529,#0d3032);color:#d8e3e5;margin-top:auto;position:relative;overflow:hidden}.pc-footer:before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:rgba(45,212,191,.07);right:-120px;top:-170px}.pc-footer-inner{position:relative;padding:58px 0 26px}.pc-footer-grid{display:grid;grid-template-columns:1.35fr .8fr .9fr 1fr;gap:42px}.pc-footer-brand{color:#fff;font-weight:700;font-size:22px;margin-bottom:14px;display:flex;align-items:center;gap:10px}.pc-footer p{font-size:12px;line-height:1.8;color:#a9bbc0;margin:0}.pc-footer h4{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#fff;margin:5px 0 15px}.pc-footer ul{list-style:none;padding:0;margin:0}.pc-footer li{margin:9px 0;color:#bfd0d4;font-size:12px}.pc-footer a{color:#bfd0d4;transition:.2s}.pc-footer a:hover{color:#66e2d6;text-decoration:none}.pc-contact li{display:flex;gap:10px;align-items:flex-start}.pc-contact i{color:#43cdbf;margin-top:3px;width:15px}.pc-footer-bottom{margin-top:38px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;gap:20px;color:#8da3a8;font-size:10px}.pc-trust{display:flex;gap:13px;flex-wrap:wrap}.pc-trust span{display:inline-flex;align-items:center;gap:6px}.pc-trust i{color:#69d8cd}
+        .toast-notification:not(.show){opacity:0!important;visibility:hidden!important;pointer-events:none!important}
         #back-to-top{background:var(--pc)!important;color:#fff!important;border:0!important;box-shadow:0 10px 24px rgba(13,148,136,.3);z-index:1060}
 
         .pc-global-cart{position:fixed;right:24px;bottom:24px;z-index:1080;display:none;align-items:center;gap:12px;min-width:196px;padding:11px 13px;border:1px solid rgba(255,255,255,.2);border-radius:18px;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff!important;box-shadow:0 16px 38px rgba(13,148,136,.32);text-decoration:none!important;transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease}.pc-global-cart:hover{transform:translateY(-3px);box-shadow:0 20px 46px rgba(13,148,136,.38);color:#fff!important}.pc-global-cart-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(255,255,255,.14);font-size:16px;position:relative}.pc-global-cart-copy{display:flex;flex-direction:column;line-height:1.15;min-width:0}.pc-global-cart-copy strong{font-size:13px;color:#fff}.pc-global-cart-copy span{font-size:10px;color:rgba(255,255,255,.76);margin-top:4px}.pc-global-cart-badge{margin-left:auto;min-width:27px;height:27px;padding:0 8px;border-radius:999px;background:#fff;color:#0d9488;display:grid;place-items:center;font-size:11px;font-weight:800}.pc-global-cart.is-visible{display:flex;animation:pcCartIn .24s ease both}.pc-global-cart.pulse{animation:pcCartPulse .38s ease}.dark-mode .pc-global-cart{box-shadow:0 16px 40px rgba(0,0,0,.4)}#shop-floating-cart{display:none!important}
@@ -61,16 +63,17 @@
     @RenderSection("Styles", required:false)
 </head>
 <body>
-<div class="toast-notification" id="toast-notification" aria-live="polite"><i class="fas fa-check-circle"></i><span id="toast-message">Item added to cart!</span></div>
+<input type="hidden" id="pc-antiforgery-token" value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+<div class="toast-notification" id="toast-notification" aria-live="polite"><i class="fas fa-check-circle"></i><span id="toast-message"></span></div>
 <div class="site-wrap">
     <header class="pc-header">
         <div class="container">
             <div class="pc-nav">
-                <a class="pc-brand" href="@Url.Action("Index","FrontEnd")"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span><span>PHARMACARE</span></a>
+                <a class="pc-brand" href="@Url.Action("Index","Marketplace")"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span><span>PHARMACARE</span></a>
                 <nav class="d-none d-lg-block site-navigation">
                     <ul class="pc-menu site-menu">
-                        <li class="@((action=="Index"&&controller=="FrontEnd")?"active":"")"><a href="@Url.Action("Index","FrontEnd")">Home</a></li>
-                        <li class="@((action=="Shop"||action=="ShopSingle")?"active":"")"><a href="@Url.Action("Shop","FrontEnd")">Store</a></li>
+                        <li class="@((action=="Index"&&controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">Home</a></li>
+                        <li class="@((controller=="Marketplace")?"active":"")"><a href="@Url.Action("Index","Marketplace")">Marketplace</a></li>
                         <li class="has-children"><a href="#">Categories <i class="fas fa-chevron-down" style="font-size:8px"></i></a><ul class="dropdown">@if(ViewBag.Categories!=null){foreach(var category in ViewBag.Categories){<li><a href="@Url.Action("Shop","FrontEnd",new{category=category.CategoryID})">@category.CategoryName</a></li>}}</ul></li>
                         <li class="@(action=="About"?"active":"")"><a href="@Url.Action("About","FrontEnd")">About</a></li>
                         <li class="@(action=="Contact"?"active":"")"><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li>
@@ -78,13 +81,13 @@
                 </nav>
                 <div class="pc-actions">
                     <div class="pc-search d-none d-lg-block"><input type="text" id="navbar-search-input" placeholder="Search medicines..."><button id="navbar-search-btn"><span class="icon-search"></span></button><div id="navbar-search-results" class="navbar-search-results"></div></div>
-                    <a class="pc-icon-btn" href="@Url.Action("Cart","FrontEnd")" aria-label="Cart"><span class="icon-shopping-bag"></span><span class="pc-cart-count" id="cart-count">0</span></a>
+                    <a class="pc-icon-btn" href="@Url.Action("Index","MarketplaceCart")" aria-label="Cart"><span class="icon-shopping-bag"></span><span class="pc-cart-count" id="cart-count">0</span></a>
                     <div class="pc-user">
                         <button class="pc-user-trigger" type="button"><span class="pc-avatar"><i class="fas fa-user"></i></span><span class="pc-user-name">@(ViewBag.IsLoggedIn==true?"Hi, "+(ViewBag.UserName?.ToString().Split(' ')[0]):"Account")</span><i class="fas fa-chevron-down" style="font-size:8px"></i></button>
                         <div class="pc-user-menu">
                             @if(ViewBag.IsLoggedIn==true){
                                 @if(ViewBag.UserRole=="Admin"||ViewBag.UserRole=="Pharmacist"){<a href="@Url.Action("Index","Admin")"><i class="fas fa-columns"></i> Dashboard</a>}
-                                <a href="@Url.Action("Profile","Account")"><i class="fas fa-id-card"></i> My Account</a><a href="@Url.Action("Index","Order")"><i class="fas fa-box"></i> My Orders</a><a href="@Url.Action("MyReservations","Prescription")"><i class="fas fa-prescription"></i> Reservations</a><a href="@Url.Action("Logout","Account")"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                                <a href="@Url.Action("Profile","Account")"><i class="fas fa-id-card"></i> My Account</a><a href="@Url.Action("Index","MarketplaceOrders")"><i class="fas fa-box"></i> My Orders</a><a href="@Url.Action("MyRequests","MarketplacePrescription")"><i class="fas fa-prescription"></i> Reservations</a><a href="@Url.Action("Logout","Account")"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
                             } else {<a href="@Url.Action("Login","Account")"><i class="fas fa-sign-in-alt"></i> Sign In</a><a href="@Url.Action("Register","Account")"><i class="fas fa-user-plus"></i> Create Account</a>}
                         </div>
                     </div>
@@ -103,7 +106,7 @@
     @RenderBody()
 
     <a href="#" id="back-to-top" class="btn rounded-circle p-3" style="position:fixed;bottom:92px;right:24px;display:none"><i class="fas fa-arrow-up"></i></a>
-    <a href="@Url.Action("Cart","FrontEnd")" id="pc-global-cart" class="pc-global-cart" aria-label="Open shopping cart">
+    <a href="@Url.Action("Index","MarketplaceCart")" id="pc-global-cart" class="pc-global-cart" aria-label="Open shopping cart">
         <span class="pc-global-cart-icon"><i class="fas fa-shopping-bag"></i></span>
         <span class="pc-global-cart-copy"><strong>View cart</strong><span>Your basket is ready</span></span>
         <span class="pc-global-cart-badge" id="pc-global-cart-count">0</span>
@@ -113,8 +116,8 @@
         <div class="container pc-footer-inner">
             <div class="pc-footer-grid">
                 <div><div class="pc-footer-brand"><span class="pc-brand-mark"><i class="fas fa-prescription-bottle-alt"></i></span> PHARMACARE</div><p>Trusted pharmacy care, convenient ordering and secure prescription services for customers across Amman.</p></div>
-                <div><h4>Explore</h4><ul><li><a href="@Url.Action("Index","FrontEnd")">Home</a></li><li><a href="@Url.Action("Shop","FrontEnd")">Store</a></li><li><a href="@Url.Action("About","FrontEnd")">About us</a></li><li><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li></ul></div>
-                <div><h4>Account</h4><ul><li><a href="@Url.Action("Profile","Account")">My account</a></li><li><a href="@Url.Action("Index","Order")">My orders</a></li><li><a href="@Url.Action("MyReservations","Prescription")">Prescription pickups</a></li><li><a href="@Url.Action("Cart","FrontEnd")">Shopping cart</a></li></ul></div>
+                <div><h4>Explore</h4><ul><li><a href="@Url.Action("Index","Marketplace")">Home</a></li><li><a href="@Url.Action("Index","Marketplace")">Store</a></li><li><a href="@Url.Action("About","FrontEnd")">About us</a></li><li><a href="@Url.Action("Contact","FrontEnd")">Contact</a></li></ul></div>
+                <div><h4>Account</h4><ul><li><a href="@Url.Action("Profile","Account")">My account</a></li><li><a href="@Url.Action("Index","MarketplaceOrders")">My orders</a></li><li><a href="@Url.Action("MyRequests","MarketplacePrescription")">Prescription pickups</a></li><li><a href="@Url.Action("Index","MarketplaceCart")">Shopping cart</a></li></ul></div>
                 <div><h4>Contact</h4><ul class="pc-contact"><li><i class="fas fa-map-marker-alt"></i><span>Almadina Almonaora St, Amman, Jordan</span></li><li><i class="fas fa-phone"></i><span>+962 7 9999 8888</span></li><li><i class="fas fa-envelope"></i><span>pharmacare@info.com</span></li></ul></div>
             </div>
             <div class="pc-footer-bottom"><span>© @DateTime.Now.Year PharmaCare. All rights reserved.</span><div class="pc-trust"><span><i class="fas fa-lock"></i> Secure checkout</span><span><i class="fas fa-shield-alt"></i> Trusted pharmacy</span><span><i class="fas fa-prescription"></i> Prescription control</span></div></div>
@@ -128,15 +131,22 @@ function syncGlobalCartAccess(n){
     var count=parseInt(n,10)||0;
     $('#cart-count,#pc-global-cart-count').text(count);
     var path=(window.location.pathname||'').toLowerCase();
-    var isCartPage=path.indexOf('/frontend/cart')>=0||path.indexOf('/order/checkout')>=0;
+    var isCartPage=path.indexOf('/marketplacecart')>=0;
     var $quick=$('#pc-global-cart');
     if(count>0&&!isCartPage){$quick.addClass('is-visible')}else{$quick.removeClass('is-visible')}
 }
-function loadCartCount(){if(window.cartCountLoaded)return;window.cartCountLoaded=true;$.ajax({url:'@Url.Action("GetCartCount","Cart")',type:'GET',cache:false,success:function(r){syncGlobalCartAccess(r.success?r.count:0)},error:function(){syncGlobalCartAccess(0)},complete:function(){window.cartCountLoaded=false}})}
+function loadCartCount(){if(window.cartCountLoaded)return;window.cartCountLoaded=true;$.ajax({url:'@Url.Action("Count","MarketplaceCart")',type:'GET',cache:false,success:function(r){syncGlobalCartAccess(r.success?r.count:0)},error:function(){syncGlobalCartAccess(0)},complete:function(){window.cartCountLoaded=false}})}
+$(document).ajaxSend(function(_event,xhr,settings){
+    var method=(settings.type||'GET').toUpperCase();
+    if(method!=='GET'&&method!=='HEAD'&&method!=='OPTIONS'){
+        var token=$('#pc-antiforgery-token').val();
+        if(token)xhr.setRequestHeader('RequestVerificationToken',token);
+    }
+});
 $(document).ready(loadCartCount);$(window).on('focus pageshow',function(e){if(e.originalEvent&&e.originalEvent.persisted)loadCartCount()});
 window.updateCartCount=function(n){syncGlobalCartAccess(n)};
 window.updateGlobalCartAccess=function(n){syncGlobalCartAccess(n);var $quick=$('#pc-global-cart');if($quick.hasClass('is-visible')){$quick.removeClass('pulse');void $quick[0].offsetWidth;$quick.addClass('pulse');setTimeout(function(){$quick.removeClass('pulse')},450)}};
-window.cartUrls={updateCart:'@Url.Action("UpdateCart","Cart")',removeFromCart:'@Url.Action("RemoveFromCart","Cart")',clearCart:'@Url.Action("ClearCart","Cart")',getCartCount:'@Url.Action("GetCartCount","Cart")'};window.cartCountUrl='@Url.Action("GetCartCount","Cart")';
+window.cartUrls={getCartCount:'@Url.Action("Count","MarketplaceCart")'};window.cartCountUrl='@Url.Action("Count","MarketplaceCart")';
 
 $(function(){
     var $cartCount=$('#cart-count');
@@ -149,7 +159,7 @@ $(function(){
                 <a class="pc-mobile-tool primary" href="@(ViewBag.IsLoggedIn==true ? Url.Action("Profile","Account") : Url.Action("Login","Account"))"><i class="fas fa-user"></i> @(ViewBag.IsLoggedIn==true ? "My account" : "Sign in")</a>\
                 <button type="button" class="pc-mobile-tool" id="mobile-theme-toggle"><i class="fas fa-moon pc-theme-icon"></i> <span class="pc-theme-state">Light mode</span></button>\
             </div>\
-            <a class="pc-mobile-tool" style="margin-top:10px" href="@Url.Action("Cart","FrontEnd")"><i class="fas fa-shopping-bag"></i> Shopping cart</a>\
+            <a class="pc-mobile-tool" style="margin-top:10px" href="@Url.Action("Index","MarketplaceCart")"><i class="fas fa-shopping-bag"></i> Shopping cart</a>\
             @if(ViewBag.IsLoggedIn==true){<a class="pc-mobile-tool" style="margin-top:10px" href="@Url.Action("Logout","Account")"><i class="fas fa-sign-out-alt"></i> Sign out</a>}\
         </div>';
         $body.append(tools);
