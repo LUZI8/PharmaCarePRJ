@@ -111,14 +111,12 @@ if (app.Environment.IsDevelopment())
     var db = scope.ServiceProvider.GetRequiredService<DataDbContext>();
     var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
 
+    await db.Database.MigrateAsync();
+
     await DemoCatalogSeeder.SeedAsync(db, loggerFactory.CreateLogger("DemoCatalogSeeder"));
     await RealMedicineImageSeeder.SeedAsync(db, loggerFactory.CreateLogger("RealMedicineImageSeeder"));
-    await MarketplaceBootstrapper.EnsureAsync(db, loggerFactory.CreateLogger("MarketplaceBootstrapper"));
-    await MarketplaceOrderBootstrapper.EnsureAsync(db);
-    await MarketplacePrescriptionBootstrapper.EnsureAsync(db);
+    await MarketplaceBootstrapper.EnsureAsync(db, loggerFactory.CreateLogger("MarketplaceSeeder"));
     await MarketplaceStaffBootstrapper.EnsureAsync(db);
-    await MarketplaceOperationsBootstrapper.EnsureAsync(db);
-    await MarketplacePrescriptionFileBootstrapper.EnsureAsync(db);
 }
 
 if (app.Environment.IsDevelopment())
