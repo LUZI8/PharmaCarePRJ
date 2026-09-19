@@ -21,8 +21,8 @@
         <div class="offer-row">
             <div><div class="store-name">@o.PharmacyName @if(i==0){<span class="best">BEST PRICE</span>}</div><div class="store-meta">Verified pharmacy · @o.Stock units available · <a href="/Marketplace/Pharmacy/@o.PharmacyId">View pharmacy</a></div></div>
             <div class="metric"><strong>@o.DeliveryMinutes min</strong><span>Estimated delivery</span></div>
-            <div class="metric"><strong>@(o.DeliveryFee==0?"FREE":"$"+o.DeliveryFee.ToString("0.00"))</strong><span>Delivery fee</span></div>
-            <div class="offer-price">$@o.Price.ToString("0.00")</div>
+            <div class="metric"><strong>@(o.DeliveryFee==0?"FREE":CurrencyFormatter.Format(o.DeliveryFee))</strong><span>Delivery fee</span></div>
+            <div class="offer-price">@CurrencyFormatter.Format(o.Price)</div>
             @if(o.RequiresPrescription){<a class="offer-action" href="/MarketplacePrescription/Confirm?offerId=@o.PharmacyProductId">Reserve & verify</a>}
             else{<form method="post" action="/MarketplaceCart/Add">@Html.AntiForgeryToken()<input type="hidden" name="pharmacyProductId" value="@o.PharmacyProductId"/><input type="hidden" name="quantity" value="1"/><button class="offer-action" type="submit"><i class="fas fa-shopping-basket" style="margin-right:6px"></i>Add from this pharmacy</button></form>}
         </div>
