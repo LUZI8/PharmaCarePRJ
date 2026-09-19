@@ -33,6 +33,7 @@
 
         public IActionResult Index()
         {
+            return RedirectToAction("Index", "Marketplace");
             LoadCategories();
 
             // Filter active products excluding prescription medicines AND expired products for homepage featured section
@@ -79,6 +80,7 @@
         [HttpGet]
         public IActionResult Shop(int? category, string search, decimal? minPrice, decimal? maxPrice, string sort = "relevance", int page = 1, bool prescriptionOnly = false, bool includeExpired = false)
         {
+            return RedirectToAction("Index", "Marketplace", new { q = search, sort = sort == "price_asc" ? "cheapest" : "recommended" });
             LoadCategories();
 
             // Validate and correct invalid price range inputs to prevent system errors
@@ -283,6 +285,7 @@
         // Updated ShopSingle method to include ExpiryDate
         public IActionResult ShopSingle(int id)
         {
+            return RedirectToAction("Compare", "Marketplace", new { id });
             LoadCategories();
             var product = _productRepository.Find(id);
 
@@ -371,6 +374,7 @@
 
         public async Task<IActionResult> Cart()
         {
+            return RedirectToAction("Index", "MarketplaceCart");
             LoadCategories();
             ViewBag.IsLoggedIn = HttpContext.Session.GetInt32("UserId") != null;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
@@ -397,6 +401,7 @@
 
         public IActionResult Checkout()
         {
+            return RedirectToAction("Checkout", "MarketplaceCart");
             LoadCategories();
             ViewBag.IsLoggedIn = HttpContext.Session.GetInt32("UserId") != null;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
@@ -407,6 +412,7 @@
 
         public IActionResult ThankYou()
         {
+            return RedirectToAction("Index", "MarketplaceOrders");
             LoadCategories();
             ViewBag.IsLoggedIn = HttpContext.Session.GetInt32("UserId") != null;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
