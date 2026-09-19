@@ -14,7 +14,7 @@
  <div class="ops-head"><div><div class="ops-muted">PHARMACY INTELLIGENCE</div><h1>Operations Center</h1><div class="ops-muted">Orders, prescriptions, inventory and customer attention in one operational view.</div></div><div class="ops-muted">Updated @Model.GeneratedAt.ToString("MMM d, HH:mm")</div></div>
  <div class="ops-grid">
   <div class="ops-kpi"><i class="fas fa-shopping-bag"></i><strong>@Model.OrdersToday</strong><span>Orders today</span></div>
-  <div class="ops-kpi"><i class="fas fa-coins"></i><strong>$@Model.RevenueToday.ToString("0.00")</strong><span>Revenue today</span></div>
+  <div class="ops-kpi"><i class="fas fa-coins"></i><strong>@CurrencyFormatter.Format(Model.RevenueToday)</strong><span>Revenue today</span></div>
   <div class="ops-kpi"><i class="fas fa-hourglass-half"></i><strong>@Model.PendingOrders</strong><span>Orders needing attention</span></div>
   <div class="ops-kpi"><i class="fas fa-prescription"></i><strong>@Model.PendingPrescriptions</strong><span>Prescription pickups</span></div>
  </div>
