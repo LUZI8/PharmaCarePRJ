@@ -1,6 +1,7 @@
 @model ProductCompareViewModel
 @{
-    ViewData["Title"] = Model.Product.ProductName + " - Compare pharmacies";
+    var ar = Context.Request.Cookies["pc-culture"] == "ar";
+    ViewData["Title"] = Model.Product.ProductName + (ar ? " - مقارنة الصيدليات" : " - Compare pharmacies");
     Layout = "~/Views/Shared/_FrontendLayout.cshtml";
 }
 @section Styles{
@@ -11,21 +12,21 @@
 </style>
 }
 <div class="compare-page"><div class="container">
-<div style="margin-bottom:18px"><a href="/Marketplace" style="font-size:10px;font-weight:700;color:var(--cp)">← Back to marketplace</a><a class="basket-link" href="/MarketplaceCart"><i class="fas fa-shopping-basket"></i> Marketplace basket</a></div>
+<div style="margin-bottom:18px"><a href="/Marketplace" style="font-size:10px;font-weight:700;color:var(--cp)">@(ar?"← العودة للسوق":"← Back to marketplace")</a><a class="basket-link" href="/MarketplaceCart"><i class="fas fa-shopping-basket"></i> @(ar?"السلة":"Marketplace basket")</a></div>
 <div class="compare-shell">
-<aside class="product-panel"><div class="product-image"><img src="@Model.Product.ImageUrl" alt="@Model.Product.ProductName"/></div><div class="category">@Model.Product.Category?.CategoryName</div><h1>@Model.Product.ProductName</h1><p class="description">@Model.Product.Description</p>@if(Model.Product.RequiresPrescription){<div class="rx-note"><i class="fas fa-prescription"></i> <strong>Prescription medicine.</strong><br/>Compare pharmacies first, then continue through pharmacy-specific prescription verification before pickup.</div>}</aside>
-<section class="offers-panel"><h2>Compare pharmacy offers</h2><div class="offers-sub">@Model.Offers.Count pharmacies currently have this product available.</div>
+<aside class="product-panel"><div class="product-image"><img src="@Model.Product.ImageUrl" alt="@Model.Product.ProductName"/></div><div class="category">@Model.Product.Category?.CategoryName</div><h1>@Model.Product.ProductName</h1><p class="description">@Model.Product.Description</p>@if(Model.Product.RequiresPrescription){<div class="rx-note"><i class="fas fa-prescription"></i> <strong>@(ar?"دواء يحتاج وصفة.":"Prescription medicine.")</strong><br/>@(ar?"قارن الصيدليات أولاً، ثم أكمل التحقق من الوصفة لدى الصيدلية قبل الاستلام.":"Compare pharmacies first, then continue through pharmacy-specific prescription verification before pickup.")</div>}</aside>
+<section class="offers-panel"><h2>@(ar?"قارن عروض الصيدليات":"Compare pharmacy offers")</h2><div class="offers-sub">@Model.Offers.Count @(ar?"صيدلية لديها هذا المنتج متوفراً حالياً.":"pharmacies currently have this product available.")</div>
 @if(Model.Offers.Any()){
     for(var i=0;i<Model.Offers.Count;i++){
         var o=Model.Offers[i];
         <div class="offer-row">
-            <div><div class="store-name">@o.PharmacyName @if(i==0){<span class="best">BEST PRICE</span>}</div><div class="store-meta">Verified pharmacy · @o.Stock units available · <a href="/Marketplace/Pharmacy/@o.PharmacyId">View pharmacy</a></div></div>
-            <div class="metric"><strong>@o.DeliveryMinutes min</strong><span>Estimated delivery</span></div>
-            <div class="metric"><strong>@(o.DeliveryFee==0?"FREE":CurrencyFormatter.Format(o.DeliveryFee))</strong><span>Delivery fee</span></div>
+            <div><div class="store-name">@o.PharmacyName @if(i==0){<span class="best">@(ar?"أفضل سعر":"BEST PRICE")</span>}</div><div class="store-meta">@(ar?"صيدلية موثقة":"Verified pharmacy") · @o.Stock @(ar?"متوفر":"units available") · <a href="/Marketplace/Pharmacy/@o.PharmacyId">@(ar?"عرض الصيدلية":"View pharmacy")</a></div></div>
+            <div class="metric"><strong>@o.DeliveryMinutes min</strong><span>@(ar?"وقت التوصيل":"Estimated delivery")</span></div>
+            <div class="metric"><strong>@(o.DeliveryFee==0?"FREE":CurrencyFormatter.Format(o.DeliveryFee))</strong><span>@(ar?"رسوم التوصيل":"Delivery fee")</span></div>
             <div class="offer-price">@CurrencyFormatter.Format(o.Price)</div>
-            @if(o.RequiresPrescription){<a class="offer-action" href="/MarketplacePrescription/Confirm?offerId=@o.PharmacyProductId">Reserve & verify</a>}
-            else{<form method="post" action="/MarketplaceCart/Add">@Html.AntiForgeryToken()<input type="hidden" name="pharmacyProductId" value="@o.PharmacyProductId"/><input type="hidden" name="quantity" value="1"/><button class="offer-action" type="submit"><i class="fas fa-shopping-basket" style="margin-right:6px"></i>Add from this pharmacy</button></form>}
+            @if(o.RequiresPrescription){<a class="offer-action" href="/MarketplacePrescription/Confirm?offerId=@o.PharmacyProductId">@(ar?"احجز وتحقق":"Reserve & verify")</a>}
+            else{<form method="post" action="/MarketplaceCart/Add">@Html.AntiForgeryToken()<input type="hidden" name="pharmacyProductId" value="@o.PharmacyProductId"/><input type="hidden" name="quantity" value="1"/><button class="offer-action" type="submit"><i class="fas fa-shopping-basket" style="margin-right:6px"></i>@(ar?"أضف من هذه الصيدلية":"Add from this pharmacy")</button></form>}
         </div>
     }
-}else{<div class="empty">This medicine is currently unavailable across marketplace pharmacies.</div>}
+}else{<div class="empty">@(ar?"هذا الدواء غير متوفر حالياً في صيدليات السوق.":"This medicine is currently unavailable across marketplace pharmacies.")</div>}
 </section></div></div></div>
