@@ -1,6 +1,7 @@
 namespace PharmaCare.Controllers
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    [SessionAuthorize("Admin", "Pharmacist")]
     public class AdminController : Controller
     {
         private readonly DataDbContext _context;
