@@ -104,6 +104,7 @@ public class MarketplaceApiController : ControllerBase
     }
 
     [HttpPost("smart-cart")]
+    [IgnoreAntiforgeryToken] // Stateless, read-only recommendation API for web/mobile clients.
     public async Task<IActionResult> SmartCart([FromBody] SmartCartApiRequest request, CancellationToken ct)
     {
         if (request.Items == null || request.Items.Count == 0)
