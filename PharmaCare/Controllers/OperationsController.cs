@@ -11,14 +11,6 @@ public class OperationsController : Controller
 
     public OperationsController(DataDbContext db) => _db = db;
 
-    public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        base.OnActionExecuting(context);
-        var role = HttpContext.Session.GetString("UserRole");
-        if (role is not ("Admin" or "Pharmacist"))
-            context.Result = RedirectToAction("Login", "Account");
-    }
-
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
