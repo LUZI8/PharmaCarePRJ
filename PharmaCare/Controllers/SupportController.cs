@@ -74,6 +74,7 @@ namespace PharmaCare.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Send([FromBody] QuickSupportRequest request)
         {
             if (request == null || string.IsNullOrWhiteSpace(request.Message))
