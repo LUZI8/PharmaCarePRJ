@@ -71,7 +71,7 @@ var now = DateTime.Now;
 
                 ViewBag.OrderStatistics = await _orderRepository.GetOrderStatisticsAsync();
                 ViewBag.AdminName = HttpContext.Session.GetString("UserName") ?? "Admin";
-                ViewBag.UserRole = userRole;
+                ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
                 ViewBag.FeedbackCount = viewModel.FeedbackCount;
 
                 return View(viewModel);
