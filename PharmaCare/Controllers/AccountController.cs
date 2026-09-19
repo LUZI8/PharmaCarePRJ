@@ -5,17 +5,20 @@
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IEmailService _emailService;
+        private readonly ILogger<AccountController> _logger;
 
         private static readonly TimeSpan CodeLifetime = TimeSpan.FromMinutes(15);
 
         public AccountController(
             IUserRepository userRepository,
             ICategoryRepository categoryRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            ILogger<AccountController> logger)
         {
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
             _emailService = emailService;
+            _logger = logger;
         }
 
         private static string GenerateCode()
@@ -37,7 +40,9 @@
 
             var userRole = HttpContext.Session.GetString("UserRole");
             if (!string.IsNullOrEmpty(userRole))
-                return userRole == "Admin" ? Redirect("/Admin/Index") : Redirect("/FrontEnd/Index");
+                return userRole == "Admin" || userRole == "Pharmacist"
+                    ? Redirect("/Admin/Index")
+                    : Redirect("/Marketplace");
 
             return View();
         }
@@ -81,7 +86,7 @@
 
                         return Redirect(user.Role == "Admin" || user.Role == "Pharmacist"
                             ? "/Admin/Index?loggedIn=true"
-                            : "/FrontEnd/Index?loggedIn=true");
+                            : "/Marketplace?loggedIn=true");
                     }
 
                     if (user != null && !user.IsActive)
@@ -94,8 +99,9 @@
                 ModelState.AddModelError("", "Invalid email or password");
                 return View();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Login failed unexpectedly for {Email}", Email);
                 ModelState.AddModelError("", "An error occurred during login. Please try again.");
                 return View();
             }
@@ -124,21 +130,9 @@
                     return View(user);
                 }
 
-                if (user.Password.Length < 8)
+                if (!PasswordPolicy.IsValid(user.Password))
                 {
-                    ModelState.AddModelError("Password", "Password must be at least 8 characters long");
-                    return View(user);
-                }
-
-                if (!user.Password.Any(char.IsUpper))
-                {
-                    ModelState.AddModelError("Password", "Password must contain at least one uppercase letter");
-                    return View(user);
-                }
-
-                if (!user.Password.Any(c => !char.IsLetterOrDigit(c)))
-                {
-                    ModelState.AddModelError("Password", "Password must contain at least one special character");
+                    ModelState.AddModelError("Password", PasswordPolicy.Message);
                     return View(user);
                 }
 
@@ -149,7 +143,7 @@
                     {
                         if (existing.IsEmailVerified)
                         {
-                            ModelState.AddModelError("Email", "Email already exists. Please sign in.");
+                            ModelState.AddModelError("Email", "This email cannot be registered. Try signing in or use password recovery.");
                             return View(user);
                         }
 
@@ -182,8 +176,9 @@
 
                 return View(user);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Registration failed unexpectedly");
                 ModelState.AddModelError("", "Registration could not be completed. Please try again.");
                 return View(user);
             }
@@ -232,7 +227,7 @@
 
             return user.Role == "Admin" || user.Role == "Pharmacist"
                 ? Redirect("/Admin/Index")
-                : Redirect("/FrontEnd/Index?verified=true");
+                : Redirect("/Marketplace?verified=true");
         }
 
         [HttpPost]
@@ -333,9 +328,9 @@
                 return View();
             }
 
-            if (NewPassword.Length < 8 || !NewPassword.Any(char.IsUpper) || !NewPassword.Any(c => !char.IsLetterOrDigit(c)))
+            if (!PasswordPolicy.IsValid(NewPassword))
             {
-                ModelState.AddModelError("", "Password must be at least 8 characters and include an uppercase letter and a special character.");
+                ModelState.AddModelError("", PasswordPolicy.Message);
                 return View();
             }
 
@@ -392,14 +387,41 @@
                     var currentUser = await _userRepository.GetByIdAsync(userId.Value);
                     if (currentUser == null) return NotFound();
 
+                    var requestedEmail = (user.Email ?? string.Empty).Trim();
+                    var emailChanged = !string.Equals(currentUser.Email, requestedEmail, StringComparison.OrdinalIgnoreCase);
+                    if (emailChanged)
+                    {
+                        var duplicate = await _userRepository.GetByEmailAsync(requestedEmail);
+                        if (duplicate != null && duplicate.UserId != currentUser.UserId)
+                        {
+                            ModelState.AddModelError("Email", "This email cannot be used. Try another address or use account recovery.");
+                            return View(user);
+                        }
+                    }
+
                     currentUser.FirstName = user.FirstName;
                     currentUser.LastName = user.LastName;
-                    currentUser.Email = user.Email;
                     currentUser.PhoneNumber = user.PhoneNumber;
                     currentUser.Address = user.Address;
                     currentUser.City = user.City;
 
                     var result = await _userRepository.UpdateAsync(currentUser);
+                    if (result != null && emailChanged)
+                    {
+                        var code = GenerateCode();
+                        var changed = await _userRepository.ChangeEmailAndRequireVerificationAsync(currentUser.UserId, requestedEmail, code, DateTime.UtcNow.Add(CodeLifetime));
+                        if (!changed)
+                        {
+                            ModelState.AddModelError("Email", "This email cannot be used. Try another address.");
+                            return View(user);
+                        }
+
+                        await _emailService.SendVerificationCodeAsync(requestedEmail, currentUser.FirstName, code);
+                        HttpContext.Session.Clear();
+                        TempData["PendingEmail"] = requestedEmail;
+                        TempData["InfoMessage"] = "Email changed. Verify the new address before signing in again.";
+                        return RedirectToAction("VerifyEmail");
+                    }
                     if (result == null)
                     {
                         TempData["ErrorMessage"] = "Failed to update profile. Please try again.";
@@ -413,8 +435,9 @@
 
                 return View(user);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Profile update failed for signed-in user");
                 TempData["ErrorMessage"] = "An error occurred while updating your profile. Please try again.";
                 return View(user);
             }
@@ -446,6 +469,12 @@
             if (newPassword != confirmPassword)
             {
                 TempData["ErrorMessage"] = "New password and confirmation do not match.";
+                return View();
+            }
+
+            if (!PasswordPolicy.IsValid(newPassword))
+            {
+                TempData["ErrorMessage"] = PasswordPolicy.Message;
                 return View();
             }
 
