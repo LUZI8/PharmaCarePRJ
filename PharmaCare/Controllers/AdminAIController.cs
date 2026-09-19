@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace PharmaCare.Controllers;
 
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+[SessionAuthorize("Admin", "Pharmacist")]
 public class AdminAIController : Controller
 {
     private readonly DataDbContext _db;
@@ -20,10 +21,6 @@ public class AdminAIController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> OperationsBrief(CancellationToken ct)
     {
-        var role = HttpContext.Session.GetString("UserRole");
-        if (role is not ("Admin" or "Pharmacist"))
-            return Unauthorized(new { success = false, message = "Staff access required." });
-
         if (!_ai.IsConfigured)
             return StatusCode(503, new { success = false, message = "AI is not configured." });
 
@@ -74,7 +71,7 @@ public class AdminAIController : Controller
         context.AppendLine("You are the internal PharmaCare pharmacy operations copilot.");
         context.AppendLine("Give a concise staff briefing with: 1) urgent actions, 2) today overview, 3) inventory risks, 4) prescription/support follow-up.");
         context.AppendLine("Do not diagnose, prescribe, recommend dose changes, or infer clinical decisions. Never expose private customer information.");
-        context.AppendLine($"Orders today: {ordersToday}; revenue today: ${revenueToday:0.00}; pending/processing orders: {pendingOrders}; reserved prescriptions: {pendingRx}.");
+        context.AppendLine($"Orders today: {ordersToday}; revenue today: {CurrencyFormatter.Format(revenueToday)}; pending/processing orders: {pendingOrders}; reserved prescriptions: {pendingRx}.");
         context.AppendLine("Low stock:");
         foreach (var p in lowStock) context.AppendLine($"- {p.ProductName}: {p.Stock} units, reorder level {p.ReorderLevel}");
         context.AppendLine("Out of stock:");
