@@ -1,5 +1,6 @@
 ﻿namespace PharmaCare.Controllers
 {
+    [SessionAuthorize("Admin")]
     public class UsersController : Controller
     {
         private readonly IUserRepository _userRepository;
