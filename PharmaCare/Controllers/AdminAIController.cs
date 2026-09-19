@@ -85,7 +85,7 @@ public class AdminAIController : Controller
         {
             Message = "Create my current operations briefing. Keep it practical and prioritized.",
             SiteContext = context.ToString(),
-            UserContext = $"Staff role: {role}",
+            UserContext = $"Staff role: {HttpContext.Session.GetString("UserRole") ?? "Staff"}",
             History = Array.Empty<AIChatMessage>()
         }, ct);
 
