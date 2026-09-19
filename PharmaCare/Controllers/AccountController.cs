@@ -141,18 +141,17 @@
                     var existing = await _userRepository.GetByEmailAsync(user.Email);
                     if (existing != null)
                     {
-                        if (existing.IsEmailVerified)
+                        // Keep registration behavior generic so this screen cannot be used to
+                        // discover whether an email already has an account.
+                        if (!existing.IsEmailVerified)
                         {
-                            ModelState.AddModelError("Email", "This email cannot be registered. Try signing in or use password recovery.");
-                            return View(user);
+                            var resendCode = GenerateCode();
+                            await _userRepository.SetEmailVerificationCodeAsync(existing.UserId, resendCode, DateTime.UtcNow.Add(CodeLifetime));
+                            await _emailService.SendVerificationCodeAsync(existing.Email, existing.FirstName, resendCode);
                         }
 
-                        var resendCode = GenerateCode();
-                        await _userRepository.SetEmailVerificationCodeAsync(existing.UserId, resendCode, DateTime.UtcNow.Add(CodeLifetime));
-                        await _emailService.SendVerificationCodeAsync(existing.Email, existing.FirstName, resendCode);
-
-                        TempData["PendingEmail"] = existing.Email;
-                        TempData["InfoMessage"] = "That email is already registered but not verified. We've sent a new code — enter it to finish.";
+                        TempData["PendingEmail"] = user.Email.Trim();
+                        TempData["InfoMessage"] = "If this email can be activated, a verification code has been sent. If you already have an account, sign in or use password recovery.";
                         return RedirectToAction("VerifyEmail");
                     }
 
