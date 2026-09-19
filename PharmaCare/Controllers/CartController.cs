@@ -42,6 +42,7 @@
 
         /* AJAX endpoint to add products to cart with stock validation */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
             /* Authentication check for cart operations */
@@ -87,6 +88,7 @@
             }
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCart(int productId, int quantity)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -141,6 +143,7 @@
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromCart(int productId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -179,6 +182,7 @@
         }
         /* AJAX endpoint to clear entire cart */
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
