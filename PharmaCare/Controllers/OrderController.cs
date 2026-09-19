@@ -1,5 +1,6 @@
 ﻿namespace PharmaCare.Controllers
 {
+    [SessionAuthorize]
     public class OrderController : Controller
     {
         private readonly IOrderRepository _orderRepository;
