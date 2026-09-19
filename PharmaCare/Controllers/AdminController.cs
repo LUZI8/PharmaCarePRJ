@@ -15,29 +15,11 @@ namespace PharmaCare.Controllers
             _orderRepository = orderRepository;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            base.OnActionExecuting(context);
-            var userRole = HttpContext.Session.GetString("UserRole");
-
-            if (string.IsNullOrEmpty(userRole) || (userRole != "Admin" && userRole != "Pharmacist"))
-            {
-                context.HttpContext.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-                context.HttpContext.Response.Headers["Pragma"] = "no-cache";
-                context.HttpContext.Response.Headers["Expires"] = "0";
-                context.Result = Redirect("/Account/Login");
-            }
-        }
-
         public async Task<IActionResult> Index()
         {
             try
             {
-                var userRole = HttpContext.Session.GetString("UserRole");
-                if (string.IsNullOrEmpty(userRole) || (userRole != "Admin" && userRole != "Pharmacist"))
-                    return Redirect("/Account/Login");
-
-                var now = DateTime.Now;
+var now = DateTime.Now;
                 var today = now.Date;
                 var tomorrow = today.AddDays(1);
                 var expiryThreshold = today.AddDays(90);
