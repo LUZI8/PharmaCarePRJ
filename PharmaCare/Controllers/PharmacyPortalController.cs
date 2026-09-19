@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PharmaCare.Controllers;
 
+[SessionAuthorize("Admin", "Pharmacist")]
 public class PharmacyPortalController : Controller
 {
     private readonly DataDbContext _db;
