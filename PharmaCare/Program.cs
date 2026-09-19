@@ -13,7 +13,11 @@ var environmentApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 if (string.IsNullOrWhiteSpace(builder.Configuration["AISettings:ApiKey"]) && !string.IsNullOrWhiteSpace(environmentApiKey))
     builder.Configuration["AISettings:ApiKey"] = environmentApiKey;
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Protect every unsafe MVC request by default. Explicit stateless APIs can opt out with [IgnoreAntiforgeryToken].
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+});
 builder.Services.AddHttpContextAccessor();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -113,9 +117,18 @@ if (app.Environment.IsDevelopment())
 
     await db.Database.MigrateAsync();
 
-    await DemoCatalogSeeder.SeedAsync(db, loggerFactory.CreateLogger("DemoCatalogSeeder"));
-    await RealMedicineImageSeeder.SeedAsync(db, loggerFactory.CreateLogger("RealMedicineImageSeeder"));
-    await MarketplaceBootstrapper.EnsureAsync(db, loggerFactory.CreateLogger("MarketplaceSeeder"));
+    // Seed demo data only when the migrated development database is empty.
+    // This keeps startup fast and keeps schema management inside EF migrations.
+    var needsCatalogSeed = !await db.Product.AsNoTracking().AnyAsync();
+    if (needsCatalogSeed)
+    {
+        await DemoCatalogSeeder.SeedAsync(db, loggerFactory.CreateLogger("DemoCatalogSeeder"));
+        await RealMedicineImageSeeder.SeedAsync(db, loggerFactory.CreateLogger("RealMedicineImageSeeder"));
+    }
+
+    if (!await db.Pharmacies.AsNoTracking().AnyAsync())
+        await MarketplaceBootstrapper.EnsureAsync(db, loggerFactory.CreateLogger("MarketplaceSeeder"));
+
     await MarketplaceStaffBootstrapper.EnsureAsync(db);
 }
 
