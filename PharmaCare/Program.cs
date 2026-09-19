@@ -41,7 +41,7 @@ builder.Services.AddHttpClient<IAIService, OpenAIService>();
 builder.Services.AddScoped<IExpiredReservationsService, ExpiredReservationsService>();
 builder.Services.AddHostedService<ExpiredReservationsService>();
 
-builder.Services.Configure<Microsoft.AspNetCore.HttpOverrides.ForwardedHeadersOptions>(options =>
+builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
                                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
