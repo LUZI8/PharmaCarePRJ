@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PharmaCare.Controllers;
 
+[SessionAuthorize("Driver", "Admin")]
 public class DriverPortalController : Controller
 {
     private readonly DataDbContext _db;
