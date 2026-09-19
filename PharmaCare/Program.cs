@@ -19,6 +19,10 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
 });
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<DataDbContext>(x => x.UseSqlServer(connectionString));
@@ -159,6 +163,8 @@ app.Use(async (context, next) =>
     });
     await next();
 });
+
+app.UseResponseCompression();
 
 app.UseStaticFiles(new StaticFileOptions
 {
