@@ -15,13 +15,6 @@ public class DriverPortalController : Controller
         _operations = operations;
     }
 
-    public override void OnActionExecuting(ActionExecutingContext context)
-    {
-        base.OnActionExecuting(context);
-        var role = HttpContext.Session.GetString("UserRole");
-        if (role is not ("Driver" or "Admin")) context.Result = RedirectToAction("Login", "Account");
-    }
-
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
