@@ -134,6 +134,24 @@ namespace Repositories.Repository
             return true;
         }
 
+        public async Task<bool> ChangeEmailAndRequireVerificationAsync(int userId, string newEmail, string code, DateTime expiry)
+        {
+            if (string.IsNullOrWhiteSpace(newEmail)) return false;
+            var normalized = newEmail.Trim();
+            var duplicate = await _context.User.AnyAsync(u => u.UserId != userId && u.Email.ToLower() == normalized.ToLower());
+            if (duplicate) return false;
+
+            var user = await _context.User.FindAsync(userId);
+            if (user == null) return false;
+
+            user.Email = normalized;
+            user.IsEmailVerified = false;
+            user.EmailVerificationCode = code;
+            user.EmailVerificationCodeExpiry = expiry;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task SetPasswordResetCodeAsync(int userId, string code, DateTime expiry)
         {
             var user = await _context.User.FindAsync(userId);
