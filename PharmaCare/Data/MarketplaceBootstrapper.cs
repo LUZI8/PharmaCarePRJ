@@ -12,7 +12,10 @@ public static class MarketplaceBootstrapper
             new Pharmacy { Name="Shifa Pharmacy", Address="Gardens St, Amman", City="Amman", Phone="+962 7 9000 1122", Email="orders@shifa.demo", Latitude=31.982400m, Longitude=35.899100m, Rating=4.8m, RatingCount=860, EstimatedDeliveryMinutes=28, DeliveryFee=1.50m, MinimumOrder=6m, Description="Community pharmacy with strong everyday medicine availability and fast delivery." },
             new Pharmacy { Name="LifeCare Pharmacy", Address="Mecca St, Amman", City="Amman", Phone="+962 7 9111 2233", Email="hello@lifecare.demo", Latitude=31.977300m, Longitude=35.863700m, Rating=4.7m, RatingCount=615, EstimatedDeliveryMinutes=34, DeliveryFee=2m, MinimumOrder=7m, Description="Wellness, OTC and prescription reservation service across west Amman." },
             new Pharmacy { Name="Al Hayat Pharmacy", Address="University St, Amman", City="Amman", Phone="+962 7 9222 3344", Email="care@alhayat.demo", Latitude=32.014200m, Longitude=35.873100m, Rating=4.6m, RatingCount=440, EstimatedDeliveryMinutes=31, DeliveryFee=1.25m, MinimumOrder=5m, Description="Trusted neighborhood pharmacy with extended opening hours." },
-            new Pharmacy { Name="CarePlus Pharmacy", Address="Abdoun, Amman", City="Amman", Phone="+962 7 9333 4455", Email="support@careplus.demo", Latitude=31.948000m, Longitude=35.886000m, Rating=4.9m, RatingCount=998, EstimatedDeliveryMinutes=19, DeliveryFee=2.25m, MinimumOrder=10m, Description="Premium pharmacy delivery with curated health and wellness products." }
+            new Pharmacy { Name="CarePlus Pharmacy", Address="Abdoun, Amman", City="Amman", Phone="+962 7 9333 4455", Email="support@careplus.demo", Latitude=31.948000m, Longitude=35.886000m, Rating=4.9m, RatingCount=998, EstimatedDeliveryMinutes=19, DeliveryFee=2.25m, MinimumOrder=10m, Description="Premium pharmacy delivery with curated health and wellness products." },
+            new Pharmacy { Name="Irbid Health Pharmacy", Address="University St, Irbid", City="Irbid", Phone="+962 7 9444 5566", Email="orders@irbidhealth.demo", Latitude=32.556800m, Longitude=35.846900m, Rating=4.8m, RatingCount=524, EstimatedDeliveryMinutes=24, DeliveryFee=1.25m, MinimumOrder=6m, Description="Verified pharmacy fulfillment across central Irbid." },
+            new Pharmacy { Name="Zarqa Care Pharmacy", Address="King Hussein St, Zarqa", City="Zarqa", Phone="+962 7 9555 6677", Email="orders@zarqacare.demo", Latitude=32.072800m, Longitude=36.088000m, Rating=4.7m, RatingCount=408, EstimatedDeliveryMinutes=27, DeliveryFee=1.00m, MinimumOrder=5m, Description="Everyday pharmacy essentials and prescription verification in Zarqa." },
+            new Pharmacy { Name="Al Salt Community Pharmacy", Address="Al Hamman St, Salt", City="Salt", Phone="+962 7 9666 7788", Email="orders@saltcommunity.demo", Latitude=32.039200m, Longitude=35.727200m, Rating=4.7m, RatingCount=287, EstimatedDeliveryMinutes=29, DeliveryFee=1.50m, MinimumOrder=5m, Description="Neighborhood pharmacy serving Salt with live marketplace stock." }
         };
 
         db.Pharmacies.AddRange(pharmacies);
@@ -23,7 +26,10 @@ public static class MarketplaceBootstrapper
             for (var d = 0; d < 7; d++)
                 db.PharmacyHours.Add(new PharmacyHour { PharmacyId=pharmacy.PharmacyId, DayOfWeek=(DayOfWeek)d, OpensAt=new TimeSpan(8,0,0), ClosesAt=new TimeSpan(23,30,0), IsClosed=false });
 
-            foreach (var zone in new[] { "Amman", "Abdoun", "Gardens", "Khalda", "Sweifieh" })
+            var zones = pharmacy.City == "Amman"
+                ? new[] { "Amman", "Abdoun", "Gardens", "Khalda", "Sweifieh" }
+                : new[] { pharmacy.City, "Central " + pharmacy.City };
+            foreach (var zone in zones)
                 db.PharmacyDeliveryZones.Add(new PharmacyDeliveryZone { PharmacyId=pharmacy.PharmacyId, ZoneName=zone, DeliveryFee=pharmacy.DeliveryFee, EstimatedMinutes=pharmacy.EstimatedDeliveryMinutes, IsActive=true });
         }
 
